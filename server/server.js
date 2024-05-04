@@ -58,6 +58,15 @@ import fetchDoctorsDaySched from "./MyServerFunctions/Patient/fetchDoctorsDaySch
 import fetchAvailableDoctorTime from "./MyServerFunctions/Patient/fetchAvailableDoctorTime.js";
 import fetchEmployeeAttendance from "./MyServerFunctions/HR/fetchEmployeeAttendance.js";
 import getEmployeeDaySchedReverse from "./MyServerFunctions/rfid/getEmployeeDaySchedReverse.js";
+import AddNewDepartment from "./MyServerFunctions/Admin/AddNewDepartment.js";
+import CheckExistingDepartment from "./MyServerFunctions/Admin/CheckExistingDepartment.js";
+import fetchDepartments from "./MyServerFunctions/Admin/fetchDepartments.js";
+import fetchPositions from "./MyServerFunctions/Admin/fetchPositions.js";
+import UpdateDepartment from "./MyServerFunctions/Admin/UpdateDepartment.js";
+import AddNewPosition from "./MyServerFunctions/Admin/AddNewPosition.js";
+import CheckExistingService from "./MyServerFunctions/Admin/CheckExistingService.js";
+import AddService from "./MyServerFunctions/Admin/AddService.js";
+import fetchServices from "./MyServerFunctions/Admin/fetchServices.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1394,15 +1403,72 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
     const ncrBarangays = await fetchNcrBarangays();
 
     const employee = await GetAllEmployee(db);
-
+    const departments = await fetchDepartments(db);
+    const positions = await fetchPositions(db);
+    const services = await fetchServices(db);
     res.json({
       user: employeeResult.rows,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
       employees: employee,
+      departments: departments,
+      services: services,
+      positions: positions,
     });
   } catch (error) {
     console.error("API request error:", error.message);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/Add-Service", async (req, res)=>{
+  try {
+    const {service_type, service_name} = req.body;
+    const existingService = await CheckExistingService(db, service_type, service_name)
+
+    console.log(existingService)
+    if(parseInt(existingService) > 0){
+      return res.json({status: "invalid", message: "Service already exist!"})
+    }
+
+    const insertService = await AddService(db, req.body);
+
+    if(insertService){
+      return res.json({status: "success"})
+    }
+  } catch (error) {
+    console.error("Add Service error: " + error.message)
+  }
+})
+app.get("/fetchPositions", async (req, res) => {
+  try {
+    const positions = await fetchPositions(db);
+    res.json({
+      positions: positions,
+    });
+  } catch (error) {
+    console.error("fetchDepartment API ERROR: " + error.message);
+  }
+});
+
+app.get("/fetchServices", async (req, res) => {
+  try {
+    const services = await fetchServices(db);
+    res.json({
+      services: services,
+    });
+  } catch (error) {
+    console.error("fetchDepartment API ERROR: " + error.message);
+  }
+});
+
+app.get("/fetchDepartments", async (req, res) => {
+  try {
+    const departments = await fetchDepartments(db);
+    res.json({
+      departments: departments,
+    });
+  } catch (error) {
+    console.error("fetchDepartment API ERROR: " + error.message);
   }
 });
 
@@ -1428,34 +1494,64 @@ app.get("/cityApi", async (req, res) => {
   }
 });
 
-// app.get("/WordOfHope/HR/:user", async (req, res) => {
-//   try {
-//     const uid = req.params.user;
+app.post("/Add-Department", async (req, res) => {
+  try {
+    const { department } = req.body;
 
-//     const userIdResult = await db.query("SELECT id from wohUser WHERE id=$1", [
-//       uid,
-//     ]);
+    const existingDepartment = await CheckExistingDepartment(db, department);
 
-//     const employeeResult = await db.query(
-//       "SELECT * from employee WHERE userId=$1",
-//       [uid]
-//     );
+    console.log(existingDepartment);
+    if (existingDepartment > 0) {
+      return res.json({
+        status: "invalid",
+        message: "Department already exist!",
+      });
+    }
 
-//     const userInfos = [];
-//     // const employees = [];
+    const insertDepartment = await AddNewDepartment(db, department);
+    if (insertDepartment) {
+      return res.json({ status: "success" });
+    }
+  } catch (error) {
+    console.error("/Add-Department API  err: " + error.message);
+  }
+});
 
-//     employeeResult.rows.forEach((info) => {
-//       userInfos.push(info);
-//     });
+app.post("/Add-Position", async (req, res) => {
+  try {
+    console.log(req.body);
+    const { department_id, position } = req.body;
 
-//     res.json({
-//       user: userInfos,
-//     });
-//   } catch (error) {
-//     console.error("API request error:", error.message);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
+    const InsertPosition = await AddNewPosition(db, department_id, position);
+
+    if (InsertPosition) {
+      return res.json({ status: "success" });
+    }
+  } catch (error) {
+    console.error('"Add position api error: ' + error.message);
+  }
+});
+app.post("/Update-Department", async (req, res) => {
+  try {
+    const { id, department } = req.body;
+
+    const existingDepartment = await CheckExistingDepartment(db, department);
+
+    if (existingDepartment > 0) {
+      return res.json({
+        status: "invalid",
+        message: "Department already exist!",
+      });
+    }
+
+    const updateDepartment = await UpdateDepartment(db, id, department);
+    if (updateDepartment) {
+      return res.json({ status: "success" });
+    }
+  } catch (error) {
+    console.error("/Add-Department API  err: " + error.message);
+  }
+});
 
 app.post("/register", async (req, res) => {
   try {

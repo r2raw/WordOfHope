@@ -32,6 +32,33 @@ function AdminLayout() {
       .catch((error) => {});
   };
 
+  const updateDepartments = () => {
+    axios.get("/fetchDepartments").then((res) => {
+      setBackendData((prev) => ({
+        ...prev,
+        departments: res.data.departments,
+      }));
+    });
+  };
+
+  const updatePositions = () => {
+    axios.get("/fetchPositions").then((res) => {
+      setBackendData((prev) => ({
+        ...prev,
+        positions: res.data.positions,
+      }));
+    });
+  };
+
+  
+  const updateServices = () => {
+    axios.get("/fetchServices").then((res) => {
+      setBackendData((prev) => ({
+        ...prev,
+        services: res.data.services,
+      }));
+    });
+  };
   const renewEmployees = () => {
     axios
       .get("/employeeApi")
@@ -103,6 +130,9 @@ function AdminLayout() {
             renewBackendData,
             renewEmployees,
             renewUserInfo,
+            updateDepartments,
+            updatePositions,
+            updateServices,
           }}
         />
       </main>

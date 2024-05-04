@@ -1255,6 +1255,16 @@ a.active .nav-item * {
   height: 83dvh;
 }
 
+#success-message-fit {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+}
+#success-message-fit svg{
+  font-size: 150px;
+}
 .admin-element .loading {
   display: flex;
   align-items: center;
@@ -1306,7 +1316,7 @@ a.active .nav-item * {
 
 /* employee header */
 .emp-header {
-  background-color: black;
+  background-color: var(--color-darkblue);
   color: white;
   display: flex;
   align-items: center;
@@ -2395,10 +2405,84 @@ nav .nav-container .nav-items .nav-list a.active::before {
   margin-bottom: 20px;
 }
 
+.table-container .pagination {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* grid-template-columns: 1fr 1fr; */
+  width: 100%;
+  gap: 10px;
+}
+
+.table-container table thead tr th:is(.action){
+  text-align: right;
+}
+.table-container table tbody tr td:is(.action-button) > div{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.table-container table tbody tr td:is(.action-button) button{
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  margin: 0!important;
+}
+.table-container .pagination #new-input-group *{
+  color: var(--font-primary-color);
+}
+
+.table-container .pagination .pagination-arrow{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-container span.sort-indicator{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -10px;   
+}
+
+.table-container .pagination #new-input-group .dropdown{
+  z-index: 200;
+}
+
+.table-container .pagination  select * {
+  color: var(--font-primary-color);
+}
+
+.table-container .pagination  select {
+  color: var(--font-primary-color);
+  width: fit-content;
+  padding-block: 5px;
+}
+
+.table-container .pagination > div {
+  display: flex;
+  gap: 10px;
+}
+
+.table-container .pagination * {
+  color: var(--color-white);
+}
+
 .table-container .multiple-input #new-input-group input {
   width: 400px;
 }
-
+.table-container thead tr th {
+  position: relative;
+}
 .table-container {
   background-color: var(--color-darkblue);
   padding: 3%;
@@ -3125,7 +3209,8 @@ header .header-details {
 }
 
 #new-input-group select {
-  width: 200px;
+  /* width: 200px; */
+  width: 100%;
 }
 #new-input-group .dropdown {
   position: absolute;
@@ -3178,6 +3263,12 @@ header .header-details {
   top: 50%;
   transform: translateY(-50%);
 }
+
+#new-input-group input[type="text"] ~ .new-floating-icon {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;}
 
 #new-input-group select:valid + .new-floating-label {
   top: 10px;
@@ -3740,6 +3831,100 @@ input[type="file"] + label {
   width: 100%;
   height: 100%;
   border-radius: 10px;
+}
+
+.admin-element.department {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+
+.admin-element.department .item {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  width: 50%;
+}
+.admin-element.department .item .department-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--font-primary-color);
+}
+
+.admin-element.department .item .department-header button{
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+}
+
+
+.admin-element.department .item .department-header button p{
+  color: var(--color-white);
+  padding: 0;
+  line-height: 1;
+}
+
+.admin-element.department .add-department{
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  border-radius: 10px;
+}
+
+.admin-element.department .add-department form{
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+}
+
+.admin-element.department .add-department .close-btn{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.admin-element.department .add-position select{
+  width: 100%;
+}
+
+.admin-element.manage-services{
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+.admin-element.manage-services .service-form{
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--card-box-shadow);
+}
+.admin-element.manage-services .service-form .close-btn{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.admin-element.manage-services form .radio{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-element.manage-services form input[type="radio"]+ label{
+  border: 1px solid var(--color-darkblue);
+  border-radius: 10px;
+  padding: 5px;
+  cursor: pointer;
+}
+.admin-element.manage-services form input[type="radio"]:checked + label{
+  background-color: var(--color-darkblue);
+  color: var(--color-white);
 }
 /*1280 screen responsive */
 @media screen and (max-width: 1280px) {
