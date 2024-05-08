@@ -9,7 +9,7 @@ import _ from "lodash";
 import { titleCase } from "title-case";
 
 function EditDepartmentForm(props) {
-  const { updateDepartments } = useOutletContext();
+  const { updateDepartments, updatePositions } = useOutletContext();
   const [loading, setLoading] = useState(false);
   const [departmentName, setDepartmentName] = useState(
     props.department.department_name
@@ -31,6 +31,7 @@ function EditDepartmentForm(props) {
         setLoading(false);
         if (res.data.status === "success") {
           updateDepartments();
+          updatePositions();
           setSuccess(true);
           return;
         }

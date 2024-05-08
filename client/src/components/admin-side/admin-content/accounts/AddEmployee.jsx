@@ -218,6 +218,8 @@ function AddEmployee() {
     }
   },[addStatus])
 
+  console.log(values)
+
   if (loading) return <Loading />;
 
   if (addStatus === "success")
@@ -480,8 +482,10 @@ function AddEmployee() {
                   className="card"
                 >
                   <option></option>
-                  {Departments.map((i, index) => {
-                    return <option key={index}>{i.name}</option>;
+                  {backendData.departments.filter(i => i.id !== 1).map((department, index)=>{
+                    return(
+                      <option value={department.id} key={index}>{department.department_name}</option>
+                    )
                   })}
                 </select>
                 <span
@@ -504,11 +508,12 @@ function AddEmployee() {
                 >
                   <option></option>
                   {values.department &&
-                    Departments.find(
-                      (i) => i.name === values.department
-                    )?.positions.map((i, index) => {
-                      return <option>{i}</option>;
-                    })}
+                    backendData.positions.filter(i => i.department_id === parseInt(values.department)).map((position, index)=>{
+                      return(
+                        <option key={index} value={position.id}>{position.position_name}</option>
+                      )
+                    })
+                    }
                 </select>
                 <span
                   className="new-floating-label"

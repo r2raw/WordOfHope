@@ -16,7 +16,7 @@ import PositionFilter from "./PositionFilter";
 function PositionTable(props) {
   const { backendData } = useOutletContext();
   const columns = useMemo(() => positionColumns, []);
-  const data = useMemo(() => backendData.positions, []);
+  const data = useMemo(() => backendData.positions, [backendData.positions]);
   const {
     getTableProps,
     getTableBodyProps,

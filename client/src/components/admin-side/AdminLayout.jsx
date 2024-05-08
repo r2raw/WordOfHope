@@ -33,12 +33,14 @@ function AdminLayout() {
   };
 
   const updateDepartments = () => {
-    axios.get("/fetchDepartments").then((res) => {
-      setBackendData((prev) => ({
-        ...prev,
-        departments: res.data.departments,
-      }));
-    });
+    axios
+      .get("/fetchDepartments")
+      .then((res) => {
+        setBackendData((prev) => ({
+          ...prev,
+          departments: res.data.departments,
+        }));
+      });
   };
 
   const updatePositions = () => {
@@ -50,7 +52,6 @@ function AdminLayout() {
     });
   };
 
-  
   const updateServices = () => {
     axios.get("/fetchServices").then((res) => {
       setBackendData((prev) => ({
