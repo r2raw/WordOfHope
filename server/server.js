@@ -1420,25 +1420,51 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
   }
 });
 
-app.post("/Add-Service", async (req, res)=>{
+app.post("/Add-Service", async (req, res) => {
   try {
-    const {service_type, service_name} = req.body;
-    const existingService = await CheckExistingService(db, service_type, service_name)
+    const { service_type, service_name } = req.body;
+    const existingService = await CheckExistingService(
+      db,
+      service_type,
+      service_name
+    );
 
-    console.log(existingService)
-    if(parseInt(existingService) > 0){
-      return res.json({status: "invalid", message: "Service already exist!"})
+    if (parseInt(existingService) > 0) {
+      return res.json({ status: "invalid", message: "Service already exist!" });
     }
 
     const insertService = await AddService(db, req.body);
 
-    if(insertService){
-      return res.json({status: "success"})
+    if (insertService) {
+      return res.json({ status: "success" });
     }
   } catch (error) {
-    console.error("Add Service error: " + error.message)
+    console.error("Add Service error: " + error.message);
   }
-})
+});
+
+app.post("/Update-Services", async (req, res) => {
+  try {
+    const { service_type, service_name } = req.body;
+    const existingService = await CheckExistingService(
+      db,
+      service_type,
+      service_name
+    );
+
+    if (parseInt(existingService) > 0) {
+      return res.json({ status: "invalid", message: "Service already exist!" });
+    }
+
+    const insertService = await AddService(db, req.body);
+
+    if (insertService) {
+      return res.json({ status: "success" });
+    }
+  } catch (error) {
+    console.error("Update Service error: " + error.message);
+  }
+});
 app.get("/fetchPositions", async (req, res) => {
   try {
     const positions = await fetchPositions(db);

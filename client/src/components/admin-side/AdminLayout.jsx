@@ -53,10 +53,12 @@ function AdminLayout() {
   
   const updateServices = () => {
     axios.get("/fetchServices").then((res) => {
+      
       setBackendData((prev) => ({
         ...prev,
         services: res.data.services,
       }));
+
     });
   };
   const renewEmployees = () => {

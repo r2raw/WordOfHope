@@ -4,7 +4,12 @@ import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import suffix from "../../../my-functions/Suffixes";
 import { calendarMax } from "../../../my-functions/EighteenYearsAgo";
 import ArrowDropDownSharpIcon from "@mui/icons-material/ArrowDropDownSharp";
-import { useOutletContext, Link, useParams, useNavigate } from "react-router-dom";
+import {
+  useOutletContext,
+  Link,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import Departments from "../../../my-functions/Departments";
 import SuccessMessage from "../../../SuccessMessage";
 import Loading from "../../../Loading";
@@ -18,7 +23,7 @@ function AddEmployee() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addStatus, setAddStatus] = useState("");
-  const {cities} = backendData.ncr;
+  const { cities } = backendData.ncr;
   const [barangays, setBarangays] = useState();
 
   const [errorsIn, setErrorsIn] = useState({
@@ -187,37 +192,37 @@ function AddEmployee() {
     setErrors({
       email: "",
       rfid: "",
-    })
+    });
     let newData = new FormData(e.target);
     setLoading(true);
     axios
       .post(`/add-employee/${user}`, newData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       })
       .then((res) => {
         setImage(null);
-        setLoading(false)
-        if(res.data.status === "success"){
-          setAddStatus("success")
-        }else{
-          setErrorsIn(res.data.errorIn)
+        setLoading(false);
+        if (res.data.status === "success") {
+          setAddStatus("success");
+        } else {
+          setErrorsIn(res.data.errorIn);
         }
       })
       .catch((err) => console.error("ADD  EMPLOYEE ERROR:" + err.message));
   };
 
-  useEffect(()=>{
-    if(addStatus === "success"){
-      
+  useEffect(() => {
+    if (addStatus === "success") {
       renewEmployees();
-      setTimeout(()=>{
-        navigate("../Accounts")
-      }, 3000)
+      setTimeout(() => {
+        navigate("../Accounts");
+      }, 3000);
     }
-  },[addStatus])
+  }, [addStatus]);
 
+  console.log(backendData);
   if (loading) return <Loading />;
 
   if (addStatus === "success")
@@ -480,9 +485,18 @@ function AddEmployee() {
                   className="card"
                 >
                   <option></option>
-                  {Departments.map((i, index) => {
+                  {backendData.departments
+                    .filter((i) => i.id !== 1 && i.availability === "Available")
+                    .map((department, index) => {
+                      return (
+                        <option key={index} value={department.id}>
+                          {department.department_name}
+                        </option>
+                      );
+                    })}
+                  {/* {Departments.map((i, index) => {
                     return <option key={index}>{i.name}</option>;
-                  })}
+                  })} */}
                 </select>
                 <span
                   className="new-floating-label"
@@ -504,11 +518,30 @@ function AddEmployee() {
                 >
                   <option></option>
                   {values.department &&
+                    backendData.positions &&
+                    backendData.positions
+                      .filter(
+                        (i) =>
+                          i.department_id ===
+                          parseInt(
+                            values.department &&
+                              i.department_availability === "Available" &&
+                              i.position_availability === "Available"
+                          )
+                      )
+                      .map((position, index) => {
+                        return (
+                          <option key={index} value={position.id}>
+                            {position.position_name}
+                          </option>
+                        );
+                      })}
+                  {/* {values.department &&
                     Departments.find(
                       (i) => i.name === values.department
                     )?.positions.map((i, index) => {
                       return <option>{i}</option>;
-                    })}
+                    })} */}
                 </select>
                 <span
                   className="new-floating-label"
@@ -557,8 +590,8 @@ function AddEmployee() {
               </div>
             </div>
             {errorsIn?.email && <p className="invalid">{errorsIn.email}</p>}
-            {errorsIn?.rfid &&<p className="invalid">{errorsIn.rfid}</p> }
-            
+            {errorsIn?.rfid && <p className="invalid">{errorsIn.rfid}</p>}
+
             <button className="solid fade card submit" disabled={!isEnabled}>
               Submit
             </button>

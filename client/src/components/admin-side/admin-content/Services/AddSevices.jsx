@@ -7,7 +7,7 @@ import ServicesTable from "./ServicesTable";
 function AddSevices() {
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedService, setSelectedService] = useState();
-  const { backendData } = useOutletContext();
+  const { backendData, updateServices } = useOutletContext();
   const handleOpenEdit = (id) => {
     if (openEdit) {
       handleCloseEdit();
@@ -15,7 +15,7 @@ function AddSevices() {
         const findService = backendData.services.find((i) => i.id === id);
         setSelectedService(findService);
         setOpenEdit(true);
-      }, 300);
+      }, 100);
       return;
     }
 
