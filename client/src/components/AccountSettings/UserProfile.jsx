@@ -10,7 +10,7 @@ function UserProfile() {
   const { userInfo } = useOutletContext();
   const [myInfo, setMyinfo] = useState(userInfo);
 
-  const {firstname, lastname, suffix, middlename, empimg, email, phone, department, position,emptype, sex, birthdate} = myInfo;
+  const {firstname, lastname, suffix, middlename, empimg, email, phone, department, position,emptype, sex, birthdate, department_name, position_name} = myInfo;
   const {street, barangay, city, province, zip} = myInfo;
   // const userImg = require(`../my-images/empImg/${empimg}`)
   const userImg = `http://localhost:5000/empImg/${empimg}`
@@ -49,8 +49,8 @@ function UserProfile() {
         </div>
         <div className="user-job">
           <h1>Job Details</h1>
-          <p>Department:  <span>{department}</span></p>
-          <p>Position:  <span>{position} - {emptype}</span></p>
+          <p>Department:  <span>{department_name}</span></p>
+          <p>Position:  <span>{position_name} - {emptype}</span></p>
         </div>
       </div>
     </div>

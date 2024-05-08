@@ -100,8 +100,8 @@ function ChangePassForm() {
 
           setTimeout(() => {
             setSuccess(false);
-            if(userInfo.position !== "Admin"){
-              navigate(`/WordOfHope/${userInfo.position}/${userInfo.userid}/Account-Settings/User-Profile`);
+            if(userInfo.usertype !== "Admin"){
+              navigate(`/WordOfHope/${userInfo.usertype}/${userInfo.userid}/Account-Settings/User-Profile`);
             }else{
               navigate(`/WordOfHope/MNS/${userInfo.userid}/Account-Settings/User-Profile`);
             }

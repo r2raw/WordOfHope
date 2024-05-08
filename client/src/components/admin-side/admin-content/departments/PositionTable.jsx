@@ -54,18 +54,20 @@ function PositionTable(props) {
               <tr {...header.getHeaderGroupProps()}>
                 {header.headers.map((col) => (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {col.render("Header")}
-                    <span className="sort-indicator">
-                      {col.isSorted ? (
-                        col.isSortedDesc ? (
-                          <ArrowDropDownSharpIcon />
+                    <div className="table-header">
+                      {col.render("Header")}
+                      <span className="sort-indicator">
+                        {col.isSorted ? (
+                          col.isSortedDesc ? (
+                            <ArrowDropDownSharpIcon />
+                          ) : (
+                            <ArrowDropUpSharpIcon />
+                          )
                         ) : (
-                          <ArrowDropUpSharpIcon />
-                        )
-                      ) : (
-                        ""
-                      )}
-                    </span>
+                          ""
+                        )}
+                      </span>
+                    </div>
                   </th>
                 ))}
                 <th className="action">Action</th>

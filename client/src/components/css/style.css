@@ -2444,14 +2444,20 @@ nav .nav-container .nav-items .nav-list a.active::before {
   justify-content: center;
 }
 
-.table-container span.sort-indicator{
+.table-container .table-header {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  /* display: grid; */
+  /* display: flex;
+  flex-direction: row; */
+  /* grid-template-columns: 1fr 1fr; */
+}
+
+.table-container .table-header span.sort-indicator{
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  right: -10px;   
 }
 
 .table-container .pagination #new-input-group .dropdown{
@@ -3935,6 +3941,23 @@ input[type="file"] + label {
 .admin-element.manage-services form input[type="radio"]:checked + label{
   background-color: var(--color-darkblue);
   color: var(--color-white);
+}
+
+.service-info{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.service-info .btn{
+  display: flex;
+  justify-content: flex-end;
+}
+.service-info button.smlBlue{
+  /* align-self: right; */
+  padding: 0;
+  height: 30px;
+  width: 300px;
+  border-radius: 5px;
 }
 /*1280 screen responsive */
 @media screen and (max-width: 1280px) {

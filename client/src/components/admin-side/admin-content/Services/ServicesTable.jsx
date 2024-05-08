@@ -55,18 +55,20 @@ function ServicesTable(props) {
               <tr {...header.getHeaderGroupProps()}>
                 {header.headers.map((col) => (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {col.render("Header")}
-                    <span className="sort-indicator">
-                      {col.isSorted ? (
-                        col.isSortedDesc ? (
-                          <ArrowDropDownSharpIcon />
+                    <div className="table-header">
+                      {col.render("Header")}
+                      <span className="sort-indicator">
+                        {col.isSorted ? (
+                          col.isSortedDesc ? (
+                            <ArrowDropDownSharpIcon />
+                          ) : (
+                            <ArrowDropUpSharpIcon />
+                          )
                         ) : (
-                          <ArrowDropUpSharpIcon />
-                        )
-                      ) : (
-                        ""
-                      )}
-                    </span>
+                          ""
+                        )}
+                      </span>
+                    </div>
                   </th>
                 ))}
                 <th className="action">Action</th>
@@ -87,7 +89,14 @@ function ServicesTable(props) {
                   })}
                   <td className="action-button">
                     <div>
-                      <button className="solid submit fade" onClick={()=> {props.handleOpenEdit(row.original.id)}}>Edit</button>
+                      <button
+                        className="solid submit fade"
+                        onClick={() => {
+                          props.handleOpenEdit(row.original.id);
+                        }}
+                      >
+                        Edit
+                      </button>
                       {row.original.availability === "Available" ? (
                         <button className="solid danger fade">Delete</button>
                       ) : (

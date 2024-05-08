@@ -40,7 +40,7 @@ import getNoSchedEmployee from "./MyServerFunctions/HR/getNoSchedEmployee.js";
 import updateEmployee from "./MyServerFunctions/employeeprofile/updateEmployee.js";
 import GetAllEmployee from "./MyServerFunctions/GetAllEmployee.js";
 import CheckExistingEmail from "./MyServerFunctions/CheckExistingEmail.js";
-import AddNewEmployee from "./MyServerFunctions/Admin/AddNewEmployee.js";
+import AddNewEmployee, { addNewEmployeeNoImg } from "./MyServerFunctions/Admin/AddNewEmployee.js";
 import internal from "stream";
 import CheckExistingRfid from "./MyServerFunctions/Admin/CheckExistingRfid.js";
 import InsertSchedule from "./MyServerFunctions/HR/InsertSchedule.js";
@@ -976,39 +976,85 @@ app.post("/patient-edit-my-profile/:user", async (req, res) => {
   }
 });
 
+
+app.post("/Validate-Add-Employee", async (req, res)=>{
+  try {
+    
+    const { email } = req.body;
+    const emailCount = await CheckExistingEmail(db, email);
+
+    let errors = {
+      email: "",
+      rfid: "",
+    };
+
+    if (parseInt(emailCount) > 0) {
+      errors.email = "Email already exist!";
+    }
+
+    if (req.body.rfid !== "") {
+      const rfidCount = await CheckExistingRfid(db, req.body.rfid);
+      if (parseInt(rfidCount) > 0) {
+        errors.rfid = "RFID already exist!";
+      }
+    }
+
+    if (errors.rfid !== "" || errors.email !== "") {
+      return res.json({ status: "invalid", errorIn: errors });
+    }
+
+    return res.json({ status: "success" })
+  } catch (error) {
+    console.error("Validate-Add-Employee Error: " + error.message)
+  }
+})
+
+app.post(
+  "/add-employee-no-img/:user",
+  async (req, res) => {
+    try {
+      const { user } = req.params;
+
+      const empl = await db.query("SELECT COUNT(*) from employee");
+      const employeeCount = empl.rows[0].count;
+     
+      const num = parseInt(employeeCount) + 1;
+      const empId = (num, places) => String(num).padStart(places, "0");
+
+      const username = empId(num, 3);
+
+      const salt = await bcrypt.genSalt(saltRounds);
+      const hash = await bcrypt.hash(username, salt);
+
+      const addEmployeeResult = await addNewEmployeeNoImg(
+        db,
+        username,
+        hash,
+        req.body,
+        user,
+      );
+
+      if (addEmployeeResult === "success") {
+        return res.json({ status: "success" });
+      }
+    } catch (error) {
+      console.error("/add-employee/:user no image error: " + error.message);
+      res.status(503).json("Internal server error: " + error.message);
+    }
+  }
+);
+
 app.post(
   "/add-employee/:user",
   upload.single("employeeImg"),
   async (req, res) => {
     try {
       const { user } = req.params;
-      const { email } = req.body;
       const image = req.file.filename;
 
       const empl = await db.query("SELECT COUNT(*) from employee");
       const employeeCount = empl.rows[0].count;
-      const emailCount = await CheckExistingEmail(db, email);
-
-      let errors = {
-        email: "",
-        rfid: "",
-      };
-
-      if (parseInt(emailCount) > 0) {
-        errors.email = "Email already exist!";
-      }
-
-      if (req.body.rfid !== "") {
-        const rfidCount = await CheckExistingRfid(db, req.body.rfid);
-        if (parseInt(rfidCount) > 0) {
-          errors.rfid = "RFID already exist!";
-        }
-      }
-
-      if (errors.rfid !== "" || errors.email !== "") {
-        return res.json({ status: "invalid", errorIn: errors });
-      }
-
+     
       const num = parseInt(employeeCount) + 1;
       const empId = (num, places) => String(num).padStart(places, "0");
 

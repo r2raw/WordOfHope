@@ -120,7 +120,7 @@ function AdminNav(props) {
           firstname={backendData && backendData.user[0].firstname}
           lastname={backendData && backendData.user[0].lastname}
           img={backendData && backendData.user[0].empimg}
-          pos={backendData && backendData.user[0].position}
+          pos={backendData && backendData.user[0].usertype}
           backendData={backendData && backendData}
           openRfidDialog={props.openRfidDialog}
         />
@@ -180,7 +180,7 @@ function HRNav(props) {
           firstname={backendData && backendData.user[0].firstname}
           lastname={backendData && backendData.user[0].lastname}
           img={backendData && backendData.user[0].empimg}
-          pos={backendData && backendData.user[0].position}
+          pos={backendData && backendData.user[0].usertype}
           backendData={backendData && backendData}
         />
       </nav>
@@ -311,7 +311,7 @@ function ReceptionistNav(props) {
           firstname={backendData && backendData.user[0].firstname}
           lastname={backendData && backendData.user[0].lastname}
           img={backendData && backendData.user[0].empimg}
-          pos={backendData && backendData.user[0].position}
+          pos={backendData && backendData.user[0].usertype}
           backendData={backendData && backendData}
         />
       </nav>
@@ -438,7 +438,7 @@ function DoctorNav(props) {
           firstname={backendData && backendData.user[0].firstname}
           lastname={backendData && backendData.user[0].lastname}
           img={backendData && backendData.user[0].empimg}
-          pos={backendData && backendData.user[0].position}
+          pos={backendData && backendData.user[0].usertype}
           backendData={backendData && backendData}
         />
       </nav>

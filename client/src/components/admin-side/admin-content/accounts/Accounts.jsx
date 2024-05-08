@@ -11,6 +11,7 @@ import defaultImg from "./default.jpg";
 import AccountRow from "./AccountRow";
 import ViewEmployee from "./ViewEmployee";
 import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import AccountsTable from "./AccountsTable";
 
 function Accounts() {
   const { user } = useParams();
@@ -45,64 +46,8 @@ function Accounts() {
           </button>
       </div>
       <div className="employee-tbl">
-        <div className="tbl-input">
-          <div className="input-group">
-            <input type="text" required />
-            <span className="floating-label">Search</span>
-            <span className="label-icon">
-              <SearchSharpIcon />
-            </span>
-          </div>
-        </div>
-        <div className="tbl-content table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Employee ID</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Department</th>
-                <th>Position</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                backendData.employees
-                  .filter((employee) => employee.position !== "Admin")
-                  .map((employee, index) => {
-                    return (
-                      <AccountRow
-                        key={index}
-                        id={employee.id}
-                        firstName={employee.firstname}
-                        lastName={employee.lastname}
-                        middleName={employee.middlename}
-                        suffix={employee.suffix}
-                        sex={employee.sex}
-                        birthdate={employee.birthdate}
-                        email={employee.email}
-                        phone={employee.phone}
-                        province={employee.province}
-                        city={employee.city}
-                        barangay={employee.barangay}
-                        street={employee.street}
-                        zip={employee.zip}
-                        department={employee.department}
-                        position={employee.position}
-                        empType={employee.emptype}
-                        rfid={employee.rfid}
-                        empimg={employee.empimg}
-                        viewEmp={handleViewEmployee}
-                        shift={employee.shift}
-                      />
-                    );
-                  })}
-            </tbody>
-          </table>
-        </div>
+        <AccountsTable viewEmp={handleViewEmployee}/>
       </div>
-
     
       <div
         className={`view-employee-modal ${isViewOpen && `openModal`}`}
@@ -150,7 +95,6 @@ function Accounts() {
                     rfid={employee.rfid}
                     img={employee.empimg}
                     userId={employee.userid}
-                    shift={employee.shift}
                   />
                 );
               })}

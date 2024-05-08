@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import img from "../../../my-images/empImg/defaultImg.png";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import suffix from "../../../my-functions/Suffixes";
@@ -139,10 +139,6 @@ function AddEmployee() {
       }
     }
 
-    if (!image) {
-      valid = false;
-    }
-
     for (const fieldname in errors) {
       const error = errors[fieldname];
       if (error) {
@@ -186,31 +182,63 @@ function AddEmployee() {
     }
   }, [values.rfid]);
 
-  const handleSubmit = (e) => {
+  const uploadWithImg = useCallback(
+    (data) => {
+      axios
+        .post(`/add-employee/${user}`, data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          setImage(null);
+          setLoading(false);
+          if (res.data.status === "success") {
+            setAddStatus("success");
+          }
+        })
+        .catch((err) => console.error("ADD  EMPLOYEE ERROR:" + err.message));
+    },
+    [values]
+  );
+
+  const uploadNoImg = useCallback(
+    (data) => {
+      axios
+        .post(`/add-employee-no-img/${user}`, data)
+        .then((res) => {
+          setLoading(false);
+          if (res.data.status === "success") {
+            setAddStatus("success");
+          }
+        })
+        .catch((err) => console.error("ADD  EMPLOYEE ERROR:" + err.message));
+    },
+    [values]
+  );
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setErrors({
       email: "",
       rfid: "",
     });
+
     let newData = new FormData(e.target);
+    const validate = await axios.post("/Validate-Add-Employee", values);
+
     setLoading(true);
-    axios
-      .post(`/add-employee/${user}`, newData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        setImage(null);
-        setLoading(false);
-        if (res.data.status === "success") {
-          setAddStatus("success");
-        } else {
-          setErrorsIn(res.data.errorIn);
-        }
-      })
-      .catch((err) => console.error("ADD  EMPLOYEE ERROR:" + err.message));
+    if (validate.data.status === "success") {
+      if (!image) {
+        uploadNoImg(values);
+      } else {
+        uploadWithImg(newData);
+      }
+    } else {
+      setLoading(false);
+      setErrorsIn(validate.data.errorIn);
+    }
   };
 
   useEffect(() => {
@@ -222,7 +250,6 @@ function AddEmployee() {
     }
   }, [addStatus]);
 
-  console.log(backendData);
   if (loading) return <Loading />;
 
   if (addStatus === "success")
@@ -445,9 +472,11 @@ function AddEmployee() {
                 >
                   <option></option>
                   {barangays &&
-                    barangays.map((i) => {
-                      return <option>{i.name}</option>;
-                    })}
+                    barangays
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((i) => {
+                        return <option>{i.name}</option>;
+                      })}
                 </select>
                 <span
                   className="new-floating-label"
@@ -522,12 +551,9 @@ function AddEmployee() {
                     backendData.positions
                       .filter(
                         (i) =>
-                          i.department_id ===
-                          parseInt(
-                            values.department &&
-                              i.department_availability === "Available" &&
-                              i.position_availability === "Available"
-                          )
+                          i.department_id === parseInt(values.department) &&
+                          i.department_availability === "Available" &&
+                          i.position_availability === "Available"
                       )
                       .map((position, index) => {
                         return (

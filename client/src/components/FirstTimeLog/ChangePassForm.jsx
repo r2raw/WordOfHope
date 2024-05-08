@@ -99,9 +99,9 @@ function ChangePassForm() {
           setTimeout(() => {
             setSuccess(false);
             window.location.reload();
-            if(backendData.user[0].position !== "Admin"){
+            if(backendData.user[0].usertype !== "Admin"){
               
-              window.location.href = `/WordOfHope/${backendData.user[0].position}/${backendData.user[0].userid}/Dashboard`;
+              window.location.href = `/WordOfHope/${backendData.user[0].usertype}/${backendData.user[0].userid}/Dashboard`;
               // navigate(`/WordOfHope/${backendData.user[0].position}/${backendData.user[0].userid}/Dashboard`);
             }else{
               window.location.href = `/WordOfHope/MNS/${backendData.user[0].userid}/Dashboard`;

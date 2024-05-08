@@ -104,20 +104,20 @@ function AddEmployeeSched() {
                 </div>
                 <div className="user-info">
                   <h4>Position:</h4>
-                  <p>{foundEmployee.position}</p>
+                  <p>{foundEmployee.position_name}</p>
                 </div>
                 <div className="user-info">
                   <h4>Department:</h4>
-                  <p>{foundEmployee.department}</p>
+                  <p>{foundEmployee.department_name}</p>
                 </div>
               </div>
               {/* <p>Employee ID: 001</p>
           <p>Name: Arturo D. Marte Jr. II</p>
           <p>Position: Nurse</p>
           <p>Department: Optolmology</p> */}
-              {foundEmployee.position === "Nurse" ? (
+              {foundEmployee.position_name === "Nurse" ? (
                 <AddNurseSched emp={foundEmployee?.id} handleLoading={handleLoading} handleSuccess={handleSuccess}/>
-              ) : foundEmployee.position === "Doctor" ? (
+              ) : foundEmployee.position_name === "Doctor" ? (
                 <AddDoctorSched emp={foundEmployee?.id}  handleLoading={handleLoading} handleSuccess={handleSuccess} />
               ) : (
                 <AddOfficesSched emp={foundEmployee?.id} handleLoading={handleLoading} handleSuccess={handleSuccess} />

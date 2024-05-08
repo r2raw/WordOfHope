@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
-import img from "../../../my-images/empImg/defaultImg.png";
+import defimg from "../../../my-images/empImg/defaultImg.png";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import suffix from "../../../my-functions/Suffixes";
 import { calendarMax } from "../../../my-functions/EighteenYearsAgo";
 import ArrowDropDownSharpIcon from "@mui/icons-material/ArrowDropDownSharp";
-import { useOutletContext, Link, useParams, useNavigate } from "react-router-dom";
+import {
+  useOutletContext,
+  Link,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import Departments from "../../../my-functions/Departments";
 import dayjs from "dayjs";
 import SuccessMessage from "../../../SuccessMessage";
@@ -23,9 +28,8 @@ function EditEmployee() {
     (employee) => employee.id === empId
   );
   const empImg = `http://localhost:5000/empImg/${viewedEmployee.empimg}`;
-  const {cities} = backendData.ncr;
+  const { cities } = backendData.ncr;
   const [barangays, setBarangays] = useState();
-
 
   const navigate = useNavigate();
   const [errorsIn, setErrorsIn] = useState({
@@ -81,8 +85,6 @@ function EditEmployee() {
     rfid: viewedEmployee.rfid,
   });
 
-
-  
   const [errors, setErrors] = useState({
     birthdate: false,
     email: false,
@@ -185,53 +187,63 @@ function EditEmployee() {
     }
   }, [values.rfid]);
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     setLoading(true);
-    if(!image){
-
-      axios.post(`/update-employee/${user}`, {...values, empId: empId, prevEmail: viewedEmployee.email, prevRfid: viewedEmployee.rfid, userId: viewedEmployee.userid}).then(res =>{
-        setImage(null);
-        setLoading(false)
-        if(res.data.status === "success"){
-          renewEmployees();
-          setUpdateSuccess(true)
-        }else{
-          setErrorsIn(res.data.errorIn)
-        }
-      }).catch(err => console.error(err.message))
-    }else{
+    if (!image) {
+      axios
+        .post(`/update-employee/${user}`, {
+          ...values,
+          empId: empId,
+          prevEmail: viewedEmployee.email,
+          prevRfid: viewedEmployee.rfid,
+          userId: viewedEmployee.userid,
+        })
+        .then((res) => {
+          setImage(null);
+          setLoading(false);
+          if (res.data.status === "success") {
+            renewEmployees();
+            setUpdateSuccess(true);
+          } else {
+            setErrorsIn(res.data.errorIn);
+          }
+        })
+        .catch((err) => console.error(err.message));
+    } else {
       let newData = new FormData(e.target);
-      newData.append('empId', empId);
-      newData.append('prevEmail', viewedEmployee.email);
-      newData.append('prevRfid', viewedEmployee.rfid);
-      axios.post(`/update-employee-with-img/${user}`, newData,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      }).then(res =>{
-        setLoading(false)
-        setImage(null);
-        if(res.data.status === "success"){
-          renewEmployees();
-          setUpdateSuccess(true)
-        }else{
-          setErrorsIn(res.data.errorIn)
-        }
-      }).catch(err => console.error(err.message))
+      newData.append("empId", empId);
+      newData.append("prevEmail", viewedEmployee.email);
+      newData.append("prevRfid", viewedEmployee.rfid);
+      axios
+        .post(`/update-employee-with-img/${user}`, newData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+          setImage(null);
+          if (res.data.status === "success") {
+            renewEmployees();
+            setUpdateSuccess(true);
+          } else {
+            setErrorsIn(res.data.errorIn);
+          }
+        })
+        .catch((err) => console.error(err.message));
     }
-  }
+  };
 
-  useEffect(()=>{
-    if(updateSuccess){
-      setTimeout(()=>{
-        navigate("../Accounts")
-      }, 3000)
+  useEffect(() => {
+    if (updateSuccess) {
+      setTimeout(() => {
+        navigate("../Accounts");
+      }, 3000);
     }
-  },[updateSuccess])
+  }, [updateSuccess]);
 
-  console.log(useParams());
   if (loading) return <Loading />;
 
   if (updateSuccess)
@@ -257,7 +269,10 @@ function EditEmployee() {
                       return <img src={pic} alt="emp-img" />;
                     })
                   ) : (
-                    <img src={empImg} alt="emp-img" />
+                    <img
+                      src={!viewedEmployee.empimg ? defimg : empImg}
+                      alt="emp-img"
+                    />
                   )}
                 </div>
                 <input
@@ -452,9 +467,11 @@ function EditEmployee() {
                 >
                   <option></option>
                   {barangays &&
-                    barangays.map((i) => {
-                      return <option>{i.name}</option>;
-                    })}
+                    barangays
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((i) => {
+                        return <option>{i.name}</option>;
+                      })}
                 </select>
                 <span
                   className="new-floating-label"
@@ -569,7 +586,7 @@ function EditEmployee() {
               </div>
             </div>
             {errorsIn?.email && <p className="invalid">{errorsIn.email}</p>}
-            {errorsIn?.rfid &&<p className="invalid">{errorsIn.rfid}</p> }
+            {errorsIn?.rfid && <p className="invalid">{errorsIn.rfid}</p>}
             <button className="solid fade card submit" disabled={!isEnabled}>
               Submit
             </button>

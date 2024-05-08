@@ -39,8 +39,8 @@ function EmployeeViewAttendance() {
       <div className="card employee-attendance-view">
         <h1>Status: {foundEmployee.status} </h1>
         <h3>Name: {name} </h3>
-        <h3>Department: {foundEmployee.department} </h3>
-        <h3>Position: {foundEmployee.position} </h3>
+        <h3>Department: {foundEmployee.department_name} </h3>
+        <h3>Position: {foundEmployee.position_name} </h3>
         <div>
           <div>
             <h2>Arrival</h2>

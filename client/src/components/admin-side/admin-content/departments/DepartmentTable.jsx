@@ -54,18 +54,20 @@ function DepartmentTable(props) {
               <tr {...header.getHeaderGroupProps()}>
                 {header.headers.map((col) => (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {col.render("Header")}
-                    <span className="sort-indicator">
-                      {col.isSorted ? (
-                        col.isSortedDesc ? (
-                          <ArrowDropDownSharpIcon />
+                    <div className="table-header">
+                      {col.render("Header")}
+                      <span className="sort-indicator">
+                        {col.isSorted ? (
+                          col.isSortedDesc ? (
+                            <ArrowDropDownSharpIcon />
+                          ) : (
+                            <ArrowDropUpSharpIcon />
+                          )
                         ) : (
-                          <ArrowDropUpSharpIcon />
-                        )
-                      ) : (
-                        ""
-                      )}
-                    </span>
+                          ""
+                        )}
+                      </span>
+                    </div>
                   </th>
                 ))}
                 <th className="action">Action</th>
@@ -84,16 +86,29 @@ function DepartmentTable(props) {
                       </td>
                     );
                   })}
-                  {row.original.id !== 1 && row.original.id !== 2 ?(
+                  {row.original.id !== 1 && row.original.id !== 2 ? (
                     <td className="action-button">
                       <div>
-                        <button className="solid submit fade" onClick={()=>{props.handleOpenEditDepartment(row.original.id)}}>Edit</button>
-                        {row.original.availability === 'Available' ? 
-                        <button className="solid danger fade">Delete</button> :
-                        <button className="solid primary fade">Activate</button> }
+                        <button
+                          className="solid submit fade"
+                          onClick={() => {
+                            props.handleOpenEditDepartment(row.original.id);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        {row.original.availability === "Available" ? (
+                          <button className="solid danger fade">Delete</button>
+                        ) : (
+                          <button className="solid primary fade">
+                            Activate
+                          </button>
+                        )}
                       </div>
                     </td>
-                  ) : (<td></td>)}
+                  ) : (
+                    <td></td>
+                  )}
                 </tr>
               );
             })}

@@ -99,7 +99,6 @@ function AdminLayout() {
   }, [backendData]);
 
   if (!backendData) return <Loader />;
-
   if (backendData.user[0].firsttimelog) {
     return (
       <div className="admin-layout employee-layout">
