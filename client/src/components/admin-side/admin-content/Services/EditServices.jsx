@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Zoom } from "@mui/material";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
+import axios from "axios";
+import FitLoading from "../../../FitLoading";
+import SuccessMessageFit from "../../../SuccessMessageFit";
 function EditServices(props) {
-  const { backendData } = useOutletContext();
+  const { backendData, updateServices } = useOutletContext();
   const { selectedService } = props;
   const [isDisabled, setIsDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -16,8 +19,6 @@ function EditServices(props) {
     available_online: selectedService.available_online,
   });
 
-
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -37,6 +38,29 @@ function EditServices(props) {
 
     setIsDisabled(!valid);
   }, [values]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    axios.post("/Update-Services", values).then((res) => {
+      setLoading(false);
+      if (res.data.status === "success") {
+        setSuccess(false);
+        return;
+      }
+
+      return setError(res.data.message);
+    });
+  };
+
+  if (loading) return <FitLoading />;
+  if (success)
+    return (
+      <div className="service-form card">
+        <SuccessMessageFit message="Service updated successfully!" />
+      </div>
+    );
   return (
     <Zoom in={true}>
       <div className="service-form card">
@@ -49,7 +73,7 @@ function EditServices(props) {
           <CloseSharpIcon />
         </div>
         <h2>Edit Service</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div id="new-input-group">
             <select
               className="card"
@@ -131,6 +155,7 @@ function EditServices(props) {
               No
             </label>
           </div>
+          {error !== "" && <p className="invalid">{error}</p>}
           <button className="solid submit fade card" disabled={isDisabled}>
             Submit
           </button>

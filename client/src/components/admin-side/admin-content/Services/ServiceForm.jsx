@@ -5,7 +5,7 @@ import { useOutletContext } from "react-router-dom";
 import SuccessMessageFit from "../../../SuccessMessageFit";
 import FitLoading from "../../../FitLoading";
 function ServiceForm() {
-  const { backendData } = useOutletContext();
+  const { backendData, updateServices } = useOutletContext();
   const [isDisabled, setIsDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -45,6 +45,7 @@ function ServiceForm() {
       .then((res) => {
         setLoading(false);
         if (res.data.status === "success") {
+          updateServices();
           setSuccess(true);
           return;
         }

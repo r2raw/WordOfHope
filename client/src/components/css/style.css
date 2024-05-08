@@ -3893,9 +3893,14 @@ input[type="file"] + label {
 }
 
 .admin-element.manage-services{
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
+  align-items: flex-start;
   gap: 10px;
+  flex-direction: row;
+}
+
+.admin-element.manage-services .loading{
+  width: 35%;
 }
 .admin-element.manage-services .service-form{
   border-radius: 10px;
@@ -3903,8 +3908,13 @@ input[type="file"] + label {
   display: flex;
   position: relative;
   flex-direction: column;
+  width: 35%;
   gap: 10px;
   box-shadow: var(--card-box-shadow);
+}
+
+.admin-element.manage-services .table-container{
+  width: 65%;
 }
 .admin-element.manage-services .service-form .close-btn{
   position: absolute;

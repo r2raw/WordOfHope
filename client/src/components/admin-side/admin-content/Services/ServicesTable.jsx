@@ -17,7 +17,7 @@ import ServicesFilter from "./ServicesFilter";
 function ServicesTable(props) {
   const { backendData } = useOutletContext();
   const columns = useMemo(() => serviceColumns, []);
-  const data = useMemo(() => backendData.services, []);
+  const data = useMemo(() => backendData.services, [backendData.services]);
   const {
     getTableProps,
     getTableBodyProps,
