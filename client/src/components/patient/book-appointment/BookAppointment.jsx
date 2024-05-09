@@ -303,6 +303,7 @@ function BookAppointment() {
                 ) : page === 2 ? (
                   <BookPageTwo
                     handleInputChange={handleInputChange}
+                    service={appointMentData.pageOne.service}
                     appointMentData={appointMentData.pageTwo}
                   />
                 ) : (

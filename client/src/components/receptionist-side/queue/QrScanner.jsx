@@ -8,9 +8,11 @@ function QrScanner(props) {
 
   const [qrData, setQrData] = useState();
 
-
-  // useEffect(() => {
-  // }, []);
+  const handleConfirm = () => {
+    if (qrData) {
+      props.setAppointmentId(qrData.id);
+    }
+  };
 
   useEffect(() => {
     if (scanResult === null) {
@@ -26,14 +28,13 @@ function QrScanner(props) {
 
       scanner.render(success, error);
 
-      
-    function handleClickOutside(event) {
+      function handleClickOutside(event) {
         if (qrRef.current && !qrRef.current.contains(event.target)) {
-            scanner.clear();
+          scanner.clear();
           props.handleCloseQr();
         }
       }
-  
+
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
@@ -45,21 +46,18 @@ function QrScanner(props) {
           let scannedQr = result.split("/");
           scannedQr = scannedQr[scannedQr.length - 1];
 
-          
           axios
-            .post("/scan-qr", {qrCode: scannedQr})
+            .post("/scan-qr", { qrCode: scannedQr })
             .then((res) => {
-            //   console.log(res);
-              if(res.data.status === "success"){
+              //   console.log(res);
+              if (res.data.status === "success") {
                 setQrData(res.data.qrData);
               }
             })
             .catch((err) => console.error(err));
 
-
           setScanResult(result.split("/"));
           isScanning = false;
-
         }
       }
 
@@ -69,22 +67,28 @@ function QrScanner(props) {
     }
   }, [scanResult, props]);
 
-  console.log(qrData)
   return (
     <div className="qr-scanner" ref={qrRef}>
-      <h1 style={{teextAlign: "center"}}>QR Scanner</h1>
+      <h1 style={{ teextAlign: "center" }}>QR Scanner</h1>
       {scanResult && qrData ? (
         <div>
           <p>Appointment ID:</p>
           <h4>{qrData.id}</h4>
           <p>Name:</p>
-          <h4>{`${qrData.firstname}${qrData.middlename && ` ${qrData.middlename}`} ${qrData.lastname}${qrData.suffix && ` ${qrData.suffix}`}`}</h4>
+          <h4>{`${qrData.firstname}${
+            qrData.middlename && ` ${qrData.middlename}`
+          } ${qrData.lastname}${qrData.suffix && ` ${qrData.suffix}`}`}</h4>
           <p>Appointment Date:</p>
-          <h4>{dayjs(qrData.appointmentData).format("MMMM DD, YYYY") }  - {dayjs(qrData.appointmenttime, "HH:mm:ss").format("hh:mm A")}</h4>
+          <h4>
+            {dayjs(qrData.appointmentdate).format("MMMM DD, YYYY")} -{" "}
+            {dayjs(qrData.appointmenttime, "HH:mm:ss").format("hh:mm A")}
+          </h4>
           <p>Status:</p>
           <h4>{qrData.status}</h4>
           <div>
-            <button className="solid simple">Confirm</button>
+            <button className="solid simple" onClick={handleConfirm}>
+              Confirm
+            </button>
             <button
               onClick={() => setScanResult(null)}
               className="outlined lg-blue-3 simple"

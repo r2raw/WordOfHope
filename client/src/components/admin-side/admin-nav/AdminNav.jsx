@@ -43,7 +43,11 @@ import resultMgmtBl from "../../my-images/hopeImgs/doctor/resultmgmt-black.png"
 import resultMgmtWh from "../../my-images/hopeImgs/doctor/resultmgmt-white.png"
 import docapmtwh from "../../my-images/hopeImgs/doctor/docappointments-white.png"
 import docapmtbl from "../../my-images/hopeImgs/doctor/docappointments-black.png"
+import servicewh from '../../my-images/images/service-white.png'
+import servicebl from "../../my-images/images/services-black.png"
 
+import departmentwh from '../../my-images/images/departments-white.png'
+import departmentbl from "../../my-images/images/departments-black.png"
 
 import MNSAdmin from "./MNSAdmin";
 import NavUserInfo from "./NavUserInfo";
@@ -82,15 +86,15 @@ function AdminNav(props) {
     },
     {
       id: 3,
-      url: accountsbl,
-      wurl: accountswh,
+      url: departmentwh,
+      wurl: departmentbl,
       title: "Departments",
       path: `/WordOfHope/MNS/${user && user}/Departments`,
     },
     {
       id: 3,
-      url: accountsbl,
-      wurl: accountswh,
+      url: servicebl,
+      wurl: servicewh,
       title: "Services",
       path: `/WordOfHope/MNS/${user && user}/Services`,
     },

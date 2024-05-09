@@ -1,13 +1,36 @@
-import React, { useState } from "react";
-import QueueAppointmentInfo from "./QueueAppointmentInfo";
+import React, { useEffect, useState } from "react";
 import QrCodeScannerSharpIcon from "@mui/icons-material/QrCodeScannerSharp";
 import QrScanner from "./QrScanner";
+import EnterAppointment from "./EnterAppointment";
+import { useOutletContext } from "react-router-dom";
+import InQueueTable from "./InQueueTable";
 function Queues() {
-  const [scanner, setScanner] = useState(false)
+  const { backendData } = useOutletContext();
+  const [scanner, setScanner] = useState(false);
+  const [appointmentId, setAppointmentId] = useState("");
+  const [foundAppointment, setFoundAppointment] = useState();
 
-  const handleCloseQr = ()=>{
-    setScanner(false)
-  }
+  useEffect(() => {
+    if (appointmentId) {
+      const findappointment = backendData.appointmentsToday.find(
+        (i) => i.id === appointmentId && i.status === 'Upcoming'
+      );
+      setFoundAppointment(findappointment);
+      return;
+    }
+  }, [appointmentId]);
+
+  const handleCloseQr = () => {
+    setScanner(false);
+  };
+
+  useEffect(()=>{
+    if(appointmentId){
+      setTimeout(()=>{
+        setAppointmentId("")
+      }, 3000)
+    }
+  },[appointmentId])
   return (
     <div className="admin-element queue">
       <div>
@@ -16,19 +39,14 @@ function Queues() {
           <QrCodeScannerSharpIcon /> Scan Qr
         </button>
       </div>
-      {scanner && <QrScanner handleCloseQr={handleCloseQr}  />}
-      
-      <div>
-        <h2>Patient Appointment</h2>
-        <QueueAppointmentInfo />
-        <div className="enter-appointment">
-          <div className="input-group">
-            <input className="card" type="text" required />
-            <span className="floating-label">Appointment Id</span>
-          </div>
-          <button className="solid card">Enter</button>
-        </div>
-      </div>
+      {scanner && (
+        <QrScanner
+          handleCloseQr={handleCloseQr}
+          setAppointmentId={setAppointmentId}
+        />
+      )}
+      <EnterAppointment setAppointmentId={setAppointmentId} foundAppointment={foundAppointment} />
+      {appointmentId && !foundAppointment && <p className="invalid">No appointment today</p>}
       <hr />
       <h2>Currently Serving</h2>
       <div className="currently-serving queue">
@@ -46,28 +64,7 @@ function Queues() {
       <div>
         <h2>In Queue</h2>
       </div>
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Queue No.</th>
-              <th>Room</th>
-              <th>Department</th>
-              <th>Appointment ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <tr>
-                <td>{index + 1}</td>
-                <td>{index + 200}</td>
-                <td>Pediatrics</td>
-                <td>{Math.round(123313 * (index + 1) * 0.1)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <InQueueTable />
     </div>
   );
 }

@@ -8,6 +8,8 @@ import img3 from "../../my-images/empImg/defaultImg.png";
 import img4 from "../../my-images/empImg/defaultImg.png";
 import img5 from "../../my-images/empImg/defaultImg.png";
 import dayjs from "dayjs";
+import AppointmentsTodayTable from "./AppointmentsTodayTable";
+import ReceptNurseReports from "./ReceptNurseReports";
 function ReceptDashboard() {
   const upcomingStyle = {
     backgroundColor: "#e6db8e",
@@ -42,36 +44,7 @@ function ReceptDashboard() {
         <h3>{currentDate()}</h3>
       </div>
       <h3>Weekly Reports</h3>
-      <div className="nurse reports">
-        <div className="report">
-          <h3>Today Appointment</h3>
-          <p>March 14, 2024</p>
-          <h1>10</h1>
-        </div>
-        <div className="report">
-          <h3>Today Patients</h3>
-          <p>March 14, 2024</p>
-          <h1>10</h1>
-        </div>
-        <div className="report">
-          <h3>Total Appointments</h3>
-          <p>10 Mar - 14 Mar-2024</p>
-          <h1>10</h1>
-        </div>
-        <div className="report">
-          <h3>Total Patients</h3>
-          <p>10 Mar - 14 Mar-2024</p>
-          <h1>10</h1>
-        </div>
-        <div className="report">
-          <h3>Doctor(s)</h3>
-          <h1>10</h1>
-        </div>
-        <div className="report">
-          <h3>Department(s)</h3>
-          <h1>10</h1>
-        </div>
-      </div>
+      <ReceptNurseReports />
       <div className="nurse analytics reports">
         <div className="chart-container">
           <h3>Patient Visit By Department</h3>
@@ -85,14 +58,17 @@ function ReceptDashboard() {
                     data: visitByDepartment.map((i) => i.patients),
                     backgroundColor: [
                       "#008DDA90",
+                      "#b0f5b090",
+                      "#b34df790",
                       "#41C9E290",
-                      "#ACE2E190",
                       "#F7EEDD90",
-                      "#67C6E390",
+                      "#006cf090",
+                      "#ACE2E190",
                       "#DFF5FF90",
                       "#378CE790",
                       "#5356FF90",
                       "#1c5ca090",
+                      "#378CE790",
                     ],
                     borderRadius: 10,
                   },
@@ -157,51 +133,8 @@ function ReceptDashboard() {
         </div>
       </div>
 
-      <h3>Upcoming Appointments</h3>
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Queue No.</th>
-              <th>Room</th>
-              <th>Service</th>
-              <th>Appointment Id</th>
-              <th>Date of Appointment</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {upcomingAppointments.map((i, index) => {
-              return (
-                <tr key={index}>
-                  <td>{i.queueNo}</td>
-                  <td>{i.room}</td>
-                  <td>{i.service}</td>
-                  <td>{i.appointmentId}</td>
-                  <td>{i.date}</td>
-                  <td>
-                    <p
-                      style={
-                        i.stats === "Ongoing"
-                          ? onGoingStyle
-                          : i.stats === "Upcoming"
-                          ? upcomingStyle
-                          : i.stats === "Completed" && completedStyle
-                      }
-                    >
-                      {i.stats}
-                    </p>
-                  </td>
-                  <td>
-                    <button className="solid submit">View</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <h3>Appointments today</h3>
+      <AppointmentsTodayTable />
     </div>
   );
 }

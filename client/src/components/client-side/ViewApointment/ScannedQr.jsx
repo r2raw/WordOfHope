@@ -28,8 +28,8 @@ function ScannedQr() {
 
  if (loading) return <Loader />
 
- const qrImagePath = require(`../../my-images/qr-codes/${backendData.appointment.qrcode}.png`);
-
+//  const qrImagePath = require(`../../my-images/qr-codes/${backendData.appointment.qrcode}.png`);
+ const qrImagePath = `http://localhost:5000/qrImgs/${backendData.appointment.qrcode}.png`
  const appointedFor = backendData.appointment.appointedfor;
 
   return (

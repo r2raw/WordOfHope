@@ -1,25 +1,10 @@
 import React from "react";
 import BookSomeone from "./BookSomeone";
-
+import {useOutletContext} from 'react-router-dom';
 function BookPageOne(props) {
   //   const { appointMentData } = props;
+  const {backendData} = useOutletContext();
   const page = "pageOne";
-
-  const serviceType = {
-    generalConsultations: [
-      "General Health Concern",
-      "Pre-Employment Health Check",
-    ],
-    specializedServices: [
-      "Nephrology",
-      "Pulmonnology",
-      "Cardiology",
-      "Obstetrics (OB)",
-      "Ophtalmology",
-      "Pediatric (Pedia)",
-    ],
-    diagNosticServices: ["Laboratory", "Ultrasound", "X-Ray"],
-  };
 
   function handleInputChange(e) {
     props.handleInputChange(e, page);
@@ -161,30 +146,12 @@ function BookPageOne(props) {
           required
         >
           <option>...</option>
-          {props.appointMentData.reason === "Diagnostic"
-            ? serviceType.diagNosticServices.map((i, id) => {
-                return (
-                  <option value={i} key={id}>
-                    {i}
-                  </option>
-                );
-              })
-            : props.appointMentData.reason === "Specialized"
-            ? serviceType.specializedServices.map((i, id) => {
-                return (
-                  <option value={i} key={id}>
-                    {i}
-                  </option>
-                );
-              })
-            : props.appointMentData.reason === "General Consultation" &&
-              serviceType.generalConsultations.map((i, id) => {
-                return (
-                  <option value={i} key={id}>
-                    {i}
-                  </option>
-                );
-              })}
+
+          {backendData.services
+            .filter((i) => i.service_type === props.appointMentData.reason)
+            .map((service, index) => {
+              return <option key={index} value={service.id}>{service.service_name}</option>;
+            })}
         </select>
         <span className="floating-label">Service</span>
       </div>

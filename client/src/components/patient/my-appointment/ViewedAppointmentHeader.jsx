@@ -2,7 +2,8 @@ import React from "react";
 
 import imglogo from "../../my-images/hopeImgs/hope-logo.png";
 export default (props) => {
-  const qrImagePath = require(`../../my-images/qr-codes/${props.qrcode}.png`);
+  // const qrImagePath = require(`../../my-images/qr-codes/${props.qrcode}.png`);
+  const qrImagePath = `http://localhost:5000/qrImgs/${props.qrcode}.png`
   return (
       <div className="company-info">
         <div className="img-container">

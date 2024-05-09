@@ -110,8 +110,8 @@ function EditServices(props) {
               <option value="">...</option>
               {[
                 "General Consultation",
-                "Specialized Services",
-                "Diagnostic Services",
+                "Specialized",
+                "Diagnostic",
               ].map((type, index) => (
                 <option key={index}>{type}</option>
               ))}

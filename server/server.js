@@ -40,7 +40,9 @@ import getNoSchedEmployee from "./MyServerFunctions/HR/getNoSchedEmployee.js";
 import updateEmployee from "./MyServerFunctions/employeeprofile/updateEmployee.js";
 import GetAllEmployee from "./MyServerFunctions/GetAllEmployee.js";
 import CheckExistingEmail from "./MyServerFunctions/CheckExistingEmail.js";
-import AddNewEmployee, { addNewEmployeeNoImg } from "./MyServerFunctions/Admin/AddNewEmployee.js";
+import AddNewEmployee, {
+  addNewEmployeeNoImg,
+} from "./MyServerFunctions/Admin/AddNewEmployee.js";
 import internal from "stream";
 import CheckExistingRfid from "./MyServerFunctions/Admin/CheckExistingRfid.js";
 import InsertSchedule from "./MyServerFunctions/HR/InsertSchedule.js";
@@ -67,6 +69,18 @@ import AddNewPosition from "./MyServerFunctions/Admin/AddNewPosition.js";
 import CheckExistingService from "./MyServerFunctions/Admin/CheckExistingService.js";
 import AddService from "./MyServerFunctions/Admin/AddService.js";
 import fetchServices from "./MyServerFunctions/Admin/fetchServices.js";
+import appointmentToday from "./MyServerFunctions/Nurse/appointmentToday.js";
+import getUserAppointment from "./MyServerFunctions/Nurse/getUserAppointment.js";
+import getThirdPartyAppointment from "./MyServerFunctions/Nurse/getThirdPartyAppointment.js";
+import QueueCount from "./MyServerFunctions/Nurse/QueueCount.js";
+import InsertQueue from "./MyServerFunctions/Nurse/InsertQueue.js";
+import updateInQueueSched from "./MyServerFunctions/Nurse/updateInQueueSched.js";
+import fetchQueues from "./MyServerFunctions/Nurse/fetchQueues.js";
+import fetchDoctorQueue from "./MyServerFunctions/Doctor/fetchDoctorQueue.js";
+import fetchOngoingAppointment from "./MyServerFunctions/Doctor/fetchOngoingAppointment.js";
+import fetchTopQueue from "./MyServerFunctions/Doctor/fetchTopQueue.js";
+import updateFetchQueue from "./MyServerFunctions/Doctor/updateFetchQueue.js";
+import updatePreviousServe from "./MyServerFunctions/Doctor/updatePreviousServe.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -189,16 +203,7 @@ io.of("/Patient").on("connection", (socket) => {
       var qr_svg = qr.image(url);
 
       const rootFolder = wordOfHopePath;
-      const qrFilePath = path.join(
-        rootFolder,
-        "client",
-        "src",
-        "components",
-        "my-images",
-        "qr-codes",
-        qrCode + ".png"
-      );
-
+      const qrFilePath = "public/qrImgs/" + qrCode + ".png";
       qr_svg.pipe(fs.createWriteStream(qrFilePath));
 
       socket.emit("booking_myself_result", {
@@ -219,15 +224,7 @@ io.of("/Patient").on("connection", (socket) => {
       var qr_svg = qr.image(url);
 
       const rootFolder = wordOfHopePath;
-      const qrFilePath = path.join(
-        rootFolder,
-        "client",
-        "src",
-        "components",
-        "my-images",
-        "qr-codes",
-        qrCode + ".png"
-      );
+      const qrFilePath = "public/qrImgs/" + qrCode + ".png";
 
       qr_svg.pipe(fs.createWriteStream(qrFilePath));
 
@@ -976,10 +973,8 @@ app.post("/patient-edit-my-profile/:user", async (req, res) => {
   }
 });
 
-
-app.post("/Validate-Add-Employee", async (req, res)=>{
+app.post("/Validate-Add-Employee", async (req, res) => {
   try {
-    
     const { email } = req.body;
     const emailCount = await CheckExistingEmail(db, email);
 
@@ -1003,46 +998,43 @@ app.post("/Validate-Add-Employee", async (req, res)=>{
       return res.json({ status: "invalid", errorIn: errors });
     }
 
-    return res.json({ status: "success" })
+    return res.json({ status: "success" });
   } catch (error) {
-    console.error("Validate-Add-Employee Error: " + error.message)
+    console.error("Validate-Add-Employee Error: " + error.message);
   }
-})
+});
 
-app.post(
-  "/add-employee-no-img/:user",
-  async (req, res) => {
-    try {
-      const { user } = req.params;
+app.post("/add-employee-no-img/:user", async (req, res) => {
+  try {
+    const { user } = req.params;
 
-      const empl = await db.query("SELECT COUNT(*) from employee");
-      const employeeCount = empl.rows[0].count;
-     
-      const num = parseInt(employeeCount) + 1;
-      const empId = (num, places) => String(num).padStart(places, "0");
+    const empl = await db.query("SELECT COUNT(*) from employee");
+    const employeeCount = empl.rows[0].count;
 
-      const username = empId(num, 3);
+    const num = parseInt(employeeCount) + 1;
+    const empId = (num, places) => String(num).padStart(places, "0");
 
-      const salt = await bcrypt.genSalt(saltRounds);
-      const hash = await bcrypt.hash(username, salt);
+    const username = empId(num, 3);
 
-      const addEmployeeResult = await addNewEmployeeNoImg(
-        db,
-        username,
-        hash,
-        req.body,
-        user,
-      );
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(username, salt);
 
-      if (addEmployeeResult === "success") {
-        return res.json({ status: "success" });
-      }
-    } catch (error) {
-      console.error("/add-employee/:user no image error: " + error.message);
-      res.status(503).json("Internal server error: " + error.message);
+    const addEmployeeResult = await addNewEmployeeNoImg(
+      db,
+      username,
+      hash,
+      req.body,
+      user
+    );
+
+    if (addEmployeeResult === "success") {
+      return res.json({ status: "success" });
     }
+  } catch (error) {
+    console.error("/add-employee/:user no image error: " + error.message);
+    res.status(503).json("Internal server error: " + error.message);
   }
-);
+});
 
 app.post(
   "/add-employee/:user",
@@ -1054,7 +1046,7 @@ app.post(
 
       const empl = await db.query("SELECT COUNT(*) from employee");
       const employeeCount = empl.rows[0].count;
-     
+
       const num = parseInt(employeeCount) + 1;
       const empId = (num, places) => String(num).padStart(places, "0");
 
@@ -1372,11 +1364,13 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     // console.log(username);
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
-
+    const apptToday = await appointmentToday(db);
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
-
+    const queues = await fetchQueues(db);
     res.json({
       user: employeeResult.rows,
+      appointmentsToday: apptToday,
+      inQueue: queues,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
@@ -1384,21 +1378,77 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 app.get("/WordOfHope/Doctor/:user", async (req, res) => {
   try {
     const uid = req.params.user;
 
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
 
+    const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
+    const ongoingAppointment = await fetchOngoingAppointment(
+      db,
+      employeeResult.rows[0].id
+    );
     res.json({
       user: employeeResult.rows,
+      inQueue: queue,
+      currentlyServing: ongoingAppointment,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
     console.error("API request error:", error.message);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/update-department-queue/:department", async(req, res)=>{
+  try {
+    const {department} = req.params;
+    const queue = await fetchDoctorQueue(db,department);
+    res.json({
+      inQueue: queue,
+    });
+    
+  } catch (error) {
+    console.error("get-department-queue api: " + error.message)
+  }
+})
+
+app.post("/next-appointment/:id/:department", async (req, res) => {
+  try {
+    const { id, department } = req.params;
+    const currentlyOngoingQueue = await fetchOngoingAppointment(db, id);
+    if (currentlyOngoingQueue.length > 0) {
+      const updatePrevious = await updatePreviousServe(
+        db,
+        currentlyOngoingQueue[0].appointment_id
+      );
+      if (!updatePrevious) {
+        return;
+      }
+    }
+    const topQueue = await fetchTopQueue(db, department);
+    if (topQueue) {
+      const updatedQueue = await updateFetchQueue(
+        db,
+        topQueue.appointment_id,
+        topQueue.id,
+        id
+      );
+
+      if (updatedQueue) {
+        const ongoingQueue = await fetchOngoingAppointment(db, id);
+
+        return res.json({ currentlyServing: ongoingQueue });
+      }
+    }
+
+    return res.json({ currentlyServing: [] });
+  } catch (error) {
+    console.error("next appointment API error: " + error.message);
   }
 });
 
@@ -1409,6 +1459,8 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
     const ncrBarangays = await fetchNcrBarangays();
     const availableDays = await fetchDoctorsDaySched(db);
     const availableTime = await fetchAvailableDoctorTime(db);
+    const services = await fetchServices(db);
+
     const patientResult = await db.query(
       "SELECT userProfile.*, wohUser.email FROM userProfile JOIN wohUser ON userProfile.userId = wohUser.id WHERE userid=$1",
       [uid]
@@ -1428,6 +1480,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
       user: patientInfos,
       availableDays: availableDays,
       availableTime: availableTime,
+      services: services,
       appointments: {
         selfAppointment: myAppointments,
         thirdPartyAppointment: thirdPartyAppointment,
@@ -1509,6 +1562,30 @@ app.post("/Update-Services", async (req, res) => {
     }
   } catch (error) {
     console.error("Update Service error: " + error.message);
+  }
+});
+
+app.get("/fetchUserAppointment/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const userappointment = await getUserAppointment(db, id);
+
+    return res.json({ userappointment: userappointment });
+  } catch (error) {
+    console.error("fetchUserAppointment ERROR: " + error.message);
+  }
+});
+
+app.get("/fetchThirdPartyAppointment/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const userappointment = await getThirdPartyAppointment(db, id);
+
+    return res.json({ userappointment: userappointment });
+  } catch (error) {
+    console.error("fetchUserAppointment ERROR: " + error.message);
   }
 });
 app.get("/fetchPositions", async (req, res) => {
@@ -1882,6 +1959,45 @@ app.post("/edit-user/:uid", async (req, res) => {
   }
 });
 
+app.post("/Add-Queue/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const queueCount = await QueueCount(db);
+    const queueNum = queueCount + 1;
+    const result = await InsertQueue(db, id, queueNum);
+
+    if (result) {
+      const updateStatus = await updateInQueueSched(db, id);
+      if (updateStatus) {
+        return res.json({ status: "success" });
+      }
+    }
+  } catch (error) {
+    console.error("Add-Queue error: " + error.message);
+  }
+});
+
+app.get("/fetch-queues", async (req, res) => {
+  try {
+    const queues = await fetchQueues(db);
+    res.json({
+      inQueue: queues,
+    });
+  } catch (error) {
+    console.error("fetchQueues API error: " + error.message);
+  }
+});
+
+app.get("/appointment-today", async (req, res) => {
+  try {
+    const apptToday = await appointmentToday(db);
+    res.json({
+      appointmentsToday: apptToday,
+    });
+  } catch (error) {
+    console.error("Appointment-today API error: " + error.message);
+  }
+});
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

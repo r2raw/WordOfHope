@@ -2,7 +2,9 @@ import React from "react";
 import removeCityOfPrefix from "../../my-functions/removeCityOfPrefix";
 import calculateAge from "../../my-functions/calculateAge";
 import dayjs from "dayjs";
+import { useOutletContext } from "react-router-dom";
 function BookOtherInfo(props) {
+  const {backendData} = useOutletContext()
   const { appointment, reason, service } = props.appointMentData.pageOne;
   const { date, time } = props.appointMentData.pageTwo;
 
@@ -94,7 +96,12 @@ function BookOtherInfo(props) {
         </div>
         <div className="details-partition">
           <h4>Service:</h4>
-          <p>{service} </p>
+          <p>
+            {backendData.services.map((i) => (
+              i.id === parseInt(service) && i.service_name
+              
+            ))}
+          </p>
         </div>
         <div className="details-partition">
           <h4>Scheduled Date:</h4>

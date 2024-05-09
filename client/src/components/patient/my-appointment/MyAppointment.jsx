@@ -8,6 +8,7 @@ import ViewedAppointmentHeader from "./ViewedAppointmentHeader";
 import ViewThirdPartyAppointment from "../../client-side/ViewApointment/ViewThirdPartyAppointment";
 import ViewedThirdParty from "./ViewedThirdParty";
 import ViewSelfAppointment from "../../client-side/ViewApointment/ViewSelfAppointment";
+import ViewSelfAppoint from "./ViewSelfAppoint";
 
 function MyAppointment() {
   // const { user } = useParams();
@@ -30,7 +31,8 @@ function MyAppointment() {
 
   if (selectedAppointment) {
     console.log(selectedAppointment);
-    const qrImagePath = require(`../../my-images/qr-codes/${selectedAppointment.qrcode}.png`);
+    // const qrImagePath = require(`../../my-images/qr-codes/${selectedAppointment.qrcode}.png`);
+    const qrImagePath = `http://localhost:5000/qrImgs/${selectedAppointment.qrcode}.png`
     return (
       <div className="admin-element">
         <div
@@ -52,7 +54,7 @@ function MyAppointment() {
           {selectedAppointment.appointedby ? (
             <ViewedThirdParty selectedAppointment={selectedAppointment} />
           ) : (
-            <ViewSelfAppointment appointment={selectedAppointment} />
+            <ViewSelfAppoint appointment={selectedAppointment} />
           )}
         </div>
       </div>

@@ -4,46 +4,56 @@ import calculateAge from "../../my-functions/calculateAge";
 import calculateAgeInDays from "../../my-functions/calculateAgeInDays";
 import calculateAgeInMonths from "../../my-functions/calculateAgeInMonths";
 import removeCityOfPrefix from "../../my-functions/removeCityOfPrefix";
+import { useOutletContext } from "react-router-dom";
 
 export default (props) => {
-    const {
-        id,
-        userfirstname,
-        userlastname,
-        usermiddlename,
-        usersuffix,
-        userstreet,
-        userbarangay,
-        userprovince,
-        usercity,
-        userzip,
-        userphone,
-        datebooked,
-        type,
-        firstname,
-        middlename,
-        lastname,
-        suffix,
-        street,
-        barangay,
-        province,
-        city,
-        zip,
-        birthdate,
-        reason,
-        service,
-        appointmentdate,
-        appointmenttime,
-        relationship,
-      } = props.selectedAppointment;
-      const bookedBy = `${userfirstname}${usermiddlename && ` ${usermiddlename}`} ${userlastname}${usersuffix && ` ${usersuffix}`}`;
-      const userAddress = `${userstreet} ${userbarangay}, ${removeCityOfPrefix(usercity)}, ${userprovince}, ${userzip}`;
-      const patientName = `${firstname}${middlename && ` ${middlename}`} ${lastname}${suffix && ` ${suffix}`}`;
-      const patientAddress =`${street} ${barangay}, ${removeCityOfPrefix(city)}, ${province}, ${zip}`;
-    
-      const ageInYears = calculateAge(birthdate);;
-      const ageInMonths = calculateAgeInMonths(birthdate);
-      const ageInDays = calculateAgeInDays(birthdate);
+  const {backendData} = useOutletContext()
+  const {
+    id,
+    userfirstname,
+    userlastname,
+    usermiddlename,
+    usersuffix,
+    userstreet,
+    userbarangay,
+    userprovince,
+    usercity,
+    userzip,
+    userphone,
+    datebooked,
+    type,
+    firstname,
+    middlename,
+    lastname,
+    suffix,
+    street,
+    barangay,
+    province,
+    city,
+    zip,
+    birthdate,
+    reason,
+    service,
+    appointmentdate,
+    appointmenttime,
+    relationship,
+  } = props.selectedAppointment;
+  const bookedBy = `${userfirstname}${
+    usermiddlename && ` ${usermiddlename}`
+  } ${userlastname}${usersuffix && ` ${usersuffix}`}`;
+  const userAddress = `${userstreet} ${userbarangay}, ${removeCityOfPrefix(
+    usercity
+  )}, ${userprovince}, ${userzip}`;
+  const patientName = `${firstname}${
+    middlename && ` ${middlename}`
+  } ${lastname}${suffix && ` ${suffix}`}`;
+  const patientAddress = `${street} ${barangay}, ${removeCityOfPrefix(
+    city
+  )}, ${province}, ${zip}`;
+
+  const ageInYears = calculateAge(birthdate);
+  const ageInMonths = calculateAgeInMonths(birthdate);
+  const ageInDays = calculateAgeInDays(birthdate);
   return (
     <div className="appointment-details">
       <hr />
@@ -66,11 +76,7 @@ export default (props) => {
         </div>
         <div className="details-partition">
           <h4>Date Booked:</h4>
-          <p>
-            {dayjs(datebooked).format(
-              "MMMM DD, YYYY - dddd"
-            )}
-          </p>
+          <p>{dayjs(datebooked).format("MMMM DD, YYYY - dddd")}</p>
         </div>
       </div>
       <hr />
@@ -93,15 +99,17 @@ export default (props) => {
         </div>
         <div className="details-partition">
           <h4>Birthdate:</h4>
-          <p>
-            {dayjs(birthdate).format(
-              "MMMM DD, YYYY - dddd"
-            )}
-          </p>
+          <p>{dayjs(birthdate).format("MMMM DD, YYYY - dddd")}</p>
         </div>
         <div className="details-partition">
           <h4>Age:</h4>
-          <p>{ageInYears > 0 ? `${ageInYears} Year${ageInYears > 1 ? "s" : ""} old`: ageInMonths > 0 ? `${ageInMonths} Month${ageInMonths > 1 ? "s" : ""} old` : `${ageInDays} Day${ageInDays > 1 ? "s" : ""} old` }</p>
+          <p>
+            {ageInYears > 0
+              ? `${ageInYears} Year${ageInYears > 1 ? "s" : ""} old`
+              : ageInMonths > 0
+              ? `${ageInMonths} Month${ageInMonths > 1 ? "s" : ""} old`
+              : `${ageInDays} Day${ageInDays > 1 ? "s" : ""} old`}
+          </p>
         </div>
         <div className="details-partition">
           <h4>Reason for visit:</h4>
@@ -109,23 +117,19 @@ export default (props) => {
         </div>
         <div className="details-partition">
           <h4>Service:</h4>
-          <p>{service} </p>
+          <p>
+            {backendData.services.map(
+              (i) => i.id === parseInt(service) && i.service_name
+            )}
+          </p>
         </div>
         <div className="details-partition">
           <h4>Scheduled Date:</h4>
-          <p>
-            {dayjs(appointmentdate).format(
-              "MMMM DD, YYYY - dddd"
-            )}
-          </p>
+          <p>{dayjs(appointmentdate).format("MMMM DD, YYYY - dddd")}</p>
         </div>
         <div className="details-partition">
           <h4>Time:</h4>
-          <p>
-            {dayjs(appointmenttime, "HH:mm:ss").format(
-              "hh:mm A"
-            )}
-          </p>
+          <p>{dayjs(appointmenttime, "HH:mm:ss").format("hh:mm A")}</p>
         </div>
       </div>
     </div>

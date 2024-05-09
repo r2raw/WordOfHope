@@ -4,6 +4,7 @@ import { Outlet, useNavigate, useParams } from "react-router-dom";
 import EmpHeader from "../admin-side/header/EmpHeader";
 import axios from "axios";
 import Loader from "../Loader";
+import CurrentlyServing from "./DocQueue/CurrentlyServing";
 function DoctorLayout() {
     const {user} = useParams();
 
@@ -31,7 +32,30 @@ function DoctorLayout() {
       })
       .catch((error) => {});
   }
+
+  const updateCurrentlyServing = async ()=>{
+    try {
+      const response = await axios.post(`/next-appointment/${backendData.user[0].id}/${backendData.user[0].department}`)
+
+      setBackendData(prev => ({
+        ...prev,
+        currentlyServing: response.data.currentlyServing
+      }))
+
+      updateQueue();
+    } catch (error) {
+      console.error("updateCurrentlyServing error: " + error.message)
+    }
+  }
   
+
+  const updateQueue = async ()=>{
+    const response = await axios.get(`/update-department-queue/${backendData.user[0].department}`)
+    setBackendData(prev => ({
+      ...prev,
+      inQueue: response.data.inQueue
+    }))
+  }
   useEffect(() => {
     if (backendData) {
       if (backendData.user[0].firsttimelog) {
@@ -39,6 +63,10 @@ function DoctorLayout() {
       }
     }
   }, [backendData]);
+
+  setInterval(()=>{
+    updateQueue();
+  }, 60000)
   if(!backendData) return <Loader />
   
   if (backendData.user[0].firsttimelog) {
@@ -61,7 +89,7 @@ function DoctorLayout() {
       <EmpHeader />
       <DoctorNav user={user} backendData={backendData}/>
       <main>
-        <Outlet context={{backendData, renewUserInfo}} />
+        <Outlet context={{backendData, renewUserInfo, updateCurrentlyServing, updateQueue}} />
       </main>
     </div>
   );

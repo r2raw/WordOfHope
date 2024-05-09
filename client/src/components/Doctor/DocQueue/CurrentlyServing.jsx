@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 function CurrentlyServing() {
+  const { backendData, updateCurrentlyServing } = useOutletContext();
+  
+  const [currentlyServing, setCurrentlyServing] = useState({})
+  useEffect(()=>{
+    if(backendData.currentlyServing.length > 0){
+      setCurrentlyServing(backendData.currentlyServing[0])
+    }
+  },[backendData.currentlyServing])
   return (
     <div>
       <h2>Currently Serving</h2>
@@ -15,16 +24,24 @@ function CurrentlyServing() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>05</td>
-                <td>Sipsip posonegro</td>
-                <td>0120310</td>
-              </tr>
+              {backendData.currentlyServing.length > 0 && (
+                <tr>
+                  <td>{currentlyServing.queue_no}</td>
+                  <td>{currentlyServing.service_name}</td>
+                  <td>{currentlyServing.appointment_id}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         <div className="btn">
-          <button className="solid smlBlue">NEXT APPOINTMENT</button>
+          <button
+            className="solid danger fade"
+            disabled={backendData.currentlyServing.length === 0}
+          >
+            RETURN TO QUEUE
+          </button>
+          <button className="solid smlBlue fade" onClick={()=>{updateCurrentlyServing()}}>NEXT APPOINTMENT</button>
         </div>
       </div>
     </div>

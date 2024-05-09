@@ -366,13 +366,18 @@ button.solid.fade.submit:disabled:hover {
 }
 
 button.solid.fade.danger {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   background-color: #a10707;
 }
 button.solid.fade.danger:hover {
   background-color: #b81212 !important;
   border-color: #b81212 !important;
   color: var(--color-white) !important;
+}
+button.solid.fade.danger:disabled:hover {
+  background-color: var(--color-disabled-delete) !important;
+  border-color:  var(--color-disabled-delete) !important;
+  color: var(--color-delete)  !important;
 }
 
 button.solid.fade:hover {
@@ -2860,6 +2865,17 @@ input[type="radio"]:checked + label.lg-blue-3 {
   color: var(--color-lightblue-3);
 }
 
+.page.two{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.page.two >div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .page.three * {
   color: black;
 }
@@ -3775,6 +3791,11 @@ p.invalid {
   text-align: center;
 }
 
+p.success {
+  color: var(--color-disabled-submit)!important;
+  text-align: center;
+}
+
 input[type="file"] + label {
   padding: 5px;
   margin-top: 10px;
@@ -3818,7 +3839,6 @@ input[type="file"] + label {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 }
-
 .employee-attendance-view > div > div {
   display: flex;
   align-items: center;
@@ -3950,14 +3970,16 @@ input[type="file"] + label {
 }
 .service-info .btn{
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
 }
-.service-info button.smlBlue{
+.service-info button{
   /* align-self: right; */
+  margin: 0!important;
   padding: 0;
   height: 30px;
   width: 300px;
-  border-radius: 5px;
+  border-radius: 5px!important;
 }
 /*1280 screen responsive */
 @media screen and (max-width: 1280px) {
