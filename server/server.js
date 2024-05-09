@@ -81,6 +81,9 @@ import fetchOngoingAppointment from "./MyServerFunctions/Doctor/fetchOngoingAppo
 import fetchTopQueue from "./MyServerFunctions/Doctor/fetchTopQueue.js";
 import updateFetchQueue from "./MyServerFunctions/Doctor/updateFetchQueue.js";
 import updatePreviousServe from "./MyServerFunctions/Doctor/updatePreviousServe.js";
+import fetchNurseCurrentlyServing from "./MyServerFunctions/Nurse/fetchNurseCurrentlyServing.js";
+import serviceChart from "./MyServerFunctions/Doctor/serviceChart.js";
+import returnToQueue from "./MyServerFunctions/Doctor/returnToQueue.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1366,10 +1369,12 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     const ncrBarangays = await fetchNcrBarangays();
     const apptToday = await appointmentToday(db);
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
+    const currentlyServing = await fetchNurseCurrentlyServing(db);
     const queues = await fetchQueues(db);
     res.json({
       user: employeeResult.rows,
       appointmentsToday: apptToday,
+      currentlyServing: currentlyServing,
       inQueue: queues,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
@@ -1392,10 +1397,13 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       db,
       employeeResult.rows[0].id
     );
+
+    const serviceChartData = await serviceChart(db);
     res.json({
       user: employeeResult.rows,
       inQueue: queue,
       currentlyServing: ongoingAppointment,
+      serviceChartData: serviceChartData,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
@@ -1404,18 +1412,17 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
   }
 });
 
-app.get("/update-department-queue/:department", async(req, res)=>{
+app.get("/update-department-queue/:department", async (req, res) => {
   try {
-    const {department} = req.params;
-    const queue = await fetchDoctorQueue(db,department);
+    const { department } = req.params;
+    const queue = await fetchDoctorQueue(db, department);
     res.json({
       inQueue: queue,
     });
-    
   } catch (error) {
-    console.error("get-department-queue api: " + error.message)
+    console.error("get-department-queue api: " + error.message);
   }
-})
+});
 
 app.post("/next-appointment/:id/:department", async (req, res) => {
   try {
@@ -1451,6 +1458,44 @@ app.post("/next-appointment/:id/:department", async (req, res) => {
     console.error("next appointment API error: " + error.message);
   }
 });
+
+app.post(
+  "/return-queue/:appointmentId/:queueId/:doctorId/:department",
+  async (req, res) => {
+    try {
+      const { appointmentId, queueId, doctorId, department } = req.params;
+
+      const queue = await fetchDoctorQueue(db, department);
+      
+      if(queue.length === 0){
+        const returned = await returnToQueue(db, appointmentId, queueId);
+        if(returned){
+          return res.json({ currentlyServing: []});
+        }
+      }
+      const topQueue = await fetchTopQueue(db, department);
+      if (topQueue) {
+        const updatedQueue = await updateFetchQueue(
+          db,
+          topQueue.appointment_id,
+          topQueue.id,
+          doctorId
+        );
+
+        if (updatedQueue) {
+          const returned = await returnToQueue(db, appointmentId, queueId);
+          const ongoingQueue = await fetchOngoingAppointment(db, doctorId);
+
+          if (returned) {
+            return res.json({ currentlyServing: ongoingQueue });
+          }
+        }
+      }
+    } catch (error) {
+      console.error("return queue api error: " + error.message);
+    }
+  }
+);
 
 app.get("/WordOfHope/Patient/:user", async (req, res) => {
   try {

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 function CurrentlyServing() {
-  const { backendData, updateCurrentlyServing } = useOutletContext();
+  const { backendData, updateCurrentlyServing, returnToQueue } = useOutletContext();
   
   const [currentlyServing, setCurrentlyServing] = useState({})
   useEffect(()=>{
     if(backendData.currentlyServing.length > 0){
       setCurrentlyServing(backendData.currentlyServing[0])
     }
-  },[backendData.currentlyServing])
+  },[backendData.currentlyServing[0]])
   return (
     <div>
       <h2>Currently Serving</h2>
@@ -38,6 +38,7 @@ function CurrentlyServing() {
           <button
             className="solid danger fade"
             disabled={backendData.currentlyServing.length === 0}
+            onClick={()=>{returnToQueue()}}
           >
             RETURN TO QUEUE
           </button>

@@ -2974,6 +2974,11 @@ header .header-details {
   grid-template-columns: repeat(4, 1fr);
 }
 
+.report.patient-demo{
+  height: 400px;
+  width: 400px;
+}
+
 .reports .report {
   margin: 2%;
   background-color: var(--color-lightblue-2);

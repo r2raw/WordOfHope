@@ -53,7 +53,7 @@ function InQueueTable() {
               <tr {...header.getHeaderGroupProps()}>
                 {header.headers.map((col) => (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {console.log(col)}
+                    {/* {console.log(col)} */}
                     <div className="table-header">
                       {col.render("Header")}
                       <span className="sort-indicator">
@@ -76,7 +76,7 @@ function InQueueTable() {
           <tbody {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
-              console.log(row.original.id)
+              {/* console.log(row.original.id) */}
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {

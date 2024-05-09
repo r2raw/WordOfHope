@@ -10,6 +10,7 @@ function Queues() {
   const [appointmentId, setAppointmentId] = useState("");
   const [foundAppointment, setFoundAppointment] = useState();
 
+  console.log(backendData)
   useEffect(() => {
     if (appointmentId) {
       const findappointment = backendData.appointmentsToday.find(
@@ -50,7 +51,7 @@ function Queues() {
       <hr />
       <h2>Currently Serving</h2>
       <div className="currently-serving queue">
-        {Array.from({ length: 10 }).map((_, index) => (
+        {/* {Array.from({ length: 10 }).map((_, index) => (
           <div key={index} className="serving-info card">
             <h3>Laboratory</h3>
             <p>Optholmology</p>
@@ -58,7 +59,17 @@ function Queues() {
               <h1>{index + 1}</h1>
             </div>
           </div>
-        ))}
+        ))} */}
+        {backendData.currentlyServing.map((i, index)=>{
+          return(
+          <div key={index} className="serving-info card">
+            <h3>{i.service_name}</h3>
+            <p>{i.department_name}</p>
+            <div>
+              <h1>{i.queue_no}</h1>
+            </div>
+          </div>)
+        })}
       </div>
       <hr />
       <div>

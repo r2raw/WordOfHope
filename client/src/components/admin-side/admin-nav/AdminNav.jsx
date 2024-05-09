@@ -240,13 +240,13 @@ function ReceptionistNav(props) {
     },
     {
       schedAPMT: [
-        {
-          id: 1,
-          url: docbl,
-          wurl: docwh,
-          title: "Doctor Schedule",
-          path: `/WordOfHope/Nurse/${user}/Doctor-Schedule`,
-        },
+        // {
+        //   id: 1,
+        //   url: docbl,
+        //   wurl: docwh,
+        //   title: "Doctor Schedule",
+        //   path: `/WordOfHope/Nurse/${user}/Doctor-Schedule`,
+        // },
         {
           id: 2,
           url: bookapmtbl,
@@ -363,13 +363,13 @@ function DoctorNav(props) {
           title: "Queues",
           path: `/WordOfHope/Doctor/${user}/Queue`,
         },
-        {
-          id: 3,
-          url: docapmtbl,
-          wurl: docapmtwh,
-          title: "Appointment",
-          path: `/WordOfHope/Doctor/${user}/Appointment-Sched`,
-        },
+        // {
+        //   id: 3,
+        //   url: docapmtbl,
+        //   wurl: docapmtwh,
+        //   title: "Appointment",
+        //   path: `/WordOfHope/Doctor/${user}/Appointment-Sched`,
+        // },
         {
           id: 4,
           url: docLogBl,
