@@ -1,6 +1,6 @@
 export default async (db) =>{
     try {
-        const sql = "SELECT * FROM services WHERE available_online =true AND availability='Available'"
+        const sql = "SELECT * FROM services WHERE availability='Available'"
 
         const result = await db.query(sql);
 

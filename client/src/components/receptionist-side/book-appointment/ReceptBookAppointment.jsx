@@ -3,7 +3,6 @@ import { Link, useOutletContext, useParams } from "react-router-dom";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import ArrowForwardSharpIcon from "@mui/icons-material/ArrowForwardSharp";
 import BookPageOne from "./BookPageOne";
-import BookPageTwo from "./BookPageTwo";
 import BookPageThree from "./BookPageThree";
 import Loader from "../../Loader";
 import ConfirmAppointmentModal from "./ConfirmAppointmentModal";
@@ -17,6 +16,7 @@ function ReceptBookAppointment() {
   const [appointmentModalOpen, setAppoitnmentModalOpen] = useState(false);
   const [succesfulAppointment, setSuccesfulAppointment] = useState(false);
   const [appointmentId, setAppointmentId] = useState();
+  const [queueNum, setQueueNum] = useState();
 
   // useEffect(() => {
   //   if (backendData) {
@@ -25,14 +25,8 @@ function ReceptBookAppointment() {
   // }, [backendData]);
   const [appointMentData, setAppointmentData] = useState({
     pageOne: {
-      appointment: "",
-      patient: "",
       reason: "",
       service: "",
-    },
-    pageTwo: {
-      date: "",
-      time: "",
     },
     someOne: {
       lastname: { value: "", valid: false, isFocused: false, required: true },
@@ -45,12 +39,6 @@ function ReceptBookAppointment() {
       },
       suffix: { value: "", valid: false, isFocused: false, required: false },
       birthdate: { value: "", valid: false, isFocused: false, required: true },
-      relationship: {
-        value: "",
-        valid: false,
-        isFocused: false,
-        required: true,
-      },
       sex: { value: "", valid: true, isFocused: false, required: true },
       street: { value: "", valid: false, isFocused: false, required: true },
       province: {
@@ -149,37 +137,26 @@ function ReceptBookAppointment() {
           return false;
         }
       }
-      if (appointMentData.pageOne.patient === "Someone") {
-        for (const fieldName in appointMentData.someOne) {
-          const field = appointMentData.someOne[fieldName];
-          if (field.required && (field.value === "" || !field.valid)) {
-            return false;
-          }
-        }
-      }
-      return true;
-    };
-
-    const isPageTwoValid = () => {
-      for (const fieldName in appointMentData.pageTwo) {
-        const field = appointMentData.pageTwo[fieldName];
-        if (field === "") {
+      for (const fieldName in appointMentData.someOne) {
+        const field = appointMentData.someOne[fieldName];
+        if (field.required && (field.value === "" || !field.valid)) {
           return false;
         }
       }
       return true;
     };
 
-    const allFieldsValid = page === 1 ? isPageOneValid() : isPageTwoValid();
+    console.log(isPageOneValid());
 
-    setIsEnabled(allFieldsValid);
-  }, [appointMentData, page]);
+    setIsEnabled(isPageOneValid());
+  }, [appointMentData]);
 
   useEffect(() => {}, [isEnabled]);
 
-  const handleSuccessfulAppointment = (e, id) => {
+  const handleSuccessfulAppointment = (e, id, queue) => {
     setSuccesfulAppointment(e);
     setAppointmentId(id);
+    setQueueNum(queue);
     setPage(1);
     setAppointmentData({
       pageOne: {
@@ -187,10 +164,6 @@ function ReceptBookAppointment() {
         patient: "",
         reason: "",
         service: "",
-      },
-      pageTwo: {
-        date: "",
-        time: "",
       },
       someOne: {
         lastname: { value: "", valid: false, isFocused: false, required: true },
@@ -235,121 +208,102 @@ function ReceptBookAppointment() {
   };
   return (
     <div className="admin-element">
-    {!loading && !backendData.user[0].birthdate && (
-      <div id="setup-first">
-        <h1>Whoops!</h1>
-        <p>
-          Before scheduling your appointment, make sure to fill out all
-          necessary info.
-        </p>
-        <p>
-          <Link to="../Patient-Profile">
-            <span>Click here</span>
-          </Link>
-          to finish up.
-        </p>
-      </div>
-    )}
-    <h1>Book Appointment</h1>
-    <div className="boooking-form">
-      <div className="main-panel">
-        {succesfulAppointment ? (
-          <div className="successful-appointment">
-            <h1>Appointment successful</h1>
-            <p>
-              Your appointment [Appointment ID:{" "}
-              <span style={{ fontWeight: "600" }}>{appointmentId}</span>] has
-              been successfully booked
-            </p>
-            <div>
-              <button
-                className="solid lg-blue-3"
-                onClick={() => setSuccesfulAppointment(false)}
-              >
-                Book another
-              </button>
-              <Link to="../My-Appointment">
-                <button
-                  className="outlined lg-blue-3"
-                  onClick={() => setSuccesfulAppointment(false)}
-                >
-                  View Appointment
-                </button>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <form
-            method="post"
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <div className="page-container">
-              {page === 1 ? (
-                <BookPageOne
-                  handleInputChange={handleInputChange}
-                  handleReasonChange={handleReasonChange}
-                  appointMentData={appointMentData.pageOne}
-                  appointSomeone={appointMentData.someOne}
-                  handleBlurState={handleBlurState}
-                  handleFocusState={handleFocusState}
-                  ncr={backendData && backendData.ncr.cities}
-                  barangays={backendData && backendData.ncr.barangays}
-                />
-              ) : page === 2 ? (
-                <BookPageTwo
-                  handleInputChange={handleInputChange}
-                  appointMentData={appointMentData.pageTwo}
-                />
-              ) : (
-                page === 3 && (
-                  <BookPageThree
-                    appointMentData={appointMentData}
-                    currUser={backendData && backendData.user[0]}
-                  />
-                )
-              )}
-            </div>
-            <div className="booking-pagination">
-              <button
-                className="solid lg-blue-3"
-                style={{ visibility: page === 1 ? "hidden" : "visible" }}
-                onClick={handlePrevClick}
-              >
-                <ArrowBackSharpIcon /> Prev
-              </button>
-              {page !== 3 ? (
+      <h1>Book Appointment</h1>
+      <div className="boooking-form">
+        <div className="main-panel">
+          {succesfulAppointment ? (
+            <div className="successful-appointment">
+              <h1>Appointment successful</h1>
+              <p>
+                Your appointment [Appointment ID:
+                <span style={{ fontWeight: "600" }}>{appointmentId} </span>] has
+                been successfully booked
+              </p>
+              <p>
+                Your queue number is [
+                <span style={{ fontWeight: "600" }}>{queueNum}</span>]
+              </p>
+              <div>
                 <button
                   className="solid lg-blue-3"
-                  disabled={!isEnabled}
-                  onClick={handleNextClick}
+                  onClick={() => setSuccesfulAppointment(false)}
                 >
-                  Next
-                  <ArrowForwardSharpIcon />
+                  Book another
                 </button>
-              ) : (
-                <button className="solid submit" onClick={openModal}>
-                  Confirm
-                  <ArrowForwardSharpIcon />
-                </button>
-              )}
+                <Link to="../Manage-Appointments">
+                  <button
+                    className="outlined lg-blue-3"
+                    onClick={() => setSuccesfulAppointment(false)}
+                  >
+                    View Appointment
+                  </button>
+                </Link>
+              </div>
             </div>
-            {appointmentModalOpen && (
-              <ConfirmAppointmentModal
-                openModal={openModal}
-                userId={backendData.user[0].userid}
-                closeModal={closeModal}
-                appointMentData={appointMentData}
-                appointedBy={appointMentData.pageOne.patient}
-                handleSuccessfulAppointment={handleSuccessfulAppointment}
-              />
-            )}
-          </form>
-        )}
+          ) : (
+            <form
+              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <div className="page-container">
+                {page === 1 ? (
+                  <BookPageOne
+                    handleInputChange={handleInputChange}
+                    handleReasonChange={handleReasonChange}
+                    appointMentData={appointMentData.pageOne}
+                    appointSomeone={appointMentData.someOne}
+                    handleBlurState={handleBlurState}
+                    handleFocusState={handleFocusState}
+                    ncr={backendData && backendData.ncr.cities}
+                    barangays={backendData && backendData.ncr.barangays}
+                  />
+                ) : (
+                  page === 2 && (
+                    <BookPageThree appointMentData={appointMentData} />
+                  )
+                )}
+              </div>
+              <div className="booking-pagination">
+                <button
+                  className="solid lg-blue-3"
+                  style={{ visibility: page === 1 ? "hidden" : "visible" }}
+                  onClick={handlePrevClick}
+                >
+                  <ArrowBackSharpIcon /> Prev
+                </button>
+                {page !== 2 ? (
+                  <button
+                    className="solid lg-blue-3"
+                    disabled={!isEnabled}
+                    onClick={handleNextClick}
+                  >
+                    Next
+                    <ArrowForwardSharpIcon />
+                  </button>
+                ) : (
+                  <button className="solid submit" onClick={openModal}>
+                    Confirm
+                    <ArrowForwardSharpIcon />
+                  </button>
+                )}
+              </div>
+              {appointmentModalOpen && (
+                <ConfirmAppointmentModal
+                  openModal={openModal}
+                  userId={backendData.user[0].userid}
+                  closeModal={closeModal}
+                  appointMentData={appointMentData}
+                  appointedBy={appointMentData.pageOne.patient}
+                  handleSuccessfulAppointment={handleSuccessfulAppointment}
+                />
+              )}
+            </form>
+          )}
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 

@@ -84,7 +84,11 @@ import updatePreviousServe from "./MyServerFunctions/Doctor/updatePreviousServe.
 import fetchNurseCurrentlyServing from "./MyServerFunctions/Nurse/fetchNurseCurrentlyServing.js";
 import serviceChart from "./MyServerFunctions/Doctor/serviceChart.js";
 import returnToQueue from "./MyServerFunctions/Doctor/returnToQueue.js";
-
+import dotenv from "dotenv";
+import fetchAllServices from "./MyServerFunctions/Nurse/fetchAllServices.js";
+import fetchPatientServices from "./MyServerFunctions/Patient/fetchPatientServices.js";
+import insertWalkinAppointment from "./MyServerFunctions/Nurse/insertWalkinAppointment.js";
+dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const directoryParts = __dirname.split(sep);
@@ -111,11 +115,11 @@ app.use(cors());
 
 const server = http.createServer(app);
 const db = new pg.Client({
-  user: "postgres",
-  host: "192.168.1.7",
-  database: "WOH",
-  password: "sAJFQf9e",
-  port: 5432,
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDB,
+  password: process.env.PGPW,
+  port: process.env.PGPORT,
 });
 db.connect();
 
@@ -1371,11 +1375,15 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
     const currentlyServing = await fetchNurseCurrentlyServing(db);
     const queues = await fetchQueues(db);
+    const services = await fetchAllServices(db);
+    const availableDays = await fetchDoctorsDaySched(db);
     res.json({
       user: employeeResult.rows,
       appointmentsToday: apptToday,
       currentlyServing: currentlyServing,
       inQueue: queues,
+      availableDays: availableDays,
+      services: services,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
@@ -1384,6 +1392,36 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
   }
 });
 
+app.post("/walkin-appointment/:nurse_id", async (req, res) => {
+  try {
+    const { nurse_id } = req.params;
+    const qrCode = "qr_code-" + uid(16);
+
+    const result = await GetAppointmentNum(db);
+    const apptId = await PadZeroes(result + 1, 8);
+    const url = "http://localhost:3000/ViewAppointment/" + qrCode;
+    var qr_svg = qr.image(url);
+    const qrFilePath = "public/qrImgs/" + qrCode + ".png";
+    const bookingResult = await insertWalkinAppointment(db, req.body, nurse_id, qrCode, apptId);
+
+    if (bookingResult) {
+      const queueCount = await QueueCount(db);
+      const queueNum = queueCount + 1;
+      const result = await InsertQueue(db, apptId, queueNum);
+
+      if (result) {
+        const updateStatus = await updateInQueueSched(db, apptId);
+        if (updateStatus) {
+          return res.json({ status: "success", queue_num: queueNum, appointment_id: apptId });
+        }
+      }
+    }
+
+    qr_svg.pipe(fs.createWriteStream(qrFilePath));
+  } catch (error) {
+    console.error("walkin-appointment API error: " + error.message);
+  }
+});
 app.get("/WordOfHope/Doctor/:user", async (req, res) => {
   try {
     const uid = req.params.user;
@@ -1466,11 +1504,11 @@ app.post(
       const { appointmentId, queueId, doctorId, department } = req.params;
 
       const queue = await fetchDoctorQueue(db, department);
-      
-      if(queue.length === 0){
+
+      if (queue.length === 0) {
         const returned = await returnToQueue(db, appointmentId, queueId);
-        if(returned){
-          return res.json({ currentlyServing: []});
+        if (returned) {
+          return res.json({ currentlyServing: [] });
         }
       }
       const topQueue = await fetchTopQueue(db, department);
@@ -1504,7 +1542,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
     const ncrBarangays = await fetchNcrBarangays();
     const availableDays = await fetchDoctorsDaySched(db);
     const availableTime = await fetchAvailableDoctorTime(db);
-    const services = await fetchServices(db);
+    const services = await fetchPatientServices(db);
 
     const patientResult = await db.query(
       "SELECT userProfile.*, wohUser.email FROM userProfile JOIN wohUser ON userProfile.userId = wohUser.id WHERE userid=$1",

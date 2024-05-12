@@ -4,12 +4,10 @@ import AppointmentInfo from "./AppointmentInfo";
 import { useOutletContext } from "react-router-dom";
 import BookOtherInfo from "./BookOtherInfo";
 
-
 function BookPageThree(props) {
   const { socket } = useOutletContext();
-  
 
-  const {patient} = props.appointMentData.pageOne;
+  const { patient } = props.appointMentData.pageOne;
   return (
     <div className="page three">
       <header>
@@ -25,16 +23,9 @@ function BookPageThree(props) {
         </div>
         <h2>Summary of Appointment Details</h2>
       </header>
-      {patient === "Self" ? (
-        <AppointmentInfo
-          appointMentData={props.appointMentData}
-          currUser={props.currUser}
-        />
-      ) : (
-        <BookOtherInfo
-          appointMentData={props.appointMentData}
-          currUser={props.currUser} />
-      )}
+      <AppointmentInfo
+        appointMentData={props.appointMentData}
+      />
     </div>
   );
 }

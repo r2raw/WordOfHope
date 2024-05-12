@@ -4,7 +4,6 @@ import calculateAge from "../../my-functions/calculateAge";
 import dayjs from "dayjs";
 function BookOtherInfo(props) {
   const { appointment, reason, service } = props.appointMentData.pageOne;
-  const { date, time } = props.appointMentData.pageTwo;
 
   const {
     birthdate,
@@ -77,10 +76,6 @@ function BookOtherInfo(props) {
           <p>{patientAddress}</p>
         </div>
         <div className="details-partition">
-          <h4>Relationship:</h4>
-          <p>{relationship.value}</p>
-        </div>
-        <div className="details-partition">
           <h4>Birthdate:</h4>
           <p>{dayjs(birthdate.value).format("MMMM DD, YYYY")}</p>
         </div>
@@ -98,11 +93,11 @@ function BookOtherInfo(props) {
         </div>
         <div className="details-partition">
           <h4>Scheduled Date:</h4>
-          <p>{date}</p>
+          <p></p>
         </div>
         <div className="details-partition">
           <h4>Time:</h4>
-          <p>{time}</p>
+          <p></p>
         </div>
       </div>
     </div>
