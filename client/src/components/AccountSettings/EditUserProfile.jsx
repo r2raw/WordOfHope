@@ -6,6 +6,7 @@ import suffix from "../my-functions/Suffixes";
 import ArrowDropDownSharpIcon from "@mui/icons-material/ArrowDropDownSharp";
 import dayjs from "dayjs";
 import axios from "axios";
+import img1 from "../my-images/empImg/defaultImg.png";
 
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";
 function EditUserProfile() {
@@ -207,7 +208,7 @@ function EditUserProfile() {
                   return <img src={pic} alt="emp-img" />;
                 })
               ) : (
-                <img src={userImg} alt="emp-img" />
+                <img src={!empimg ? img1 : userImg } alt="emp-img" />
               )}
               {/* <img src={userImg} alt="user-profile" /> */}
             </div>

@@ -29,7 +29,7 @@ function UserProfile() {
           <DateToday />
         </div>
         <div className="img-container">
-          <img src={userImg} alt="my-img" />
+          <img src={empimg ? userImg :img} alt="my-img" />
         </div>
       </div>
       <Link to="Edit-Profile">
