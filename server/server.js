@@ -112,7 +112,7 @@ app.use(cors());
 const server = http.createServer(app);
 const db = new pg.Client({
   user: "postgres",
-  host: "localhost",
+  host: "192.168.1.7",
   database: "WOH",
   password: "sAJFQf9e",
   port: 5432,
