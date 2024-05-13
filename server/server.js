@@ -143,7 +143,7 @@ const storage = multer.diskStorage({
 
 const attendanceStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/attendanceImg"); // Adjust this path as per your server setup
+    cb(null, "http://localhost:5000/public/attendanceImg"); // Adjust this path as per your server setup
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
