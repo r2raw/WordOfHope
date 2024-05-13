@@ -4,65 +4,28 @@ import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 
 import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
-
+import axios from "axios";
 import CheckCircleSharpIcon from "@mui/icons-material/CheckCircleSharp";
 import ErrorSharpIcon from "@mui/icons-material/ErrorSharp";
 function ConfirmAppointmentModal(props) {
   const [openResult, setOpenResult] = useState(false);
   const [editResult, setEditResult] = useState("");
   const [myAppointmentId, setMyAppointmentId] = useState();
-  const { socket } = useOutletContext();
+  const [queueNum, setQueueNum] = useState();
+  const { backendData } = useOutletContext();
   function closeModal() {
     props.closeModal();
   }
 
-  const handleContinueBtn = () => {
+  const handleContinueBtn = async () => {
     setOpenResult(false);
     closeModal();
-    if(editResult === "success") {
-      props.handleSuccessfulAppointment(true, myAppointmentId);
+    if (editResult === "success") {
+      props.handleSuccessfulAppointment(true, myAppointmentId, queueNum);
     }
-  };
-
-  const appointMyself = () => {
-    if (!socket) {
-      console.error("Socket is not initialized.");
-      return;
-    }
-    let datas = {};
-    for (const field in props.appointMentData.pageOne) {
-      const fieldName = props.appointMentData.pageOne[field];
-
-      datas = { ...datas, [field]: fieldName };
-    }
-
-    datas = {
-      ...datas,
-      date: dayjs(
-        props.appointMentData.pageTwo.date,
-        "MMMM DD, YYYY - dddd"
-      ).format("YYYY-MM-DD"),
-      time: dayjs(props.appointMentData.pageTwo.time, "hh:mm A").format(
-        "HH:mm:ss"
-      ),
-      userId: props.userId,
-      appointedFor: "Self",
-      method: "Online",
-      dateBooked: dayjs(Date()).format("YYYY-MM-DD"),
-    };
-
-    // console.log(datas);
-    if (!datas) return;
-
-    socket.emit("book_my_appointment", datas);
   };
 
   const appointSomeOne = () => {
-
-    if (!socket) {
-      console.error("Socket is not initialized.");
-      return;
-    }
     let datas = {};
     for (const field in props.appointMentData.pageOne) {
       const fieldName = props.appointMentData.pageOne[field];
@@ -70,61 +33,28 @@ function ConfirmAppointmentModal(props) {
       datas = { ...datas, [field]: fieldName };
     }
 
-    
     for (const field in props.appointMentData.someOne) {
       const fieldName = props.appointMentData.someOne[field];
 
       datas = { ...datas, [field]: fieldName.value };
     }
 
-    datas = {
-      ...datas,
-      date: dayjs(
-        props.appointMentData.pageTwo.date,
-        "MMMM DD, YYYY - dddd"
-      ).format("YYYY-MM-DD"),
-      time: dayjs(props.appointMentData.pageTwo.time, "hh:mm A").format(
-        "HH:mm:ss"
-      ),
-      userId: props.userId,
-      appointedFor: "Someone",
-      method: "Online",
-      dateBooked: dayjs(Date()).format("YYYY-MM-DD"),
-    };
-
-    if (!datas) return;
-
-    console.log(datas);
-
-    socket.emit("book_other_appointment", datas);
+    return datas;
   };
 
   const handleSubmitClick = async () => {
-    if (props.appointedBy === "Self") {
-      appointMyself();
-    } else {
-      appointSomeOne();
+    const response = await axios.post(
+      `/walkin-appointment/${backendData.user[0].id}`,
+      appointSomeOne()
+    );
+    if (response.data.status === "success") {
+      setEditResult(response.data.status);
+      setMyAppointmentId(response.data.appointment_id);
+      setQueueNum(response.data.queue_num);
+      setOpenResult(true);
     }
-
-    setOpenResult(true);
   };
 
-  useEffect(() => {
-    socket.on("booking_myself_result", async (data) => {
-      const result = await data;
-      setEditResult(result.result);
-      setMyAppointmentId(result.id)
-      setOpenResult(true);
-    });
-
-    
-    socket.on("booking_other_result", async (data) => {
-      const result = await data;
-      setEditResult(result.result);
-      setMyAppointmentId(result.id)
-      setOpenResult(true);
-    });
-  }, [socket]);
   return (
     <div className="confirm-appointment-modal yesNo modal">
       <div className="dialog-box">
@@ -136,7 +66,7 @@ function ConfirmAppointmentModal(props) {
         </div>
         <div className="dialog-body">
           <div className="dialog-message">
-            <p>Confirm Appointment Booking?</p>
+            <p>Confirm Appointment?</p>
           </div>
         </div>
         <div className="dialog-button">

@@ -376,8 +376,8 @@ button.solid.fade.danger:hover {
 }
 button.solid.fade.danger:disabled:hover {
   background-color: var(--color-disabled-delete) !important;
-  border-color:  var(--color-disabled-delete) !important;
-  color: var(--color-delete)  !important;
+  border-color: var(--color-disabled-delete) !important;
+  color: var(--color-delete) !important;
 }
 
 button.solid.fade:hover {
@@ -1267,7 +1267,7 @@ a.active .nav-item * {
   align-items: center;
   justify-content: center;
 }
-#success-message-fit svg{
+#success-message-fit svg {
   font-size: 150px;
 }
 .admin-element .loading {
@@ -2420,29 +2420,29 @@ nav .nav-container .nav-items .nav-list a.active::before {
   gap: 10px;
 }
 
-.table-container table thead tr th:is(.action){
+.table-container table thead tr th:is(.action) {
   text-align: right;
 }
-.table-container table tbody tr td:is(.action-button) > div{
+.table-container table tbody tr td:is(.action-button) > div {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
 }
 
-.table-container table tbody tr td:is(.action-button) button{
+.table-container table tbody tr td:is(.action-button) button {
   width: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 20px;
-  margin: 0!important;
+  margin: 0 !important;
 }
-.table-container .pagination #new-input-group *{
+.table-container .pagination #new-input-group * {
   color: var(--font-primary-color);
 }
 
-.table-container .pagination .pagination-arrow{
+.table-container .pagination .pagination-arrow {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -2459,21 +2459,21 @@ nav .nav-container .nav-items .nav-list a.active::before {
   /* grid-template-columns: 1fr 1fr; */
 }
 
-.table-container .table-header span.sort-indicator{
+.table-container .table-header span.sort-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.table-container .pagination #new-input-group .dropdown{
+.table-container .pagination #new-input-group .dropdown {
   z-index: 200;
 }
 
-.table-container .pagination  select * {
+.table-container .pagination select * {
   color: var(--font-primary-color);
 }
 
-.table-container .pagination  select {
+.table-container .pagination select {
   color: var(--font-primary-color);
   width: fit-content;
   padding-block: 5px;
@@ -2747,6 +2747,22 @@ input[type="radio"]:checked + label.lg-blue-3 {
   grid-auto-rows: 1fr;
 }
 
+.appoint-someone.recept {
+  grid-template-columns: 1fr;
+  grid-auto-rows: 0fr;
+}
+
+.appoint-someone.recept .patient-information {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.appoint-someone.recept .patient-address {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
 .appointment-details .information {
   padding: 5% 7%;
 }
@@ -2865,13 +2881,13 @@ input[type="radio"]:checked + label.lg-blue-3 {
   color: var(--color-lightblue-3);
 }
 
-.page.two{
+.page.two {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
-.page.two >div{
+.page.two > div {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2974,7 +2990,7 @@ header .header-details {
   grid-template-columns: repeat(4, 1fr);
 }
 
-.report.patient-demo{
+.report.patient-demo {
   height: 400px;
   width: 400px;
 }
@@ -3295,7 +3311,8 @@ header .header-details {
   pointer-events: none;
   display: flex;
   align-items: center;
-  justify-content: center;}
+  justify-content: center;
+}
 
 #new-input-group select:valid + .new-floating-label {
   top: 10px;
@@ -3797,7 +3814,7 @@ p.invalid {
 }
 
 p.success {
-  color: var(--color-disabled-submit)!important;
+  color: var(--color-disabled-submit) !important;
   text-align: center;
 }
 
@@ -3871,7 +3888,6 @@ input[type="file"] + label {
   gap: 20px;
 }
 
-
 .admin-element.department .item {
   display: flex;
   gap: 20px;
@@ -3885,20 +3901,19 @@ input[type="file"] + label {
   border-bottom: 1px solid var(--font-primary-color);
 }
 
-.admin-element.department .item .department-header button{
+.admin-element.department .item .department-header button {
   padding: 10px;
   width: fit-content;
   height: fit-content;
 }
 
-
-.admin-element.department .item .department-header button p{
+.admin-element.department .item .department-header button p {
   color: var(--color-white);
   padding: 0;
   line-height: 1;
 }
 
-.admin-element.department .add-department{
+.admin-element.department .add-department {
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -3907,33 +3922,33 @@ input[type="file"] + label {
   border-radius: 10px;
 }
 
-.admin-element.department .add-department form{
+.admin-element.department .add-department form {
   display: flex;
   gap: 20px;
   flex-direction: column;
 }
 
-.admin-element.department .add-department .close-btn{
+.admin-element.department .add-department .close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
 }
 
-.admin-element.department .add-position select{
+.admin-element.department .add-position select {
   width: 100%;
 }
 
-.admin-element.manage-services{
+.admin-element.manage-services {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   flex-direction: row;
 }
 
-.admin-element.manage-services .loading{
+.admin-element.manage-services .loading {
   width: 35%;
 }
-.admin-element.manage-services .service-form{
+.admin-element.manage-services .service-form {
   border-radius: 10px;
   padding: 20px;
   display: flex;
@@ -3944,47 +3959,101 @@ input[type="file"] + label {
   box-shadow: var(--card-box-shadow);
 }
 
-.admin-element.manage-services .table-container{
+.admin-element.manage-services .table-container {
   width: 65%;
 }
-.admin-element.manage-services .service-form .close-btn{
+.admin-element.manage-services .service-form .close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
 }
-.admin-element.manage-services form .radio{
+.admin-element.manage-services form .radio {
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.admin-element.manage-services form input[type="radio"]+ label{
+.admin-element.manage-services form input[type="radio"] + label {
   border: 1px solid var(--color-darkblue);
   border-radius: 10px;
   padding: 5px;
   cursor: pointer;
 }
-.admin-element.manage-services form input[type="radio"]:checked + label{
+.admin-element.manage-services form input[type="radio"]:checked + label {
   background-color: var(--color-darkblue);
   color: var(--color-white);
 }
 
-.service-info{
+.service-info {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.service-info .btn{
+.service-info .btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.service-info button{
+.service-info button {
   /* align-self: right; */
-  margin: 0!important;
+  margin: 0 !important;
   padding: 0;
   height: 30px;
   width: 300px;
-  border-radius: 5px!important;
+  border-radius: 5px !important;
+}
+
+.admin-element.result-management .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-element.result-management .header button {
+  width: 300px;
+}
+
+.admin-element.diagnosis form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.admin-element.diagnosis form .patient-information {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 10px;
+}
+
+.admin-element.diagnosis form .patient-address {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 10px;
+}
+
+.admin-element.diagnosis form .service-information {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px 10px;
+}
+
+.admin-element.diagnosis .radio {
+  padding-block: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.admin-element.diagnosis .radio input[type="radio"] + label {
+  padding: 5px;
+  cursor: pointer;
+  border: 1px solid var(--color-darkblue);
+  border-radius: 5px;
+}
+
+.admin-element.diagnosis .radio input[type="radio"]:checked + label {
+  background-color: var(--color-darkblue);
+  color: var(--color-white);
 }
 /*1280 screen responsive */
 @media screen and (max-width: 1280px) {
