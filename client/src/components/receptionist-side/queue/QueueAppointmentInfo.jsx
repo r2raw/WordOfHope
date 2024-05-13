@@ -43,7 +43,6 @@ function QueueAppointmentInfo(props) {
         } else {
           return thirdPartyAppointment();
         }
-      } else {
       }
     }
   }, [foundAppointment]);

@@ -88,6 +88,7 @@ import dotenv from "dotenv";
 import fetchAllServices from "./MyServerFunctions/Nurse/fetchAllServices.js";
 import fetchPatientServices from "./MyServerFunctions/Patient/fetchPatientServices.js";
 import insertWalkinAppointment from "./MyServerFunctions/Nurse/insertWalkinAppointment.js";
+import getWalkinAppointment from "./MyServerFunctions/Doctor/getWalkinAppointment.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1402,8 +1403,14 @@ app.post("/walkin-appointment/:nurse_id", async (req, res) => {
     const url = "http://localhost:3000/ViewAppointment/" + qrCode;
     var qr_svg = qr.image(url);
     const qrFilePath = "public/qrImgs/" + qrCode + ".png";
-    const bookingResult = await insertWalkinAppointment(db, req.body, nurse_id, qrCode, apptId);
-
+    const bookingResult = await insertWalkinAppointment(
+      db,
+      req.body,
+      nurse_id,
+      qrCode,
+      apptId
+    );
+    qr_svg.pipe(fs.createWriteStream(qrFilePath));
     if (bookingResult) {
       const queueCount = await QueueCount(db);
       const queueNum = queueCount + 1;
@@ -1412,7 +1419,11 @@ app.post("/walkin-appointment/:nurse_id", async (req, res) => {
       if (result) {
         const updateStatus = await updateInQueueSched(db, apptId);
         if (updateStatus) {
-          return res.json({ status: "success", queue_num: queueNum, appointment_id: apptId });
+          return res.json({
+            status: "success",
+            queue_num: queueNum,
+            appointment_id: apptId,
+          });
         }
       }
     }
@@ -1647,6 +1658,27 @@ app.post("/Update-Services", async (req, res) => {
     console.error("Update Service error: " + error.message);
   }
 });
+
+app.get(
+  `/doctor-get-appointment/:id/:method/:appointmentfor`,
+  async (req, res) => {
+    const { id, method, appointmentfor } = req.params;
+
+    if (method === "Online") {
+      if (method === "Someone") {
+        const appointmentData = await getThirdPartyAppointment(db, id);
+
+        return res.json({ appointment: appointmentData });
+      }
+
+      const appointmentData = await getUserAppointment(db, id);
+      return res.json({ appointment: appointmentData });
+    }
+
+    const appointmentData = await getWalkinAppointment(db, id);
+    return res.json({ appointment: appointmentData });
+  }
+);
 
 app.get("/fetchUserAppointment/:id", async (req, res) => {
   try {
