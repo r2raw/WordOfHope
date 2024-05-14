@@ -50,7 +50,6 @@ function AddEmployee() {
     }
 
     const objectUrl = tmp;
-    console.log(objectUrl);
     setPreview(objectUrl);
 
     for (let i = 0; i < objectUrl.length; i++) {

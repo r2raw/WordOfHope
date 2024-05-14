@@ -1499,6 +1499,16 @@ body:has(.modal, .openModal, #loader) {
   position: absolute;
   top: 10px;
   right: 10px;
+  padding: 10px;
+  display:  flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.modal .close:hover {
+  background-color: #00000010;
 }
 
 .modal .close svg {
@@ -3250,7 +3260,31 @@ header .header-details {
   padding: 0;
   border-radius: 10px;
 }
+#new-input-group textarea{
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  padding: 30px 10px;
+  resize: none;
+  height: min-content;
+}
+#new-input-group textarea:focus{
+  outline: 2px solid var(--color-darkblue);
+}
 
+#new-input-group textarea ~ .word-count{
+  position: absolute;
+  right: 0;
+}
+#new-input-group textarea:is(:not(:placeholder-shown), :focus)+ .new-floating-label {
+  top: 11px;
+  border-radius: 5px;
+  padding-inline: 5px;
+  left: 0;
+  font-size: .7rem;
+  width: 100%;
+  background-color: var(--color-white);
+}
 #new-input-group select {
   /* width: 200px; */
   width: 100%;
@@ -4008,6 +4042,13 @@ input[type="file"] + label {
   align-items: center;
 }
 
+.admin-element.result-management .modal .navigation{
+  display: grid;
+  width: 400px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
 .admin-element.result-management .header button {
   width: 300px;
 }
@@ -4023,6 +4064,25 @@ input[type="file"] + label {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px 10px;
+}
+
+.admin-element.diagnosis form .diagnosis-h3{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-element.diagnosis form .diagnosis-h3 .add-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.admin-element.diagnosis form .diagnosis-h3 .add-btn:hover{
+  background-color: #00000010;
 }
 
 .admin-element.diagnosis form .patient-address {

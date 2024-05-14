@@ -1,16 +1,18 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-
+import React, { useState } from "react";
+import NavigationModal from "./NavigationModal";
 function DocResultMgmt() {
-  const navigate = useNavigate()
-  const handleAddResult = ()=>{
-    navigate("Add-Result")
-  }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleAddResult = () => {
+    // navigate("Add-Result")
+    setIsModalOpen(true);
+  };
   return (
     <div className="admin-element result-management">
       <div className="header">
         <h1>Result Management</h1>
-        <button className="solid fade" onClick={handleAddResult}>Add</button>
+        <button className="solid fade" onClick={handleAddResult}>
+          Add
+        </button>
       </div>
       <div className="table-container">
         <table>
@@ -36,6 +38,7 @@ function DocResultMgmt() {
           </tbody>
         </table>
       </div>
+      {isModalOpen && <NavigationModal setIsModalOpen={setIsModalOpen} />}
     </div>
   );
 }

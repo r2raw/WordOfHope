@@ -89,6 +89,11 @@ import fetchAllServices from "./MyServerFunctions/Nurse/fetchAllServices.js";
 import fetchPatientServices from "./MyServerFunctions/Patient/fetchPatientServices.js";
 import insertWalkinAppointment from "./MyServerFunctions/Nurse/insertWalkinAppointment.js";
 import getWalkinAppointment from "./MyServerFunctions/Doctor/getWalkinAppointment.js";
+import doctorDepartmentService from "./MyServerFunctions/Doctor/doctorDepartmentService.js";
+import countPatients from "./MyServerFunctions/Doctor/countPatients.js";
+import insertNewPatient from "./MyServerFunctions/Doctor/insertNewPatient.js";
+import insertPatientRecord from "./MyServerFunctions/Doctor/insertPatientRecord.js";
+import insertDiagnosis from "./MyServerFunctions/Doctor/insertDiagnosis.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -143,11 +148,11 @@ const storage = multer.diskStorage({
 
 const attendanceStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "http://localhost:5000/public/attendanceImg"); // Adjust this path as per your server setup
+    cb(null, `public/attendanceImg`); 
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "attendanceImg-" + uniqueSuffix + ".png"); // Assuming PNG format for images
+    cb(null, "attendanceImg-" + uniqueSuffix + ".png"); 
   },
 });
 
@@ -1440,6 +1445,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
 
     const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
+    const services = await doctorDepartmentService(db, employeeResult.rows[0].department)
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
     const ongoingAppointment = await fetchOngoingAppointment(
@@ -1452,6 +1458,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       user: employeeResult.rows,
       inQueue: queue,
       currentlyServing: ongoingAppointment,
+      services: services,
       serviceChartData: serviceChartData,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
@@ -1665,7 +1672,7 @@ app.get(
     const { id, method, appointmentfor } = req.params;
 
     if (method === "Online") {
-      if (method === "Someone") {
+      if (appointmentfor === "Someone") {
         const appointmentData = await getThirdPartyAppointment(db, id);
 
         return res.json({ appointment: appointmentData });
@@ -2102,6 +2109,40 @@ app.get("/fetch-queues", async (req, res) => {
     console.error("fetchQueues API error: " + error.message);
   }
 });
+
+app.post("/add-patient-record/:doc_id", async (req, res)=>{
+  try {
+
+    const patientCount = await countPatients(db);
+
+    const {doc_id} = req.params;
+    const {diagnosis} = req.body;
+    const patient_id = await PadZeroes(patientCount + 1, 8)
+    const record_id  = uid(10)
+    const patient = await insertNewPatient(db, patient_id, req.body);
+    if(patient){
+      const patient_record = await insertPatientRecord(db, record_id, patient_id, doc_id, req.body)
+
+      if(patient_record){
+        let valid = true
+        for(let i = 0; i < diagnosis.length; i++){
+          const diagnosisRes = await insertDiagnosis(db, record_id, diagnosis[i])
+          if(!diagnosisRes){
+            valid = false;
+          }
+        }
+        if(!valid){
+          return res.status(500).json({message: 'add-patient-record error'})
+        }
+
+        return res.status(200).json({message : 'Patient added success fully'})
+      }
+    }
+  } catch (error) {
+    console.error("add-patient-record API error: " + error.message)
+    return res.status(500).json({ error: "add-patient-record API error" });
+  }
+})
 
 app.get("/appointment-today", async (req, res) => {
   try {

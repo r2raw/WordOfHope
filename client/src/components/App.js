@@ -55,6 +55,7 @@ import EmployeeViewAttendance from "./admin-side/hr-admin/attendance/EmployeeVie
 import Departments from "./admin-side/admin-content/departments/Departments";
 import AddSevices from "./admin-side/admin-content/Services/AddSevices";
 import AddResult from "./Doctor/DocResulltMgmt/AddResult";
+import AddExistingPatientResult from "./Doctor/DocResulltMgmt/AddExistingPatientResult";
 
 function App() {
   return (
@@ -113,7 +114,8 @@ function App() {
           <Route path="Patient-Demographics" element={<PatientDemo />} />
           <Route path="Result-Management" element={<DocResultMgmt />} />
 
-          <Route path="Result-Management/Add-Result" element={<AddResult />} />
+          <Route path="Result-Management/Add-New-Patient-Result" element={<AddResult />} />
+          <Route path="Result-Management/Add-Existing-Patient-Result" element={<AddExistingPatientResult />} />
           <Route path="Account-Settings" element={<AccountSettings />}>
             <Route path="User-Profile" element={<UserProfile />} />
             <Route path="Change-Password" element={<ChangePassword />} />

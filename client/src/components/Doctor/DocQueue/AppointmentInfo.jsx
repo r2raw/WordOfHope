@@ -58,7 +58,7 @@ function AppointmentInfo() {
           <p>
             {!currentlyServing
               ? "---"
-              : dayjs(currentlyServing.birthdate, "YYYY-MM-DD").format(
+              : dayjs(currentlyServing.birthdate).format(
                   "MMMM DD, YYYY"
                 )}
           </p>
@@ -94,7 +94,7 @@ function AppointmentInfo() {
           <p>
             {!currentlyServing
               ? "---"
-              : dayjs(currentlyServing.appointmentdate, "YYYY=MM-DD").format(
+              : dayjs(currentlyServing.appointmentdate).format(
                   "MMMM DD, YYYY"
                 )}
           </p>
