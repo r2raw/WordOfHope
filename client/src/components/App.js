@@ -57,6 +57,8 @@ import AddSevices from "./admin-side/admin-content/Services/AddSevices";
 import AddResult from "./Doctor/DocResulltMgmt/AddResult";
 import AddExistingPatientResult from "./Doctor/DocResulltMgmt/AddExistingPatientResult";
 import EditEmployeeSched from "./admin-side/hr-admin/EmployeeSched/EditEmployeeSched";
+import DeactivatedAccounts from "./admin-side/admin-content/deactivated/DeactivatedAccounts";
+import EditResult from "./Doctor/ResultManagementTable/EditResult";
 
 function App() {
   return (
@@ -93,6 +95,7 @@ function App() {
           <Route path="Accounts/Edit/:empId" element={<EditEmployee />} />
           <Route path="Departments" element={<Departments />} />
           <Route path="Services" element={<AddSevices />} />
+          <Route path="Deactivated" element={<DeactivatedAccounts />}/>
           <Route path="Change-Password" element={<FirstTimeLog />} />
           <Route path="Account-Settings" element={<AccountSettings />}>
             <Route path="User-Profile" element={<UserProfile />} />
@@ -114,6 +117,7 @@ function App() {
           <Route path="Patient-Record" element={<DocPatientRec />} />
           <Route path="Patient-Demographics" element={<PatientDemo />} />
           <Route path="Result-Management" element={<DocResultMgmt />} />
+          <Route path="Result-Management/:record_id" element={<EditResult />} />
 
           <Route
             path="Result-Management/Add-New-Patient-Result"

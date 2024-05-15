@@ -1,9 +1,11 @@
 import React from "react";
+import ManageAppointmentTodayTable from "./ManageAppointmentTodayTable";
 function ReceptManageAppointment() {
 
   return (
     <div className="admin-element">
-      <h1>Recept Manage Appointment</h1>
+      <h1>Manage Appointment</h1>
+      <ManageAppointmentTodayTable />
     </div>
   );
 }

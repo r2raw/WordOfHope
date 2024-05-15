@@ -6,12 +6,8 @@ export const accountsColumn = [
       accessor: `id`,
     },
     {
-      Header: `Lastname`,
-      accessor: `lastname`,
-    },
-    {
-      Header: `Firstname`,
-      accessor: `firstname`,
+      Header: `Fullname`,
+      accessor: row => `${row.lastname}, ${row.firstname}${row.middlename && `, ${row.middlename}`}${row.suffix && `, ${row.suffix}`}`,
     },
     {
       Header: `Department`,

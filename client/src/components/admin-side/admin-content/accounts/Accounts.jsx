@@ -10,96 +10,64 @@ import { Zoom } from "@mui/material";
 import defaultImg from "./default.jpg";
 import AccountRow from "./AccountRow";
 import ViewEmployee from "./ViewEmployee";
-import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import AccountsTable from "./AccountsTable";
+import AccountDeactivateModal from "./AccountDeactivateModal";
 
 function Accounts() {
   const { user } = useParams();
 
-  const {backendData} = useOutletContext();
-  const [isViewOpen, setIsViewOpen] = useState(false);
+  const { backendData } = useOutletContext();
+  const [selectedEmployee, setSelectedEmployee] = useState();
+  const [openDeactivateAccount, setOpenDeactivateAccount] = useState(false);
   const navigate = useNavigate();
-
   const [empId, setEmpId] = useState();
   var eighteenYearsAgo = new Date();
   eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
 
   function handleToggleModal() {
-    navigate("Add")
+    navigate("Add");
   }
 
-
-
+  const handleOpenAccountDeactivate = (id) => {
+    const findEmp = backendData.employees.find((i) => i.id === id);
+    setSelectedEmployee(findEmp);
+    setOpenDeactivateAccount(true);
+  };
+  const handleCloseAccountDeactivate = () => {
+    setSelectedEmployee(null);
+    setOpenDeactivateAccount(false);
+  };
   function handleViewEmployee(id) {
-    navigate(`Edit/${id}`)
-    // setEmpId(id);
-    // setIsViewOpen(true);
+    navigate(`Edit/${id}`);
   }
 
-  console.log(backendData);
   return (
     <div className="admin-element">
       <div className="content-header">
         <h1>Accounts</h1>
-          <button className="outlined" onClick={handleToggleModal}>
-            <span>+</span>Create Employee Account
-          </button>
+        <button className="outlined" onClick={handleToggleModal}>
+          <span>+</span>Create Employee Account
+        </button>
       </div>
+      
       <div className="employee-tbl">
-        <AccountsTable viewEmp={handleViewEmployee}/>
+        <AccountsTable
+          viewEmp={handleViewEmployee}
+          handleOpenAccountDeactivate={handleOpenAccountDeactivate}
+        />
       </div>
-    
-      <div
-        className={`view-employee-modal ${isViewOpen && `openModal`}`}
-        style={{ display: isViewOpen ? "flex" : "none" }}
-      >
-        <div className="view-employee-container">
-          <div className="container-header">
-            <h5 style={{ margin: "none" }}>Employee Account</h5>
-            <div
-              className="close-btn"
-              onClick={() => {
-                setIsViewOpen(false);
-              }}
-            >
-              <CloseSharpIcon />
-            </div>
-          </div>
-          {backendData.employee &&
-            backendData.employee
-              .filter((employee) => {
-                return employee.id === empId;
-              })
-              .map((employee, index) => {
-                return (
-                  <ViewEmployee
-                    backendData={backendData}
-                    key={index}
-                    id={employee.id}
-                    firstName={employee.firstname}
-                    lastName={employee.lastname}
-                    middleName={employee.middlename}
-                    suffix={employee.suffix}
-                    sex={employee.sex}
-                    birthdate={employee.birthdate}
-                    email={employee.email}
-                    phone={employee.phone}
-                    province={employee.province}
-                    city={employee.city}
-                    barangay={employee.barangay}
-                    street={employee.street}
-                    zip={employee.zip}
-                    department={employee.department}
-                    position={employee.position}
-                    empType={employee.emptype}
-                    rfid={employee.rfid}
-                    img={employee.empimg}
-                    userId={employee.userid}
-                  />
-                );
-              })}
-        </div>
-      </div>
+      {openDeactivateAccount && (
+        <AccountDeactivateModal
+          handleCloseAccountDeactivate={handleCloseAccountDeactivate}
+          selectedEmployee={selectedEmployee}
+        />
+      )}
     </div>
   );
 }

@@ -48,7 +48,8 @@ import servicebl from "../../my-images/images/services-black.png"
 
 import departmentwh from '../../my-images/images/departments-white.png'
 import departmentbl from "../../my-images/images/departments-black.png"
-
+import deactivatedbl from "../../my-images/images/deactivaated-black.png"
+import deactivatedwh from "../../my-images/images/deactivated-white.png"
 import MNSAdmin from "./MNSAdmin";
 import NavUserInfo from "./NavUserInfo";
 import MnsUserInfo from "./MnsUserInfo";
@@ -92,11 +93,18 @@ function AdminNav(props) {
       path: `/WordOfHope/MNS/${user && user}/Departments`,
     },
     {
-      id: 3,
+      id: 4,
       url: servicebl,
       wurl: servicewh,
       title: "Services",
       path: `/WordOfHope/MNS/${user && user}/Services`,
+    },
+    {
+      id: 5,
+      url: deactivatedbl,
+      wurl: deactivatedwh,
+      title: "Deactivated",
+      path: `/WordOfHope/MNS/${user && user}/Deactivated`,
     },
   ];
 

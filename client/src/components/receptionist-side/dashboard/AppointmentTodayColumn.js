@@ -12,6 +12,9 @@ export const todayAppointmentColumn = [
     {
       Header: `Time`,
       accessor: `appointmenttime`,
+      Cell: ({ value }) => (
+        dayjs(value, "HH:mm:ss").format("hh:mm A")
+      ),
     },
     {
       Header: `Date`,

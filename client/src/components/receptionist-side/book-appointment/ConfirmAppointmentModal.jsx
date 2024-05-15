@@ -12,7 +12,7 @@ function ConfirmAppointmentModal(props) {
   const [editResult, setEditResult] = useState("");
   const [myAppointmentId, setMyAppointmentId] = useState();
   const [queueNum, setQueueNum] = useState();
-  const { backendData } = useOutletContext();
+  const { backendData, updateQueue } = useOutletContext();
   function closeModal() {
     props.closeModal();
   }
@@ -49,6 +49,7 @@ function ConfirmAppointmentModal(props) {
     );
     if (response.data.status === "success") {
       setEditResult(response.data.status);
+      updateQueue()
       setMyAppointmentId(response.data.appointment_id);
       setQueueNum(response.data.queue_num);
       setOpenResult(true);

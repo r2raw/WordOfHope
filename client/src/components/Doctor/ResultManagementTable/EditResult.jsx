@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import DiagnosisPatientInfo from "./DiagnosisPatientInfo";
-import DiagnosisPatientAddress from "./DiagnosisPatientAddress";
-import DiagnosisPatientService from "./DiagnosisPatientService";
-import DiagnosisRadioBtn from "./DiagnosisRadioBtn";
+import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import DiagnosisPatientInfo from "../DocResulltMgmt/DiagnosisPatientInfo";
+import DiagnosisPatientAddress from "../DocResulltMgmt/DiagnosisPatientAddress";
+import DiagnosisPatientService from "../DocResulltMgmt/DiagnosisPatientService";
+import DiagnosisRadioBtn from "../DocResulltMgmt/DiagnosisRadioBtn";
 import suffix from "../../my-functions/Suffixes";
 import axios from "axios";
 import AddCircleSharpIcon from "@mui/icons-material/AddCircleSharp";
 import dayjs from "dayjs";
-import DiagnosisTextArea from "./DiagnosisTextArea";
-import DiagnosiscComment from "./DiagnosiscComment";
+import DiagnosisTextArea from "../DocResulltMgmt/DiagnosisTextArea";
+import DiagnosiscComment from "../DocResulltMgmt/DiagnosiscComment";
 import _ from "lodash";
 import SuccessMessage from "../../SuccessMessage";
 import Loading from "../../Loading";
-function AddResult() {
+function EditResult() {
   const { backendData } = useOutletContext();
+  const {record_id}  = useParams()
+  const [recordData, setRecordData] = useState()
   const [isDisabled, setIsDisabled] = useState(true);
   const navigate = useNavigate();
   const [isCurrentlyServing, setIsCurrentlyServing] = useState("false");
@@ -32,6 +34,7 @@ function AddResult() {
     email: "",
     phone: "",
     street: "",
+    city: "",
     province: "Metro-Manila",
     barangay: "",
     zip: "",
@@ -39,8 +42,47 @@ function AddResult() {
     date_of_visit: "",
     diagnosis: [""],
     comment: "",
-    user_id: "",
   });
+
+
+  console.log(recordData)
+  useEffect(()=>{
+    if(recordData){
+        const {patientData, patient_diagnosis} = recordData;
+        setValues({
+            firstname: patientData.firstname,
+            lastname: patientData.lastname,
+            middlename: patientData.middlename,
+            suffix: patientData.suffix,
+            sex: patientData.sex,
+            birthdate: dayjs(patientData.birthdate).format("YYYY-MM-DD"),
+            email: patientData.email,
+            phone: patientData.phone,
+            street: patientData.street,
+            city: patientData.city,
+            province: patientData.province,
+            barangay: patientData.barangay,
+            zip: patientData.zip,
+            service: patientData.service_id,
+            date_of_visit: dayjs(patientData.date_visit).format("YYYY-MM-DD"),
+            diagnosis: patient_diagnosis,
+            comment: patientData.doctor_comment,
+          })
+    }
+  },[recordData])
+  const fetchPatientRecord  = async ()=>{
+    try {
+        const response = await axios.get(`/fetchEditPatientRecord/${record_id}`)
+        if(response.status === 200){
+            setRecordData(response.data)
+        }
+    } catch (error) {
+        console.error("fetchPatientRecord Error: " + error.message)
+    }
+  }
+  useEffect(()=>{
+    fetchPatientRecord();
+  },[])
 
   const addDiagnosis = () => {
     setValues((prev) => {
@@ -70,11 +112,6 @@ function AddResult() {
     });
   };
 
-  const handleRadio = (e) => {
-    const { value } = e.target;
-    setIsCurrentlyServing(value);
-  };
-
   const handleInputChange = (e) => {
     const { value, name } = e.target;
 
@@ -84,88 +121,7 @@ function AddResult() {
     }));
   };
 
-  const clearData = () => {
-    setValues((prev) => ({
-      ...prev,
-      firstname: "",
-      lastname: "",
-      middlename: "",
-      suffix: "",
-      sex: "",
-      birthdate: "",
-      email: "",
-      phone: "",
-      street: "",
-      province: "Metro-Manila",
-      city: "",
-      barangay: "",
-      user_id: "",
-      zip: "",
-    }));
-  };
 
-  const fetchAppointmentData = async (id, method, appointedfor) => {
-    try {
-      const response = await axios.get(
-        `/doctor-get-appointment/${id}/${method}/${appointedfor}`
-      );
-
-      if (response.status === 200) {
-        const {
-          firstname,
-          lastname,
-          suffix,
-          middlename,
-          sex,
-          birthdate,
-          email,
-          phone,
-          barangay,
-          street,
-          zip,
-          city,
-          province,
-          userid,
-          service,
-        } = response.data.appointment;
-
-        setValues((prev) => ({
-          ...prev,
-          firstname: firstname,
-          lastname: lastname,
-          middlename: middlename,
-          suffix: suffix,
-          sex: sex,
-          birthdate: dayjs(birthdate).format("YYYY-MM-DD"),
-          email: email || "",
-          phone: phone || "",
-          street: street,
-          province: province,
-          city: city,
-          barangay: barangay,
-          zip: zip,
-          service: service,
-          date_of_visit: dayjs(
-            backendData.currentlyServing[0].date_of_visit
-          ).format("YYYY-MM-DD"),
-          user_id: userid || "",
-        }));
-      }
-    } catch (error) {
-      console.error("fetchAppointmentData Error: " + error.message);
-    }
-  };
-  useEffect(() => {
-    if (isCurrentlyServing === "true") {
-      fetchAppointmentData(
-        backendData.currentlyServing[0].appointment_id,
-        backendData.currentlyServing[0].method,
-        backendData.currentlyServing[0].appointedfor
-      );
-    } else {
-      clearData();
-    }
-  }, [isCurrentlyServing]);
 
   useEffect(() => {
     let valid = true;
@@ -195,8 +151,8 @@ function AddResult() {
     try {
       setLoading(true)
       const response = await axios.post(
-        `/add-patient-record/${backendData.user[0].id}`,
-        values
+        `/edit-patient-record/${record_id}`,
+        {...values, patient_id: recordData.patientData.patient_id}
       );
 
       setLoading(false);
@@ -204,7 +160,7 @@ function AddResult() {
         setSuccess(true);
       }
     } catch (error) {
-      console.error("add-patient-record: " + error.message);
+      console.error("edit-patient-record: " + error.message);
     }
   };
 
@@ -222,8 +178,10 @@ function AddResult() {
       }, 3000);
     }
   }, [success]);
+
+  if (!recordData) return null
   if (loading) return <Loading />;
-  if (success) return <SuccessMessage message="Record added successfully" />;
+  if (success) return <SuccessMessage message="Record updated successfully" />;
   return (
     <div className="admin-element diagnosis">
       <div className="back-button">
@@ -231,13 +189,7 @@ function AddResult() {
           <ArrowBackSharpIcon />
         </Link>
       </div>
-      <h1>Add Result</h1>
-      {backendData.currentlyServing.length > 0 && (
-        <DiagnosisRadioBtn
-          isCurrentlyServing={isCurrentlyServing}
-          handleRadio={handleRadio}
-        />
-      )}
+      <h1>Edit Result</h1>
       <form
         className="card"
         onChange={handleFormChange}
@@ -291,4 +243,4 @@ function AddResult() {
   );
 }
 
-export default AddResult;
+export default EditResult

@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
+import { useOutletContext } from "react-router-dom";
 function QueueAppointmentInfo(props) {
   const { foundAppointment } = props;
+  const {updateQueue} = useOutletContext();;
   const [appointmentDetails, setAppointmentDetails] = useState();
   const [successful, setSuccessful] = useState(false);
   const userAppointment = useCallback(() => {
@@ -52,6 +54,7 @@ function QueueAppointmentInfo(props) {
 
     if (response.data.status === "success") {
       setSuccessful(true);
+      updateQueue();
       setAppointmentDetails(null);
       return ;
     }

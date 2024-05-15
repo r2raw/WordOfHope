@@ -1,13 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import EmpHeader from "../../header/EmpHeader";
 import AdminNav from "../../admin-nav/AdminNav";
 import { currentDate } from "../../../my-functions/CurrentDate";
 import { useOutletContext } from "react-router-dom";
 import _ from "lodash";
 import { titleCase } from "title-case";
+import { Zoom } from "@mui/material";
 
 function AdminDashboard() {
-  const {backendData} = useOutletContext()
+  const { backendData } = useOutletContext();
+  const [onTimeAttendance, setOnTimeAttendance] = useState();
+  const [lateAttendance, setLateAttendance] = useState();
+  const [unscheduledAttendance, setUnscheduledAttendance] = useState();
+  const [earlyAttendance, setEarlyAttendance] = useState();
+  useEffect(() => {
+    setUnscheduledAttendance(
+      backendData.attendancesToday.filter((i) => i.status === "Unscheduled")
+    );
+    setOnTimeAttendance(
+      backendData.attendancesToday.filter((i) => i.status === "On-Time")
+    );
+    setLateAttendance(
+      backendData.attendancesToday.filter((i) => i.status === "Late")
+    );
+    setEarlyAttendance(
+      backendData.attendancesToday.filter((i) => i.status === "Early")
+    );
+  }, [backendData.attendanceToday]);
   const attndnce = [
     {
       id: 1,
@@ -50,11 +69,23 @@ function AdminDashboard() {
       status: "Late",
     },
   ];
+
+  if (
+    !onTimeAttendance ||
+    !lateAttendance ||
+    !earlyAttendance ||
+    !unscheduledAttendance
+  )
+    return null;
   return (
-    <div className="admin-element">
+    <Zoom in={true}>
+      <div className="admin-element">
         <div className="greetings">
           <div>
-            <h1>Hello, {backendData.user[0].sex === "Male" ? "Mr." : "Ms."} {titleCase(_.lowerCase(backendData.user[0].lastname))}!</h1>
+            <h1>
+              Hello, {backendData.user[0].sex === "Male" ? "Mr." : "Ms."}{" "}
+              {titleCase(_.lowerCase(backendData.user[0].lastname))}!
+            </h1>
             <h4>Have a nice day at work</h4>
           </div>
           <h4>{currentDate()}</h4>
@@ -62,16 +93,24 @@ function AdminDashboard() {
         <h1>Reports</h1>
         <div className="attendance-monitor">
           <div className="attendance-result">
+            <h2>EARLY</h2>
+            <h1>{earlyAttendance.length}</h1>
+          </div>
+          <div className="attendance-result">
             <h2>ON TIME</h2>
-            <h1>10</h1>
+            <h1>{onTimeAttendance.length}</h1>
           </div>
           <div className="attendance-result">
             <h2>LATE</h2>
-            <h1>10</h1>
+            <h1>{lateAttendance.length}</h1>
+          </div>
+          <div className="attendance-result">
+            <h2>USCHEDULED</h2>
+            <h1>{unscheduledAttendance.length}</h1>
           </div>
           <div className="attendance-result">
             <h2>ABSENT</h2>
-            <h1>10</h1>
+            <h1>{backendData.absentee.length}</h1>
           </div>
         </div>
         <h1>Attendance</h1>
@@ -103,7 +142,8 @@ function AdminDashboard() {
             </tbody>
           </table>
         </div>
-    </div>
+      </div>
+    </Zoom>
   );
 }
 

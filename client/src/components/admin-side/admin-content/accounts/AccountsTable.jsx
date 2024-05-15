@@ -19,8 +19,8 @@ function AccountsTable(props) {
   const { backendData } = useOutletContext();
   const columns = useMemo(() => accountsColumn, []);
   const data = useMemo(
-    () => backendData.employees.filter((i) => i.position !== 1),
-    []
+    () => backendData.employees.filter((i) => i.position !== 1 && i.accountstatus === "Activated"),
+    [backendData.employees]
   );
   const {
     getTableProps,
@@ -95,7 +95,7 @@ function AccountsTable(props) {
                         </td>
                       );
                     })}
-                    {row.original.id !== 1 && row.original.id !== 2 ? (
+                    {row.original.id !== 1 && row.original.id !== 2 && (
                       <td className="action-button">
                         <div>
                           <button
@@ -106,13 +106,11 @@ function AccountsTable(props) {
                           >
                             Edit
                           </button>
-                          <button className="solid danger fade">
+                          <button className="solid danger fade" onClick={()=>{props.handleOpenAccountDeactivate(row.original.id)}}>
                             Deactivate
                           </button>
                         </div>
                       </td>
-                    ) : (
-                      <td></td>
                     )}
                   </tr>
                 );

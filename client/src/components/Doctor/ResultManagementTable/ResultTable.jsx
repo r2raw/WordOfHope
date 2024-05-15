@@ -1,22 +1,26 @@
 import React, { useMemo } from "react";
 import { Zoom } from "@mui/material";
-import { useOutletContext } from "react-router-dom";
-import dayjs from "dayjs";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   useTable,
   useSortBy,
   useGlobalFilter,
   usePagination,
 } from "react-table";
-import { inQueueColumn } from "./InQueuColumn";
+import { resultColumns } from "./resultColumn";
 import ArrowDropUpSharpIcon from "@mui/icons-material/ArrowDropUpSharp";
 import ArrowDropDownSharpIcon from "@mui/icons-material/ArrowDropDownSharp";
 import ArrowBackIosNewSharpIcon from "@mui/icons-material/ArrowBackIosNewSharp";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-function InQueueTable() {
+import ResultFilter from "./ResultFilter";
+function ResultTable() {
   const { backendData } = useOutletContext();
-  const columns = useMemo(() => inQueueColumn, []);
-  const data = useMemo(() => backendData.inQueue, [backendData.inQueue]);
+  const navigate = useNavigate();
+  const columns = useMemo(() => resultColumns, []);
+  const data = useMemo(
+    () => backendData.doctorPatientRecord,
+    [backendData.doctorPatientRecord]
+  );
   const {
     getTableProps,
     getTableBodyProps,
@@ -47,14 +51,13 @@ function InQueueTable() {
   return (
     <Zoom in={true}>
       <div className="table-container">
-        {/* <DepartmentFilter filter={globalFilter} setFilter={setGlobalFilter} /> */}
+        <ResultFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((header) => (
               <tr {...header.getHeaderGroupProps()}>
                 {header.headers.map((col) => (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {/* {console.log(col)} */}
                     <div className="table-header">
                       {col.render("Header")}
                       <span className="sort-indicator">
@@ -77,28 +80,20 @@ function InQueueTable() {
           <tbody {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
-              {
-                /* console.log(row.original.id) */
-              }
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
                       <td {...cell.getCellProps()}>
-                        <p
-                          style={
-                            dayjs(row.original.appointmentdate)
-                              .startOf("day")
-                              .isBefore(dayjs().startOf("day"))
-                              ? { color: "red" }
-                              : {}
-                          }
-                        >
-                          {cell.render("Cell")}
-                        </p>
+                        <p>{cell.render("Cell")}</p>
                       </td>
                     );
                   })}
+                  <td className="action-button">
+                    <div>
+                      <button className="solid fade" onClick={()=>{navigate(row.original.id)}}>edit</button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
@@ -145,4 +140,4 @@ function InQueueTable() {
   );
 }
 
-export default InQueueTable;
+export default ResultTable;

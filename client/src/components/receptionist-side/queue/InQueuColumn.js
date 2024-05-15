@@ -17,6 +17,11 @@ export const inQueueColumn = [
       Header: `Appointment ID`,
       accessor: `appointment_id`,
     },
+    {
+      Header: `Appointment Date`,
+      accessor: `appointmentdate`,
+      Cell: ({value})=> (dayjs(value).format("MMMM DD, YYYY"))
+    },
   ];
   
   

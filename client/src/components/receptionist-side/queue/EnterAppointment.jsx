@@ -18,7 +18,6 @@ function EnterAppointment(props) {
   return (
     <div>
       <h2>Patient Appointment</h2>
-      <QueueAppointmentInfo foundAppointment={props.foundAppointment} />
       <div className="enter-appointment">
         <div className="input-group">
           <input
@@ -34,6 +33,7 @@ function EnterAppointment(props) {
           Enter
         </button>
       </div>
+      <QueueAppointmentInfo foundAppointment={props.foundAppointment} />
     </div>
   );
 }

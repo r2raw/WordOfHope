@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import NavigationModal from "./NavigationModal";
+import ResultTable from "../ResultManagementTable/ResultTable";
 function DocResultMgmt() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleAddResult = () => {
@@ -14,30 +15,7 @@ function DocResultMgmt() {
           Add
         </button>
       </div>
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>First name</th>
-              <th>Last name</th>
-              <th>Service</th>
-              <th>Date Added</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>ID</td>
-              <td>First name</td>
-              <td>Last name</td>
-              <td>Service</td>
-              <td>Date Added</td>
-              <td>Action</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ResultTable />
       {isModalOpen && <NavigationModal setIsModalOpen={setIsModalOpen} />}
     </div>
   );

@@ -102,6 +102,15 @@ import updatePositionAvailability from "./MyServerFunctions/Admin/updatePosition
 import checkExistingServiceUpdate from "./MyServerFunctions/Admin/checkExistingServiceUpdate.js";
 import UpdateService from "./MyServerFunctions/Admin/UpdateService.js";
 import updateServiceAvailability from "./MyServerFunctions/Admin/updateServiceAvailability.js";
+import updateEmployeeStatus from "./MyServerFunctions/Admin/updateEmployeeStatus.js";
+import absentEmployee from "./MyServerFunctions/absentEmployee.js";
+import attendanceToday from "./MyServerFunctions/attendanceToday.js";
+import fetchDoctorPatientRecord from "./MyServerFunctions/Doctor/fetchDoctorPatientRecord.js";
+import fetchPatientEditRecord from "./MyServerFunctions/Doctor/fetchPatientEditRecord.js";
+import fetchPatientEditDiagnosis from "./MyServerFunctions/Doctor/fetchPatientEditDiagnosis.js";
+import deleteDiagnosis from "./MyServerFunctions/Doctor/deleteDiagnosis.js";
+import editDoctorPatientInfo from "./MyServerFunctions/Doctor/editDoctorPatientInfo.js";
+import editDoctorPatientRecord from "./MyServerFunctions/Doctor/editDoctorPatientRecord.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1391,7 +1400,7 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     const queues = await fetchQueues(db);
     const services = await fetchAllServices(db);
     const availableDays = await fetchDoctorsDaySched(db);
-    res.json({
+    return res.json({
       user: employeeResult.rows,
       appointmentsToday: apptToday,
       currentlyServing: currentlyServing,
@@ -1446,12 +1455,50 @@ app.post("/walkin-appointment/:nurse_id", async (req, res) => {
     console.error("walkin-appointment API error: " + error.message);
   }
 });
+
+app.get("/fetchQueues", async (req, res) => {
+  try {
+    const queues = await fetchQueues(db);
+    const apptToday = await appointmentToday(db);
+    return res.json({
+      inQueue: queues,
+      appointmentsToday: apptToday,
+    });
+  } catch (error) {
+    console.error("fetchQueue Error: " + error.message);
+  }
+});
+
+app.post("/add-to-queue/:appointmentid", async (req, res) => {
+  try {
+    const { appointmentid } = req.params;
+
+    const queueCount = await QueueCount(db);
+    const queueNum = queueCount + 1;
+    const result = await InsertQueue(db, appointmentid, queueNum);
+
+    if (result) {
+      const updateStatus = await updateInQueueSched(db, appointmentid);
+      if (updateStatus) {
+        return res.status(200).json({
+          status: "success",
+        });
+      }
+    }
+  } catch (error) {
+    console.error("add to queue api error: " + error.message);
+  }
+});
 app.get("/WordOfHope/Doctor/:user", async (req, res) => {
   try {
     const uid = req.params.user;
 
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
 
+    const doctorPatientRecord = await fetchDoctorPatientRecord(
+      db,
+      employeeResult.rows[0].id
+    );
     const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
     const services = await doctorDepartmentService(
       db,
@@ -1471,6 +1518,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       currentlyServing: ongoingAppointment,
       services: services,
       serviceChartData: serviceChartData,
+      doctorPatientRecord: doctorPatientRecord,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
@@ -1479,6 +1527,19 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
   }
 });
 
+app.get("/fetchEditPatientRecord/:record_id", async (req, res) => {
+  try {
+    const { record_id } = req.params;
+    const patientData = await fetchPatientEditRecord(db, record_id);
+    const diagnosis = await fetchPatientEditDiagnosis(db, record_id);
+
+    return res
+      .status(200)
+      .json({ patientData: patientData, patient_diagnosis: diagnosis });
+  } catch (error) {
+    console.error("fetchEditPatientRecord API ERROR: " + error.message);
+  }
+});
 app.get("/update-department-queue/:department", async (req, res) => {
   try {
     const { department } = req.params;
@@ -1613,10 +1674,12 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
 
+    const absentee = await absentEmployee(db);
     const employee = await GetAllEmployee(db);
     const departments = await fetchDepartments(db);
     const positions = await fetchPositions(db);
     const services = await fetchServices(db);
+    const attendancesToday = await attendanceToday(db);
     res.json({
       user: employeeResult.rows,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
@@ -1624,6 +1687,8 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
       departments: departments,
       services: services,
       positions: positions,
+      absentee: absentee,
+      attendancesToday: attendancesToday,
     });
   } catch (error) {
     console.error("API request error:", error.message);
@@ -1661,7 +1726,7 @@ app.post("/Update-Services", async (req, res) => {
       db,
       service_type,
       service_name,
-      service_id,
+      service_id
     );
 
     if (parseInt(existingService) > 0) {
@@ -1840,7 +1905,7 @@ app.post("/update-department-availability/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { availability } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     const updateDepartment = await updateDepartmentAvailabilty(
       db,
       id,
@@ -1853,19 +1918,34 @@ app.post("/update-department-availability/:id", async (req, res) => {
     console.error(
       "/update-department-availability api error: " + error.message
     );
-    return res.status(500).json({ message: "internal server error update-department" });
+    return res
+      .status(500)
+      .json({ message: "internal server error update-department" });
   }
 });
+app.post("/employee-account-status/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const { accountstatus } = req.body;
 
+    const updateStatus = await updateEmployeeStatus(db, accountstatus, userid);
+
+    if (updateStatus) {
+      return res.status(200).json({ status: "success" });
+    }
+  } catch (error) {
+    console.error("/employee-account-status API error: " + error.message);
+  }
+});
 app.post("/update-service-availability/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { availability } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     const updateDepartment = await updateServiceAvailability(
       db,
       availability,
-      id,
+      id
     );
     if (updateDepartment) {
       return res.status(200).json({ status: "success" });
@@ -1874,7 +1954,9 @@ app.post("/update-service-availability/:id", async (req, res) => {
     console.error(
       "/update-department-availability api error: " + error.message
     );
-    return res.status(500).json({ message: "internal server error update-department" });
+    return res
+      .status(500)
+      .json({ message: "internal server error update-department" });
   }
 });
 app.post("/update-position-availability/:id", async (req, res) => {
@@ -1893,7 +1975,9 @@ app.post("/update-position-availability/:id", async (req, res) => {
     console.error(
       "/update-department-availability api error: " + error.message
     );
-    return res.status(500).json({ message: "internal server error update-department" });
+    return res
+      .status(500)
+      .json({ message: "internal server error update-department" });
   }
 });
 
@@ -2259,6 +2343,39 @@ app.post("/add-patient-record/:doc_id", async (req, res) => {
   }
 });
 
+app.post("/edit-patient-record/:record_id", async (req, res)=>{
+  try {
+    const {record_id} = req.params;
+    const {diagnosis} = req.body;
+    const diagnosisDelete = await deleteDiagnosis(db, record_id);
+  
+    let valid = true;
+    if(diagnosisDelete){
+      const updatePatient = await editDoctorPatientInfo(db, req.body);
+      if(updatePatient){
+        const updateRecord = await editDoctorPatientRecord(db, record_id, req.body)
+        if(updateRecord){
+          for (let i = 0; i < diagnosis.length; i++) {
+            const diagnosisRes = await insertDiagnosis(
+              db,
+              record_id,
+              diagnosis[i]
+            );
+            if (!diagnosisRes) {
+              valid = false;
+            }
+          }
+        }
+      }
+    }
+    if(valid){
+      return res.status(200).json({ message: "Patient edited successfully" }); 
+    }
+    
+  } catch (error) {
+    console.error("/edit-patient-record API ERROR: " + error.message)
+  }
+})
 app.get("/appointment-today", async (req, res) => {
   try {
     const apptToday = await appointmentToday(db);

@@ -13,10 +13,13 @@ import ArrowDropDownSharpIcon from "@mui/icons-material/ArrowDropDownSharp";
 import ArrowBackIosNewSharpIcon from "@mui/icons-material/ArrowBackIosNewSharp";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 // import DepartmentFilter from "./DepartmentFilter";
-function AppointmentsTodayTable(props) {
+function AppointmentsTodayTable() {
   const { backendData } = useOutletContext();
   const columns = useMemo(() => todayAppointmentColumn, []);
-  const data = useMemo(() => backendData.appointmentsToday, []);
+  const data = useMemo(
+    () => backendData.appointmentsToday,
+    [backendData.appointmentsToday]
+  );
   const {
     getTableProps,
     getTableBodyProps,
