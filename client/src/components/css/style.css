@@ -3856,6 +3856,14 @@ p.invalid {
   text-align: center;
 }
 
+h3.update-dialog{
+  font-weight: 400;
+  text-align: center;
+}
+
+h3.update-dialog span{
+  font-weight: 600;
+}
 p.success {
   color: var(--color-disabled-submit) !important;
   text-align: center;

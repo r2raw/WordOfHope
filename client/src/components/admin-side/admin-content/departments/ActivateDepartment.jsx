@@ -5,17 +5,17 @@ import axios from "axios";
 import FitLoading from "../../../FitLoading";
 import SuccessMessageFit from "../../../SuccessMessageFit";
 import { useOutletContext } from "react-router-dom";
-function DeleteDepartment(props) {
+
+function ActivateDepartment(props) {
   const { updateDepartments, updatePositions, updateServices } = useOutletContext();
   const { department_name, id } = props.department;
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const deactivateDepartment = async (deptid) => {
-
+  const activateDepartment = async (deptid) => {
     try {
       const response = await axios.post(
         `/update-department-availability/${deptid}`,
-        { availability: "Unavailable"}
+        { availability: "Available" }
       );
 
       setLoading(false);
@@ -23,7 +23,7 @@ function DeleteDepartment(props) {
         if (response.data.status === "success") {
           setSuccess(true);
           updateDepartments();
-          updateServices()
+          updateServices();
           updatePositions();
         }
       }
@@ -34,14 +34,14 @@ function DeleteDepartment(props) {
 
   const handleDelete = () => {
     setLoading(true);
-    deactivateDepartment(id);
+    activateDepartment(id);
   };
 
   useEffect(() => {
     if (success) {
       setTimeout(() => {
         setSuccess(false);
-        props.handleCloseDeleteDepartment();
+        props.handleCloseActivateDepartment();
       }, 3000);
     }
   }, [success]);
@@ -54,23 +54,23 @@ function DeleteDepartment(props) {
         <div
           className="close-btn"
           onClick={() => {
-            props.handleCloseDeleteDepartment();
+            props.handleCloseActivateDepartment();
           }}
         >
           <CloseSharpIcon />
         </div>
-        <h3>Delete Department</h3>
+        <h3>Activate Department</h3>
         <div>
           <h3 className="update-dialog">
-            Are you sure to turn <span>[{department_name}]</span> department unavailable?
+            Are you sure to activate <span>[{department_name}]</span> department?
           </h3>
         </div>
-        <button className="solid danger fade" onClick={handleDelete}>
-          Deactivate
+        <button className="solid submit fade" onClick={handleDelete}>
+          Activate
         </button>
       </div>
     </Zoom>
   );
 }
 
-export default DeleteDepartment;
+export default ActivateDepartment;

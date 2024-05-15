@@ -98,6 +98,10 @@ import getEmployeeDataEdit from "./MyServerFunctions/HR/getEmployeeDataEdit.js";
 import getEmployeeSchedEdit from "./MyServerFunctions/HR/getEmployeeSchedEdit.js";
 import deleteEmployeesched from "./MyServerFunctions/HR/deleteEmployeesched.js";
 import updateDepartmentAvailabilty from "./MyServerFunctions/Admin/updateDepartmentAvailabilty.js";
+import updatePositionAvailability from "./MyServerFunctions/Admin/updatePositionAvailability.js";
+import checkExistingServiceUpdate from "./MyServerFunctions/Admin/checkExistingServiceUpdate.js";
+import UpdateService from "./MyServerFunctions/Admin/UpdateService.js";
+import updateServiceAvailability from "./MyServerFunctions/Admin/updateServiceAvailability.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1652,20 +1656,21 @@ app.post("/Add-Service", async (req, res) => {
 
 app.post("/Update-Services", async (req, res) => {
   try {
-    const { service_type, service_name } = req.body;
-    const existingService = await CheckExistingService(
+    const { service_type, service_name, service_id } = req.body;
+    const existingService = await checkExistingServiceUpdate(
       db,
       service_type,
-      service_name
+      service_name,
+      service_id,
     );
 
     if (parseInt(existingService) > 0) {
       return res.json({ status: "invalid", message: "Service already exist!" });
     }
 
-    const insertService = await AddService(db, req.body);
+    const updateService = await UpdateService(db, req.body, service_id);
 
-    if (insertService) {
+    if (updateService) {
       return res.json({ status: "success" });
     }
   } catch (error) {
@@ -1842,6 +1847,46 @@ app.post("/update-department-availability/:id", async (req, res) => {
       availability
     );
     if (updateDepartment) {
+      return res.status(200).json({ status: "success" });
+    }
+  } catch (error) {
+    console.error(
+      "/update-department-availability api error: " + error.message
+    );
+    return res.status(500).json({ message: "internal server error update-department" });
+  }
+});
+
+app.post("/update-service-availability/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { availability } = req.body;
+    console.log(req.body)
+    const updateDepartment = await updateServiceAvailability(
+      db,
+      availability,
+      id,
+    );
+    if (updateDepartment) {
+      return res.status(200).json({ status: "success" });
+    }
+  } catch (error) {
+    console.error(
+      "/update-department-availability api error: " + error.message
+    );
+    return res.status(500).json({ message: "internal server error update-department" });
+  }
+});
+app.post("/update-position-availability/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { availability } = req.body;
+    const updatePosition = await updatePositionAvailability(
+      db,
+      id,
+      availability
+    );
+    if (updatePosition) {
       return res.status(200).json({ status: "success" });
     }
   } catch (error) {

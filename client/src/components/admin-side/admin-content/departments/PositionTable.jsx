@@ -82,7 +82,7 @@ function PositionTable(props) {
                   {row.cells.map((cell) => {
                     return (
                       <td {...cell.getCellProps()}>
-                        <p>{cell.render("Cell")}</p>
+                        <p style={row.original.department_availability === "Unavailable" ? {color: "red"} : {}}>{cell.render("Cell")}</p>
                       </td>
                     );
                   })}
@@ -90,9 +90,9 @@ function PositionTable(props) {
                     <td className="action-button">
                       <div>
                         {row.original.position_availability === "Available" ? (
-                          <button className="solid danger fade">Delete</button>
+                          <button className="solid danger fade" onClick={()=>{props.handleOpenDeletePosition(row.original.id)}}>Deactivate</button>
                         ) : (
-                          <button className="solid primary fade">
+                          <button className="solid primary fade" onClick={()=>{props.handleOpenActivatePosition(row.original.id)}}>
                             Activate
                           </button>
                         )}

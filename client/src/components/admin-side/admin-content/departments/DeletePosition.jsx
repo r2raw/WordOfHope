@@ -5,64 +5,62 @@ import axios from "axios";
 import FitLoading from "../../../FitLoading";
 import SuccessMessageFit from "../../../SuccessMessageFit";
 import { useOutletContext } from "react-router-dom";
-function DeleteDepartment(props) {
-  const { updateDepartments, updatePositions, updateServices } = useOutletContext();
-  const { department_name, id } = props.department;
+
+function DeletePosition(props) {
+  const {updatePositions } = useOutletContext();
+  const { department_name, id, position_name } = props.position;
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const deactivateDepartment = async (deptid) => {
-
+  const deactivatePosition = async (deptid) => {
     try {
       const response = await axios.post(
-        `/update-department-availability/${deptid}`,
-        { availability: "Unavailable"}
+        `/update-position-availability/${deptid}`,
+        { availability: "Unavailable" }
       );
 
       setLoading(false);
       if (response.status === 200) {
         if (response.data.status === "success") {
           setSuccess(true);
-          updateDepartments();
-          updateServices()
           updatePositions();
         }
       }
     } catch (error) {
-      console.error("deactivateDepartment ERROR: " + error.message);
+      console.error("deactivatePosition ERROR: " + error.message);
     }
   };
 
   const handleDelete = () => {
     setLoading(true);
-    deactivateDepartment(id);
+    deactivatePosition(id);
   };
 
   useEffect(() => {
     if (success) {
       setTimeout(() => {
         setSuccess(false);
-        props.handleCloseDeleteDepartment();
+        props.handleCloseDeletePosition();
       }, 3000);
     }
   }, [success]);
   if (loading) return <FitLoading />;
   if (success)
-    return <SuccessMessageFit message={"Department updated successfully"} />;
+    return <SuccessMessageFit message={"Position updated successfully"} />;
   return (
     <Zoom in={true}>
       <div className="add-department card">
         <div
           className="close-btn"
           onClick={() => {
-            props.handleCloseDeleteDepartment();
+            props.handleCloseDeletePosition();
           }}
         >
           <CloseSharpIcon />
         </div>
-        <h3>Delete Department</h3>
+        <h3>Deactivate Position</h3>
         <div>
           <h3 className="update-dialog">
-            Are you sure to turn <span>[{department_name}]</span> department unavailable?
+            Are you sure to turn <span>[{position_name}]</span> position for <span>[{department_name}]</span> department unavailable?
           </h3>
         </div>
         <button className="solid danger fade" onClick={handleDelete}>
@@ -73,4 +71,4 @@ function DeleteDepartment(props) {
   );
 }
 
-export default DeleteDepartment;
+export default DeletePosition;

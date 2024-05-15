@@ -83,7 +83,16 @@ function ServicesTable(props) {
                   {row.cells.map((cell) => {
                     return (
                       <td {...cell.getCellProps()}>
-                        <p>{cell.render("Cell")}</p>
+                        <p
+                          style={
+                            row.original.department_availability ===
+                            "Unavailable"
+                              ? { color: "red" }
+                              : {}
+                          }
+                        >
+                          {cell.render("Cell")}
+                        </p>
                       </td>
                     );
                   })}
@@ -98,9 +107,23 @@ function ServicesTable(props) {
                         Edit
                       </button>
                       {row.original.availability === "Available" ? (
-                        <button className="solid danger fade">Delete</button>
+                        <button
+                          className="solid danger fade"
+                          onClick={() => {
+                            props.handleOpenDelete(row.original.id);
+                          }}
+                        >
+                          Deactivate
+                        </button>
                       ) : (
-                        <button className="solid primary fade">Activate</button>
+                        <button
+                          className="solid primary fade"
+                          onClick={() => {
+                            props.handleOpenActivateService(row.original.id);
+                          }}
+                        >
+                          Activate
+                        </button>
                       )}
                     </div>
                   </td>

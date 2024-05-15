@@ -107,7 +107,14 @@ function DepartmentTable(props) {
                             Deactivate
                           </button>
                         ) : (
-                          <button className="solid primary fade">
+                          <button
+                            className="solid primary fade"
+                            onClick={() => {
+                              props.handleOpenActivateDepartment(
+                                row.original.id
+                              );
+                            }}
+                          >
                             Activate
                           </button>
                         )}

@@ -13,12 +13,24 @@ function EditServices(props) {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [values, setValues] = useState({
+    service_id: selectedService.id,
     department_id: selectedService.department_id,
     service_type: selectedService.service_type,
     service_name: selectedService.service_name,
     available_online: selectedService.available_online,
   });
 
+  useEffect(() => {
+    setValues({
+      service_id: selectedService.id,
+      department_id: selectedService.department_id,
+      service_type: selectedService.service_type,
+      service_name: selectedService.service_name,
+      available_online: selectedService.available_online.toString(),
+    });
+  }, [selectedService]);
+
+  console.log(values)
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -46,7 +58,8 @@ function EditServices(props) {
     axios.post("/Update-Services", values).then((res) => {
       setLoading(false);
       if (res.data.status === "success") {
-        setSuccess(false);
+        setSuccess(true);
+        updateServices();
         return;
       }
 
@@ -54,6 +67,13 @@ function EditServices(props) {
     });
   };
 
+  useEffect(() => {
+    if (success) {
+      setTimeout(() => {
+        props.handleCloseEdit();
+      }, 3000);
+    }
+  }, [success]);
   if (loading) return <FitLoading />;
   if (success)
     return (
@@ -108,13 +128,11 @@ function EditServices(props) {
               required
             >
               <option value="">...</option>
-              {[
-                "General Consultation",
-                "Specialized",
-                "Diagnostic",
-              ].map((type, index) => (
-                <option key={index}>{type}</option>
-              ))}
+              {["General Consultation", "Specialized", "Diagnostic"].map(
+                (type, index) => (
+                  <option key={index}>{type}</option>
+                )
+              )}
             </select>
             <span className="new-floating-label">Service type</span>
           </div>
