@@ -94,6 +94,10 @@ import countPatients from "./MyServerFunctions/Doctor/countPatients.js";
 import insertNewPatient from "./MyServerFunctions/Doctor/insertNewPatient.js";
 import insertPatientRecord from "./MyServerFunctions/Doctor/insertPatientRecord.js";
 import insertDiagnosis from "./MyServerFunctions/Doctor/insertDiagnosis.js";
+import getEmployeeDataEdit from "./MyServerFunctions/HR/getEmployeeDataEdit.js";
+import getEmployeeSchedEdit from "./MyServerFunctions/HR/getEmployeeSchedEdit.js";
+import deleteEmployeesched from "./MyServerFunctions/HR/deleteEmployeesched.js";
+import updateDepartmentAvailabilty from "./MyServerFunctions/Admin/updateDepartmentAvailabilty.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -148,11 +152,11 @@ const storage = multer.diskStorage({
 
 const attendanceStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, `public/attendanceImg`); 
+    cb(null, `public/attendanceImg`);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "attendanceImg-" + uniqueSuffix + ".png"); 
+    cb(null, "attendanceImg-" + uniqueSuffix + ".png");
   },
 });
 
@@ -1445,7 +1449,10 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
 
     const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
-    const services = await doctorDepartmentService(db, employeeResult.rows[0].department)
+    const services = await doctorDepartmentService(
+      db,
+      employeeResult.rows[0].department
+    );
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
     const ongoingAppointment = await fetchOngoingAppointment(
@@ -1824,6 +1831,27 @@ app.post("/Update-Department", async (req, res) => {
   }
 });
 
+app.post("/update-department-availability/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { availability } = req.body;
+    console.log(req.body)
+    const updateDepartment = await updateDepartmentAvailabilty(
+      db,
+      id,
+      availability
+    );
+    if (updateDepartment) {
+      return res.status(200).json({ status: "success" });
+    }
+  } catch (error) {
+    console.error(
+      "/update-department-availability api error: " + error.message
+    );
+    return res.status(500).json({ message: "internal server error update-department" });
+  }
+});
+
 app.post("/register", async (req, res) => {
   try {
     const {
@@ -2015,6 +2043,39 @@ app.post("/add-employee-sched/:uid", async (req, res) => {
     console.log("sched insert error: " + error.message);
   }
 });
+
+app.post("/update-employee-sched", async (req, res) => {
+  try {
+    const { id, schedule, createdBy } = req.body;
+
+    const schedDeleted = await deleteEmployeesched(db, id);
+
+    if (schedDeleted) {
+      let valid = true;
+      for (let i = 0; i < schedule.length; i++) {
+        for (let j = 0; j < schedule[i].days.length; j++) {
+          const schedInsertResult = await InsertSchedule(
+            db,
+            id,
+            schedule[i].startTime,
+            schedule[i].endTime,
+            schedule[i].days[j],
+            createdBy
+          );
+          if (!schedInsertResult) {
+            valid = false;
+          }
+        }
+      }
+
+      if (valid) {
+        return res.json({ status: "success" });
+      }
+    }
+  } catch (error) {
+    console.log("sched insert error: " + error.message);
+  }
+});
 app.get("/HR/:uid", async (req, res) => {
   try {
     const ncrCities = await fetchNcrCities();
@@ -2110,39 +2171,48 @@ app.get("/fetch-queues", async (req, res) => {
   }
 });
 
-app.post("/add-patient-record/:doc_id", async (req, res)=>{
+app.post("/add-patient-record/:doc_id", async (req, res) => {
   try {
-
     const patientCount = await countPatients(db);
 
-    const {doc_id} = req.params;
-    const {diagnosis} = req.body;
-    const patient_id = await PadZeroes(patientCount + 1, 8)
-    const record_id  = uid(10)
+    const { doc_id } = req.params;
+    const { diagnosis } = req.body;
+    const patient_id = await PadZeroes(patientCount + 1, 8);
+    const record_id = uid(10);
     const patient = await insertNewPatient(db, patient_id, req.body);
-    if(patient){
-      const patient_record = await insertPatientRecord(db, record_id, patient_id, doc_id, req.body)
+    if (patient) {
+      const patient_record = await insertPatientRecord(
+        db,
+        record_id,
+        patient_id,
+        doc_id,
+        req.body
+      );
 
-      if(patient_record){
-        let valid = true
-        for(let i = 0; i < diagnosis.length; i++){
-          const diagnosisRes = await insertDiagnosis(db, record_id, diagnosis[i])
-          if(!diagnosisRes){
+      if (patient_record) {
+        let valid = true;
+        for (let i = 0; i < diagnosis.length; i++) {
+          const diagnosisRes = await insertDiagnosis(
+            db,
+            record_id,
+            diagnosis[i]
+          );
+          if (!diagnosisRes) {
             valid = false;
           }
         }
-        if(!valid){
-          return res.status(500).json({message: 'add-patient-record error'})
+        if (!valid) {
+          return res.status(500).json({ message: "add-patient-record error" });
         }
 
-        return res.status(200).json({message : 'Patient added success fully'})
+        return res.status(200).json({ message: "Patient added success fully" });
       }
     }
   } catch (error) {
-    console.error("add-patient-record API error: " + error.message)
+    console.error("add-patient-record API error: " + error.message);
     return res.status(500).json({ error: "add-patient-record API error" });
   }
-})
+});
 
 app.get("/appointment-today", async (req, res) => {
   try {
@@ -2152,6 +2222,26 @@ app.get("/appointment-today", async (req, res) => {
     });
   } catch (error) {
     console.error("Appointment-today API error: " + error.message);
+  }
+});
+
+app.get("/fetch-employee-sched/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const employeeData = await getEmployeeDataEdit(db, id);
+
+    const employeeSched = await getEmployeeSchedEdit(db, id);
+
+    if (employeeData && employeeSched) {
+      return res
+        .status(200)
+        .json({ employeeData: employeeData, schedule: employeeSched });
+    }
+  } catch (error) {
+    console.error("fetchEmployeeApi ERROR: " + error.message);
+    return res
+      .status(500)
+      .json({ message: "internal server fetch employee sched error" });
   }
 });
 server.listen(PORT, () => {

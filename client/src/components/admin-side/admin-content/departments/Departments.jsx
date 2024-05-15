@@ -6,11 +6,14 @@ import AddPositionForm from "./AddPositionForm";
 import EditDepartmentForm from "./EditDepartmentForm";
 import PositionTable from "./PositionTable";
 import { useOutletContext } from "react-router-dom";
+import DeleteDepartment from "./DeleteDepartment";
 function Departments() {
   const { backendData } = useOutletContext();
   const [openAddDepartment, setOpenAddDepartment] = useState(false);
   const [openEditDepartment, setOpenEditDepartment] = useState(false);
+  const [openDeleteDepartment, setOpenDeleteDepartment] = useState(false);
   const [editDepartment, setEditDepartment] = useState();
+  const [deleteDepartment, setDeleteDepartment] = useState();
   const [openAddPosition, setOpenAddPosition] = useState(false);
 
   const handleOpenAddDepartment = () => {
@@ -24,10 +27,22 @@ function Departments() {
     const findDepartment = backendData.departments.find((i) => i.id === id);
     setEditDepartment(findDepartment);
     setOpenAddDepartment(false);
+    setOpenDeleteDepartment(false);
     setOpenEditDepartment(true);
   };
   const handleCloseEditDepartment = () => {
     setOpenEditDepartment(false);
+  };
+
+  const handleOpenDeleteDepartment = (id) => {
+    const findDepartment = backendData.departments.find((i) => i.id === id);
+    setDeleteDepartment(findDepartment);
+    setOpenAddDepartment(false);
+    setOpenEditDepartment(false);
+    setOpenDeleteDepartment(true);
+  };
+  const handleCloseDeleteDepartment = () => {
+    setOpenDeleteDepartment(false);
   };
   const handleOpenAddPosition = () => {
     setOpenAddPosition(true);
@@ -47,18 +62,24 @@ function Departments() {
             <p>Add Department</p>
           </button>
         </div>
-        {!openAddDepartment && !openEditDepartment ? (
+        {!openAddDepartment && !openEditDepartment && !openDeleteDepartment ? (
           <DepartmentTable
             handleOpenEditDepartment={handleOpenEditDepartment}
+            handleOpenDeleteDepartment={handleOpenDeleteDepartment}
           />
         ) : openAddDepartment ? (
           <AddDepartmentForm
             handleCloseAddDepartment={handleCloseAddDepartment}
           />
-        ) : (
+        ) : !openDeleteDepartment ? (
           <EditDepartmentForm
             department={editDepartment}
             handleCloseEditDepartment={handleCloseEditDepartment}
+          />
+        ) : (
+          <DeleteDepartment
+            department={deleteDepartment}
+            handleCloseDeleteDepartment={handleCloseDeleteDepartment}
           />
         )}
       </div>

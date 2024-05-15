@@ -38,7 +38,7 @@ function DayTimeSelection(props) {
 
   return (
     <div
-      className="day-time-selection"
+      className="day-time-selection card"
       style={arrayNum === 0 ? { border: "none" } : {}}
     >
       <div className="time-select">

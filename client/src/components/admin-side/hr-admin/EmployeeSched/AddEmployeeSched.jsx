@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
-import { Link, useNavigate, useOutlet, useOutletContext, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import AddNurseSched from "./AddNurseSched";
 import AddOfficesSched from "./AddOfficesSched";
 import AddDoctorSched from "./AddDoctorSched";
@@ -15,7 +20,7 @@ function AddEmployeeSched() {
   const [successful, setSuccessful] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   //   console.log(backendData)
   const { noSchedule } = backendData;
 
@@ -45,24 +50,24 @@ function AddEmployeeSched() {
 
   const handleLoading = (result) => {
     setLoading(result);
-  }
+  };
 
   const handleSuccess = (result) => {
     setSuccessful(result);
-  }
+  };
 
-
-  useEffect(()=>{
-    if(successful){
-      setTimeout(()=>{
+  useEffect(() => {
+    if (successful) {
+      setTimeout(() => {
         renewSchedules();
         navigate("../Employee-Schedule");
-      }, 3000)
+      }, 3000);
     }
-  }, [successful])
-  if(loading) return <Loading />
+  }, [successful]);
+  if (loading) return <Loading />;
 
-  if(successful) return <SuccessMessage message={"Schedule created successfully!"} />
+  if (successful)
+    return <SuccessMessage message={"Schedule created successfully!"} />;
 
   return (
     <div className="admin-element">
@@ -70,7 +75,7 @@ function AddEmployeeSched() {
         <ArrowBackSharpIcon />
       </Link>
       <h1>Add Employee Schedule</h1>
-      <div className="add-schedule">
+      <div className="add-schedule card">
         <div className="search-employee">
           <div id="new-input-group">
             <input
@@ -111,19 +116,25 @@ function AddEmployeeSched() {
                   <p>{foundEmployee.department_name}</p>
                 </div>
               </div>
-              {/* <p>Employee ID: 001</p>
-          <p>Name: Arturo D. Marte Jr. II</p>
-          <p>Position: Nurse</p>
-          <p>Department: Optolmology</p> */}
               {foundEmployee.position_name === "Nurse" ? (
-                <AddNurseSched emp={foundEmployee?.id} handleLoading={handleLoading} handleSuccess={handleSuccess}/>
+                <AddNurseSched
+                  emp={foundEmployee?.id}
+                  handleLoading={handleLoading}
+                  handleSuccess={handleSuccess}
+                />
               ) : foundEmployee.position_name === "Doctor" ? (
-                <AddDoctorSched emp={foundEmployee?.id}  handleLoading={handleLoading} handleSuccess={handleSuccess} />
+                <AddDoctorSched
+                  emp={foundEmployee?.id}
+                  handleLoading={handleLoading}
+                  handleSuccess={handleSuccess}
+                />
               ) : (
-                <AddOfficesSched emp={foundEmployee?.id} handleLoading={handleLoading} handleSuccess={handleSuccess} />
+                <AddOfficesSched
+                  emp={foundEmployee?.id}
+                  handleLoading={handleLoading}
+                  handleSuccess={handleSuccess}
+                />
               )}
-
-              {/* <AddOfficesSched /> */}
             </div>
           ) : (
             <div>

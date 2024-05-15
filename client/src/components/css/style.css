@@ -3688,7 +3688,7 @@ header .header-details {
 }
 .add-schedule {
   padding: 5% 7%;
-  box-shadow: var(--card-box-shadow);
+  /* box-shadow: var(--card-box-shadow); */
 }
 
 .add-schedule .infos {
@@ -3761,6 +3761,12 @@ header .header-details {
   padding-block: 0px 60px;
 }
 
+.scheduler-form .selection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
 .scheduler-form .add-button {
   position: sticky;
   top: 60px;
@@ -3783,10 +3789,13 @@ header .header-details {
 
 .scheduler-form .day-time-selection {
   margin-top: 40px;
-  padding-block: 40px 0px;
-  border-top: 1px solid var(--color-darkblue);
+  padding: 40px;
+  /* border-top: 1px solid var(--color-darkblue); */
 }
 
+.scheduler-form .day-time-selection button.danger{
+  margin-top: 10px;
+}
 .scheduler-form .submit-schedule {
   margin-top: 40px;
 }

@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import AddCircleSharpIcon from "@mui/icons-material/AddCircleSharp";
-import DayTimeSelection from "./DayTimeSelection";
 import DoctorDayTimeSelection from "./DoctorDayTimeSelection";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useParams } from "react-router-dom";
-function AddDoctorSched(props) {
-  const { user } = useParams();
-  const { emp } = props;
+
+function EditDoctorSched(props) {
+  const { user, id } = useParams();
+  const { emp, schedule } = props;
   const [selectedDays, setSelectedDays] = useState([]);
-  const [hasOverlappingSched, setHasOverLappingSched] = useState();
-  const [disabled, setDisabled] = useState(true);
+  const [hasOverlappingSched, setHasOverLappingSched] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const [employeeSched, setEmployeesched] = useState([
     {
       startTime: "00:00:00",
@@ -19,6 +19,34 @@ function AddDoctorSched(props) {
       invalid: false,
     },
   ]);
+
+
+  
+  useEffect(() => {
+    const sched = [];
+  
+    for (let i = 0; i < schedule.length; i++) {
+      const foundIndex = sched.findIndex(
+        (sch) =>
+          sch.startTime === schedule[i].starttime &&
+          sch.endTime === schedule[i].endtime
+      );
+  
+      if (foundIndex !== -1) {
+        sched[foundIndex].days.push(schedule[i].day);
+      } else {
+        sched.push({
+          startTime: schedule[i].starttime,
+          endTime: schedule[i].endtime,
+          days: [schedule[i].day],
+          invalid: false,
+        });
+      }
+    }
+  
+    setEmployeesched(sched);
+    handleEmployeeSchedChange(sched)
+  }, [schedule]);
 
   const weekdays = [
     "Sunday",
@@ -127,6 +155,8 @@ function AddDoctorSched(props) {
   };
   const handleEmployeeSchedChange = useCallback(
     (empSchedArray) => {
+        console.log("empSchedArray: " + empSchedArray.length)
+        console.log("employeeSched: " + employeeSched.length)
       if (empSchedArray.length > 1) {
         let overlappingSched = false;
         if (employeeSched.length > 1) {
@@ -175,6 +205,19 @@ function AddDoctorSched(props) {
             }
           });
           setDisabled(!valid);
+        }else{
+            let valid = false;
+            employeeSched.forEach((empSched) => {
+              if (
+                empSched.startTime !== "" &&
+                empSched.endTime !== "" &&
+                empSched.days.length > 0 &&
+                !empSched.invalid
+              ) {
+                valid = true;
+              }
+            });
+            setDisabled(!valid);
         }
       } else {
         let valid = false;
@@ -186,9 +229,11 @@ function AddDoctorSched(props) {
             empSched.days.length > 0 &&
             !empSched.invalid
           ) {
+            console.log("valid")
             valid = true;
           }
         });
+        console.log(valid)
         setDisabled(!valid);
       }
     },
@@ -201,8 +246,9 @@ function AddDoctorSched(props) {
   }
 
   useEffect(() => {
+    console.log(employeeSched)
     handleEmployeeSchedChange([...employeeSched]);
-  }, [employeeSched, handleEmployeeSchedChange]);
+  }, [schedule, employeeSched, handleEmployeeSchedChange]);
 
   const handleDeleteSelection = (index) => {
     const deletedDays = employeeSched[index].days;
@@ -255,7 +301,10 @@ function AddDoctorSched(props) {
       setEmployeesched((prev) => prev.filter((i) => i.days.length !== 0));
     }
   }, [selectedDays]);
+//   console.log(disabled)
+//   console.log(hasOverlappingSched)
 
+console.log()
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -265,7 +314,7 @@ function AddDoctorSched(props) {
         sched.startTime !== "" && sched.endTime !== "" && sched.days.length > 0
     );
     axios
-      .post("/add-employee-sched/:uid", {
+      .post(`/update-employee-sched`, {
         id: emp,
         schedule: values,
         createdBy: user,
@@ -318,4 +367,4 @@ function AddDoctorSched(props) {
   );
 }
 
-export default AddDoctorSched;
+export default EditDoctorSched;
