@@ -509,9 +509,16 @@ function EditEmployee() {
                   className="card"
                 >
                   <option></option>
-                  {Departments.map((i, index) => {
-                    return <option key={index}>{i.name}</option>;
-                  })}
+
+                  {backendData.departments
+                    .filter((i) => i.id !== 1 && i.availability === "Available")
+                    .map((department, index) => {
+                      return (
+                        <option key={index} value={department.id}>
+                          {department.department_name}
+                        </option>
+                      );
+                    })}
                 </select>
                 <span
                   className="new-floating-label"
@@ -532,12 +539,23 @@ function EditEmployee() {
                   className="card"
                 >
                   <option></option>
+
                   {values.department &&
-                    Departments.find(
-                      (i) => i.name === values.department
-                    )?.positions.map((i, index) => {
-                      return <option>{i}</option>;
-                    })}
+                    backendData.positions &&
+                    backendData.positions
+                      .filter(
+                        (i) =>
+                          i.department_id === parseInt(values.department) &&
+                          i.department_availability === "Available" &&
+                          i.position_availability === "Available"
+                      )
+                      .map((position, index) => {
+                        return (
+                          <option key={index} value={position.id}>
+                            {position.position_name}
+                          </option>
+                        );
+                      })}
                 </select>
                 <span
                   className="new-floating-label"

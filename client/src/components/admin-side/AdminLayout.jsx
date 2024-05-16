@@ -98,6 +98,16 @@ function AdminLayout() {
     }
   }, [backendData]);
 
+  useEffect(() => {
+    if (backendData && backendData.user && backendData.user.length > 0) {
+      const intervalId = setInterval(() => {
+        renewBackendData()
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [backendData]);
+
   if (!backendData) return <Loader />;
   if (backendData.user[0].firsttimelog) {
     return (
