@@ -4148,6 +4148,38 @@ input[type="file"] + label {
   background-color: var(--color-darkblue);
   color: var(--color-white);
 }
+
+.viewed-patient-record{
+  padding: 100px;
+}
+
+.viewed-patient-record .information > div{
+  display: flex;
+  justify-content: space-between;
+}
+
+.viewed-patient-record > div{
+  padding: 10px;
+}
+
+.viewed-patient-record .information h3 span{
+  font-weight: 400;
+}
+
+p.diagnosis{
+  font-weight: 600;
+  letter-spacing: 4px;
+}
+.viewed-patient-record .result-header{
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.viewed-patient-record hr{
+  border: 1px solid var(--color-darkblue);
+  box-shadow: var(--card-box-shadow);
+}
 /*1280 screen responsive */
 @media screen and (max-width: 1280px) {
   .login-container {

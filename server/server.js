@@ -113,6 +113,7 @@ import editDoctorPatientInfo from "./MyServerFunctions/Doctor/editDoctorPatientI
 import editDoctorPatientRecord from "./MyServerFunctions/Doctor/editDoctorPatientRecord.js";
 import searchAddExistingPatient from "./MyServerFunctions/Doctor/searchAddExistingPatient.js";
 import fetchAllPatientRecords from "./MyServerFunctions/Doctor/fetchAllPatientRecords.js";
+import viewPatientRecord from "./MyServerFunctions/Doctor/viewPatientRecord.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -2434,6 +2435,18 @@ app.get("/appointment-today", async (req, res) => {
     console.error("Appointment-today API error: " + error.message);
   }
 });
+
+app.get("/view-patient-record/:id", async (req, res)=>{
+  try {
+    const {id} = req.params;
+    const patientRecord = await viewPatientRecord(db, id)
+    const diagnosis = await fetchPatientEditDiagnosis(db, id)
+
+    return res.status(200).json({patientRecord: patientRecord, diagnosis: diagnosis})
+  } catch (error) {
+    console.error("view-patient-record error: " + error.message)
+  }
+})
 
 app.get("/search-existing-patient/:id", async (req, res) => {
   try {
