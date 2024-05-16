@@ -173,12 +173,17 @@ function AddResult() {
       if (
         fieldname !== "email" &&
         fieldname !== "phone" &&
+        fieldname !== "middlename" &&
+        fieldname !== "suffix" &&
         fieldname !== "comment" &&
+        fieldname !== "user_id" &&
         fieldname !== "diagnosis"
       ) {
         if (_.trim(values[fieldname]) === "") {
           valid = false;
         }
+        
+        console.log(values[fieldname] + " - " + fieldname)
       }
     }
 
@@ -208,6 +213,7 @@ function AddResult() {
     }
   };
 
+  console.log(isDisabled)
   const handleFormChange = (e) => {
     const { valid } = e.target.validity;
 

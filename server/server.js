@@ -111,6 +111,8 @@ import fetchPatientEditDiagnosis from "./MyServerFunctions/Doctor/fetchPatientEd
 import deleteDiagnosis from "./MyServerFunctions/Doctor/deleteDiagnosis.js";
 import editDoctorPatientInfo from "./MyServerFunctions/Doctor/editDoctorPatientInfo.js";
 import editDoctorPatientRecord from "./MyServerFunctions/Doctor/editDoctorPatientRecord.js";
+import searchAddExistingPatient from "./MyServerFunctions/Doctor/searchAddExistingPatient.js";
+import fetchAllPatientRecords from "./MyServerFunctions/Doctor/fetchAllPatientRecords.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1499,6 +1501,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       db,
       employeeResult.rows[0].id
     );
+    const patientRecords = await fetchAllPatientRecords(db);
     const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
     const services = await doctorDepartmentService(
       db,
@@ -1519,6 +1522,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       services: services,
       serviceChartData: serviceChartData,
       doctorPatientRecord: doctorPatientRecord,
+      patientRecords: patientRecords,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
@@ -2387,6 +2391,16 @@ app.get("/appointment-today", async (req, res) => {
   }
 });
 
+app.get("/search-existing-patient/:id", async (req, res)=>{
+  try {
+    const {id} = req.params;
+    const patientInfo = await searchAddExistingPatient(db, id)
+
+    return res.status(200).json(patientInfo)
+  } catch (error) {
+    console.error("/search-existing-patient API ERROR: " + error.message)
+  }
+})
 app.get("/fetch-employee-sched/:id", async (req, res) => {
   try {
     const { id } = req.params;

@@ -3697,13 +3697,26 @@ header .header-details {
 .add-schedule .infos {
   margin-top: 20px;
 }
+
 .add-schedule .search-employee {
   display: flex;
   /* justify-content: center; */
   align-items: flex-end;
   gap: 20px;
 }
+.add-result .search-patient{
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+}
 
+.add-result .search-patient > button{
+  width: 10%;
+  min-width: 100px;
+  margin: 0;
+  height: 60px;
+  padding: 0;
+}
 .add-schedule .search-employee > button {
   width: 10%;
   min-width: 100px;

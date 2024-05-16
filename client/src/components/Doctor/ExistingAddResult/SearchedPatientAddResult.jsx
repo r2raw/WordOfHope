@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
-import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import DiagnosisPatientInfo from "../DocResulltMgmt/DiagnosisPatientInfo";
 import DiagnosisPatientAddress from "../DocResulltMgmt/DiagnosisPatientAddress";
 import DiagnosisPatientService from "../DocResulltMgmt/DiagnosisPatientService";
@@ -14,13 +19,14 @@ import DiagnosiscComment from "../DocResulltMgmt/DiagnosiscComment";
 import _ from "lodash";
 import SuccessMessage from "../../SuccessMessage";
 import Loading from "../../Loading";
-function EditResult() {
+function SearchedPatientAddResult(props) {
   const { backendData } = useOutletContext();
-  const {record_id}  = useParams()
-  const [recordData, setRecordData] = useState()
+  const { foundPatient } = props;
+  console.log(foundPatient);
+  const { record_id } = useParams();
+  const [recordData, setRecordData] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const navigate = useNavigate();
-  const [isCurrentlyServing, setIsCurrentlyServing] = useState("false");
   const [isFormValid, setIsFormValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -44,45 +50,24 @@ function EditResult() {
     comment: "",
   });
 
-
-  console.log(recordData)
-  useEffect(()=>{
-    if(recordData){
-        const {patientData, patient_diagnosis} = recordData;
-        setValues({
-            firstname: patientData.firstname,
-            lastname: patientData.lastname,
-            middlename: patientData.middlename,
-            suffix: patientData.suffix,
-            sex: patientData.sex,
-            birthdate: dayjs(patientData.birthdate).format("YYYY-MM-DD"),
-            email: patientData.email,
-            phone: patientData.phone,
-            street: patientData.street,
-            city: patientData.city,
-            province: patientData.province,
-            barangay: patientData.barangay,
-            zip: patientData.zip,
-            service: patientData.service_id,
-            date_of_visit: dayjs(patientData.date_visit).format("YYYY-MM-DD"),
-            diagnosis: patient_diagnosis,
-            comment: patientData.doctor_comment,
-          })
-    }
-  },[recordData])
-  const fetchPatientRecord  = async ()=>{
-    try {
-        const response = await axios.get(`/fetchEditPatientRecord/${record_id}`)
-        if(response.status === 200){
-            setRecordData(response.data)
-        }
-    } catch (error) {
-        console.error("fetchPatientRecord Error: " + error.message)
-    }
-  }
-  useEffect(()=>{
-    fetchPatientRecord();
-  },[])
+  useEffect(() => {
+    setValues((prev) => ({
+      ...prev,
+      firstname: foundPatient[0].firstname,
+      lastname: foundPatient[0].lastname,
+      middlename: foundPatient[0].middlename,
+      suffix: foundPatient[0].suffix,
+      sex: foundPatient[0].sex,
+      birthdate: dayjs(foundPatient[0].birthdate).format("YYYY-MM-DD"),
+      email: foundPatient[0].email,
+      phone: foundPatient[0].phone,
+      street:foundPatient[0].street,
+      city: foundPatient[0].city,
+      province: foundPatient[0].province,
+      barangay: foundPatient[0].barangay,
+      zip: foundPatient[0].zip,
+    }));
+  }, []);
 
   const addDiagnosis = () => {
     setValues((prev) => {
@@ -121,8 +106,6 @@ function EditResult() {
     }));
   };
 
-
-
   useEffect(() => {
     let valid = true;
     for (const fieldname in values) {
@@ -150,20 +133,20 @@ function EditResult() {
   }, [values]);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true)
-      const response = await axios.post(
-        `/edit-patient-record/${record_id}`,
-        {...values, patient_id: recordData.patientData.patient_id}
-      );
+    // try {
+    //   setLoading(true)
+    //   const response = await axios.post(
+    //     `/edit-patient-record/${record_id}`,
+    //     {...values, patient_id: recordData.patientData.patient_id}
+    //   );
 
-      setLoading(false);
-      if (response.status === 200) {
-        setSuccess(true);
-      }
-    } catch (error) {
-      console.error("edit-patient-record: " + error.message);
-    }
+    //   setLoading(false);
+    //   if (response.status === 200) {
+    //     setSuccess(true);
+    //   }
+    // } catch (error) {
+    //   console.error("edit-patient-record: " + error.message);
+    // }
   };
 
   const handleFormChange = (e) => {
@@ -181,17 +164,13 @@ function EditResult() {
     }
   }, [success]);
 
-  if (!recordData) return null
   if (loading) return <Loading />;
-  if (success) return <SuccessMessage message="Record updated successfully" />;
+  if (success) return <SuccessMessage message="Record addeed successfully" />;
   return (
-    <div className="admin-element diagnosis">
-      <div className="back-button">
-        <Link to="../Result-Management">
-          <ArrowBackSharpIcon />
-        </Link>
-      </div>
-      <h1>Edit Result</h1>
+    <div
+      style={{ margin: "10px 0 0", width: "100%", padding: "0" }}
+      className="admin-element diagnosis"
+    >
       <form
         className="card"
         onChange={handleFormChange}
@@ -245,4 +224,4 @@ function EditResult() {
   );
 }
 
-export default EditResult
+export default SearchedPatientAddResult;
