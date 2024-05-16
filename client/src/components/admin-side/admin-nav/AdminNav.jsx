@@ -106,6 +106,13 @@ function AdminNav(props) {
       title: "Deactivated",
       path: `/WordOfHope/MNS/${user && user}/Deactivated`,
     },
+    {
+      id: 6,
+      url: mylogbl,
+      wurl: mylogwh,
+      title: "My Attendance Log",
+      path: `/WordOfHope/MNS/${user && user}/Log`,
+    },
   ];
 
 

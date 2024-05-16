@@ -14,6 +14,8 @@ function AdminLayout() {
   const navigate = useNavigate();
   const [rfidDialogfOpen, setRfidDialogOpen] = useState(false);
   const [backendData, setBackendData] = useState();
+  
+  console.log(backendData)
   useEffect(() => {
     axios
       .get("/WordOfHope/MNS/" + user)

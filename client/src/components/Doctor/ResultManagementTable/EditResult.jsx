@@ -45,7 +45,6 @@ function EditResult() {
   });
 
 
-  console.log(recordData)
   useEffect(()=>{
     if(recordData){
         const {patientData, patient_diagnosis} = recordData;

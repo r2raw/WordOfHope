@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import calculateTimeDiff from "../../../my-functions/calculateTimeDiff";
 import _ from "lodash";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
+import calculateAttendance from "../../../my-functions/calculateAttendance";
 function EmployeeViewAttendance() {
   const { attendanceId } = useParams();
   const { backendData } = useOutletContext();
@@ -25,9 +26,9 @@ function EmployeeViewAttendance() {
   }${foundEmployee.suffix && `, ${foundEmployee.suffix}`}`;
   const totalTime =
     foundEmployee.departure &&
-    calculateTimeDiff(
-      dayjs(foundEmployee.arrival).format("HH:mm:ss"),
-      dayjs(foundEmployee.departure).format("HH:mm:ss")
+    calculateAttendance(
+      dayjs(foundEmployee.arrival),
+      dayjs(foundEmployee.departure)
     );
 
   return (

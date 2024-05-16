@@ -114,6 +114,7 @@ import editDoctorPatientRecord from "./MyServerFunctions/Doctor/editDoctorPatien
 import searchAddExistingPatient from "./MyServerFunctions/Doctor/searchAddExistingPatient.js";
 import fetchAllPatientRecords from "./MyServerFunctions/Doctor/fetchAllPatientRecords.js";
 import viewPatientRecord from "./MyServerFunctions/Doctor/viewPatientRecord.js";
+import fetchMyAttendance from "./MyServerFunctions/fetchMyAttendance.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1678,7 +1679,7 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
 
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
-
+    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id)
     const absentee = await absentEmployee(db);
     const employee = await GetAllEmployee(db);
     const departments = await fetchDepartments(db);
@@ -1693,6 +1694,7 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
       services: services,
       positions: positions,
       absentee: absentee,
+      myAttendance: myAttendance,
       attendancesToday: attendancesToday,
     });
   } catch (error) {

@@ -60,6 +60,7 @@ import EditEmployeeSched from "./admin-side/hr-admin/EmployeeSched/EditEmployeeS
 import DeactivatedAccounts from "./admin-side/admin-content/deactivated/DeactivatedAccounts";
 import EditResult from "./Doctor/ResultManagementTable/EditResult";
 import ViewedPatientRecord from "./Doctor/ViewPatientRecord/ViewedPatientRecord";
+import MyAttendancLog from "./admin-side/admin-content/myLog/MyAttendancLog";
 
 function App() {
   return (
@@ -89,6 +90,7 @@ function App() {
         <Route path="MNS/:user" element={<AdminLayout />}>
           <Route path="RFIDScan" element={<RFIDScan />} />
           <Route path="Dashboard" element={<AdminDashboard />} />
+          <Route path="Log" element={<MyAttendancLog />} />
           <Route path="Accounts" element={<Accounts />} />
           <Route path="Doctor-Schedule" element={<DoctorSched />} />
           <Route path="Patient-Demand-Rate" element={<PatientDemandRate />} />
