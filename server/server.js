@@ -1945,7 +1945,6 @@ app.post("/update-service-availability/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { availability } = req.body;
-    console.log(req.body);
     const updateDepartment = await updateServiceAvailability(
       db,
       availability,
@@ -2053,11 +2052,9 @@ app.post("/register", async (req, res) => {
 
 app.post("/scan-qr", async (req, res) => {
   try {
-    console.log(req.body);
     const { qrCode } = req.body;
     const appointedFor = await ScanQr(db, qrCode);
 
-    console.log(appointedFor);
     if (appointedFor) {
       if (appointedFor === "Self") {
         const qrDetails = await ScanQrSelfAppointment(db, qrCode);
@@ -2347,18 +2344,66 @@ app.post("/add-patient-record/:doc_id", async (req, res) => {
   }
 });
 
-app.post("/edit-patient-record/:record_id", async (req, res)=>{
+app.post(
+  "/add-existing-patient-record/:doc_id/:patient_id",
+  async (req, res) => {
+    try {
+
+      const { doc_id, patient_id } = req.params;
+      const { diagnosis } = req.body;
+      const record_id = uid(10);
+
+      console.log(patient_id)
+      console.log(req.body)
+      const patient_record = await insertPatientRecord(
+        db,
+        record_id,
+        patient_id,
+        doc_id,
+        req.body
+      );
+
+      if (patient_record) {
+        let valid = true;
+        for (let i = 0; i < diagnosis.length; i++) {
+          const diagnosisRes = await insertDiagnosis(
+            db,
+            record_id,
+            diagnosis[i]
+          );
+          if (!diagnosisRes) {
+            valid = false;
+          }
+        }
+        if (!valid) {
+          return res.status(500).json({ message: "add-patient-record error" });
+        }
+
+        return res.status(200).json({ message: "Patient added success fully" });
+      }
+    } catch (error) {
+      console.error("add-patient-record API error: " + error.message);
+      return res.status(500).json({ error: "add-patient-record API error" });
+    }
+  }
+);
+
+app.post("/edit-patient-record/:record_id", async (req, res) => {
   try {
-    const {record_id} = req.params;
-    const {diagnosis} = req.body;
+    const { record_id } = req.params;
+    const { diagnosis } = req.body;
     const diagnosisDelete = await deleteDiagnosis(db, record_id);
-  
+
     let valid = true;
-    if(diagnosisDelete){
+    if (diagnosisDelete) {
       const updatePatient = await editDoctorPatientInfo(db, req.body);
-      if(updatePatient){
-        const updateRecord = await editDoctorPatientRecord(db, record_id, req.body)
-        if(updateRecord){
+      if (updatePatient) {
+        const updateRecord = await editDoctorPatientRecord(
+          db,
+          record_id,
+          req.body
+        );
+        if (updateRecord) {
           for (let i = 0; i < diagnosis.length; i++) {
             const diagnosisRes = await insertDiagnosis(
               db,
@@ -2372,14 +2417,13 @@ app.post("/edit-patient-record/:record_id", async (req, res)=>{
         }
       }
     }
-    if(valid){
-      return res.status(200).json({ message: "Patient edited successfully" }); 
+    if (valid) {
+      return res.status(200).json({ message: "Patient edited successfully" });
     }
-    
   } catch (error) {
-    console.error("/edit-patient-record API ERROR: " + error.message)
+    console.error("/edit-patient-record API ERROR: " + error.message);
   }
-})
+});
 app.get("/appointment-today", async (req, res) => {
   try {
     const apptToday = await appointmentToday(db);
@@ -2391,16 +2435,16 @@ app.get("/appointment-today", async (req, res) => {
   }
 });
 
-app.get("/search-existing-patient/:id", async (req, res)=>{
+app.get("/search-existing-patient/:id", async (req, res) => {
   try {
-    const {id} = req.params;
-    const patientInfo = await searchAddExistingPatient(db, id)
+    const { id } = req.params;
+    const patientInfo = await searchAddExistingPatient(db, id);
 
-    return res.status(200).json(patientInfo)
+    return res.status(200).json(patientInfo);
   } catch (error) {
-    console.error("/search-existing-patient API ERROR: " + error.message)
+    console.error("/search-existing-patient API ERROR: " + error.message);
   }
-})
+});
 app.get("/fetch-employee-sched/:id", async (req, res) => {
   try {
     const { id } = req.params;

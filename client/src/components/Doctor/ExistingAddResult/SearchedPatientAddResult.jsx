@@ -22,9 +22,7 @@ import Loading from "../../Loading";
 function SearchedPatientAddResult(props) {
   const { backendData } = useOutletContext();
   const { foundPatient } = props;
-  console.log(foundPatient);
-  const { record_id } = useParams();
-  const [recordData, setRecordData] = useState();
+  console.log(backendData.user[0].id)
   const [isDisabled, setIsDisabled] = useState(true);
   const navigate = useNavigate();
   const [isFormValid, setIsFormValid] = useState(false);
@@ -131,22 +129,23 @@ function SearchedPatientAddResult(props) {
 
     setIsDisabled(!valid);
   }, [values]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // try {
-    //   setLoading(true)
-    //   const response = await axios.post(
-    //     `/edit-patient-record/${record_id}`,
-    //     {...values, patient_id: recordData.patientData.patient_id}
-    //   );
+    try {
+      setLoading(true)
+      const response = await axios.post(
+        `/add-existing-patient-record/${backendData.user[0].id}/${foundPatient[0].patient_id}`,
+        values
+      );
 
-    //   setLoading(false);
-    //   if (response.status === 200) {
-    //     setSuccess(true);
-    //   }
-    // } catch (error) {
-    //   console.error("edit-patient-record: " + error.message);
-    // }
+      setLoading(false);
+      if (response.status === 200) {
+        setSuccess(true);
+      }
+    } catch (error) {
+      console.error("add-patient-record: " + error.message);
+    }
   };
 
   const handleFormChange = (e) => {
