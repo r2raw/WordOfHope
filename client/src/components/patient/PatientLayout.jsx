@@ -48,7 +48,7 @@ function PatientLayout() {
       .then((response) => {
         setBackendData(response.data);
       })
-      .catch((error) => {});
+      .catch((error) => {console.error("backend errpr: " + error.message)});
   };
   useEffect(() => {
     socket.on("new_patient_profile", (updatedData) => {
@@ -81,6 +81,16 @@ function PatientLayout() {
     });
   }, [socket]);
 
+  
+  useEffect(() => {
+    if (backendData && backendData.user && backendData.user.length > 0) {
+      const intervalId = setInterval(() => {
+        updateBackend();
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [backendData]);
   if (!backendData) return <Loader />;
 
   console.log(backendData);

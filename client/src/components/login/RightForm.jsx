@@ -112,9 +112,9 @@ function RightForm() {
             </Zoom>
           </span>
         </div>
-        <div className="forgot">
+        {/* <div className="forgot">
           <p>Forgot password?</p>
-        </div>
+        </div> */}
         <button
           className="outlined lg-blue-3"
           type="submit"

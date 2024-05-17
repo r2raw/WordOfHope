@@ -14,17 +14,17 @@ function DoctorLayout() {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     const role = localStorage.getItem("role");
     const uid = localStorage.getItem("uid");
-    if (!isLoggedIn || isLoggedIn === "false" ||!role || !uid) {
+    if (!isLoggedIn || isLoggedIn === "false" || !role || !uid) {
       navigate("/Login");
       return;
-    }else{
-      if(role !== "Doctor"){
-        if(role !== "Admin"){
+    } else {
+      if (role !== "Doctor") {
+        if (role !== "Admin") {
           navigate(`/WordOfHope/${role}/${uid}/Dashboard`);
           return;
         }
 
-        navigate(`/WordOfHope/MNS/${uid}/Dashboard`)
+        navigate(`/WordOfHope/MNS/${uid}/Dashboard`);
         return;
       }
       axios
@@ -32,11 +32,12 @@ function DoctorLayout() {
         .then((response) => {
           setBackendData(response.data);
         })
-        .catch((error) => {console.error("API error: " + error.message)});
-
+        .catch((error) => {
+          console.error("API error: " + error.message);
+        });
     }
   }, [user]);
-  
+
   const renewUserInfo = () => {
     axios
       .get(`/renew-user/${user}`)
@@ -47,6 +48,17 @@ function DoctorLayout() {
         }));
       })
       .catch((error) => {});
+  };
+
+  const updateBackend = () => {
+    axios
+      .get("/WordOfHope/Doctor/" + user)
+      .then((response) => {
+        setBackendData(response.data);
+      })
+      .catch((error) => {
+        console.error("API error: " + error.message);
+      });
   };
 
   const updateCurrentlyServing = async () => {
@@ -81,7 +93,7 @@ function DoctorLayout() {
         currentlyServing: response.data.currentlyServing,
       }));
 
-      updateQueue()
+      updateQueue();
     } catch (error) {
       console.error("returnToQueue error: " + error.message);
     }
@@ -116,7 +128,7 @@ function DoctorLayout() {
   useEffect(() => {
     if (backendData && backendData.user && backendData.user.length > 0) {
       const intervalId = setInterval(() => {
-        updateQueue();
+        updateBackend();
       }, 60000);
 
       return () => clearInterval(intervalId);
