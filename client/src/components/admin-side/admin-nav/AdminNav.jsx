@@ -244,13 +244,13 @@ function ReceptionistNav(props) {
     },
     {
       patientMGMT: [
-        {
-          id: 1,
-          url: accountsbl,
-          wurl: accountswh,
-          title: "Patient Accounts",
-          path: `/WordOfHope/Nurse/${user}/Patient-Account`,
-        },
+        // {
+        //   id: 1,
+        //   url: accountsbl,
+        //   wurl: accountswh,
+        //   title: "Patient Accounts",
+        //   path: `/WordOfHope/Nurse/${user}/Patient-Account`,
+        // },
         {
           id: 2,
           url: patientrecbl,

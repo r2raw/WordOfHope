@@ -3170,7 +3170,7 @@ header .header-details {
   height: 100%;
   right: 0;
   top: 0;
-  z-index: 100;
+  z-index: 150;
   background-color: var(--color-white);
   padding: 60px 10px;
   box-shadow: -5px 5px 10px #5e6060, 5px -5px 10px #ffffff;

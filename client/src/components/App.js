@@ -222,7 +222,10 @@ function App() {
           <Route path="Book-Appointment" element={<BookAppointment />} />
           <Route path="My-Appointment" element={<MyAppointment />} />
           <Route path="Patient-Profile" element={<PatientProfile />} />
-          <Route path="Medical-History" element={<MedicalHistory />} />
+          <Route path="Medical-History" element={<MedicalHistory />} />\
+          <Route path="Medical-History">
+            <Route path=":record_id" element={<ViewedPatientRecord />} />
+          </Route>
         </Route>
       </Route>
     </Routes>

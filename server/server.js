@@ -135,6 +135,8 @@ import deoartmentAppointmentToday from "./MyServerFunctions/Doctor/deoartmentApp
 import departmentsServicesChart from "./MyServerFunctions/Doctor/departmentsServicesChart.js";
 import monthlyPatientVisit from "./MyServerFunctions/Doctor/monthlyPatientVisit.js";
 import removeFromQueue from "./MyServerFunctions/Nurse/removeFromQueue.js";
+import fetchMyRecord from "./MyServerFunctions/Patient/fetchMyRecord.js";
+import upcomingAppointments from "./MyServerFunctions/Nurse/upcomingAppointments.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1470,6 +1472,7 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     const queues = await fetchQueues(db);
     const services = await fetchAllServices(db);
     const availableDays = await fetchDoctorsDaySched(db);
+    const appointmentsUpcoming = await upcomingAppointments(db)
     return res.json({
       user: employeeResult.rows,
       appointmentsToday: apptToday,
@@ -1477,6 +1480,7 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
       inQueue: queues,
       availableDays: availableDays,
       services: services,
+      appointmentsUpcoming: appointmentsUpcoming,
       patientRecords: patientRecords,
       myAttendance: myAttendance,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
@@ -1794,7 +1798,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
     const availableDays = await fetchDoctorsDaySched(db);
     const availableTime = await fetchAvailableDoctorTime(db);
     const services = await fetchPatientServices(db);
-
+    const patientRecord = await fetchMyRecord(db, uid);
     const patientResult = await db.query(
       "SELECT userProfile.*, wohUser.email FROM userProfile JOIN wohUser ON userProfile.userId = wohUser.id WHERE userid=$1",
       [uid]
@@ -1815,6 +1819,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
       availableDays: availableDays,
       availableTime: availableTime,
       services: services,
+      myRecord: patientRecord,
       appointments: {
         selfAppointment: myAppointments,
         thirdPartyAppointment: thirdPartyAppointment,

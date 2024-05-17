@@ -11,6 +11,7 @@ function QrScanner(props) {
   const handleConfirm = () => {
     if (qrData) {
       props.setAppointmentId(qrData.id);
+      props.handleCloseQr();
     }
   };
 

@@ -106,7 +106,7 @@ function AdminDashboard() {
             <h1>{lateAttendance.length}</h1>
           </div>
           <div className="attendance-result">
-            <h2>USCHEDULED</h2>
+            <h2>UNSCHEDULED</h2>
             <h1>{unscheduledAttendance.length}</h1>
           </div>
           <div className="attendance-result">
