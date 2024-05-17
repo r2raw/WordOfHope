@@ -15,6 +15,7 @@ import qr from "qr-image";
 import { uid } from "uid";
 import fs, { stat } from "fs";
 import path from "path";
+import { titleCase } from "title-case";
 import GetAppointmentNum from "./MyServerFunctions/GetAppointmentNum.js";
 import PadZeroes from "./MyServerFunctions/PadZeroes.js";
 import BookMyself from "./MyServerFunctions/BookMyself.js";
@@ -115,6 +116,7 @@ import searchAddExistingPatient from "./MyServerFunctions/Doctor/searchAddExisti
 import fetchAllPatientRecords from "./MyServerFunctions/Doctor/fetchAllPatientRecords.js";
 import viewPatientRecord from "./MyServerFunctions/Doctor/viewPatientRecord.js";
 import fetchMyAttendance from "./MyServerFunctions/fetchMyAttendance.js";
+import viewedAttendance from "./MyServerFunctions/viewedAttendance.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1161,18 +1163,22 @@ app.post("/update-employee/:user", async (req, res) => {
       return res.json({ status: "invalid", errorIn: errors });
     }
 
-    console.log(req.body);
+    
+    const selectPositionName = "SELECT position_name from positions where id=$1"
+
+    const positionName = await db.query(selectPositionName,[position])
+
     const wohUser = await db.query(
       "UPDATE wohUser SET userType=$1, email=$2 WHERE id=$3",
-      [position, email, userId]
+      [positionName.rows[0].position_name, _.trim(email), userId]
     );
 
     await db.query(
       "update employee SET firstname=$1, lastname=$2, middlename=$3, suffix=$4, sex=$5, birthdate=$6,  phone=$7, province=$8, city=$9, barangay=$10, street=$11, zip=$12, position=$13, department=$14, empType=$15,rfid=$16, modifiedBy=$17 WHERE id=$18",
       [
-        firstname,
-        lastname,
-        middlename,
+        titleCase(_.toLower(_.trim(firstname))),
+        titleCase(_.toLower(_.trim(lastname))),
+        titleCase(_.toLower(_.trim(middlename))),
         suffix,
         sex,
         birthdate,
@@ -1257,13 +1263,12 @@ app.post(
 
       const image = req.file.filename;
 
-      console.log(image);
       await db.query(
         "update employee SET firstname= $1, lastname = $2, middlename=$3, suffix=$4, sex=$5, birthdate=$6, phone=$7, province=$8, city=$9, barangay=$10, street=$11, zip=$12, position=$13, department=$14, modifiedBy=$15, empType=$16,rfid=$17, empimg=$18 WHERE id=$19",
         [
-          firstname,
-          lastname,
-          middlename,
+          titleCase(_.toLower(_.trim(firstname))),
+          titleCase(_.toLower(_.trim(lastname))),
+          titleCase(_.toLower(_.trim(middlename))),
           suffix,
           sex,
           birthdate,
@@ -1283,9 +1288,12 @@ app.post(
         ]
       );
 
+      const selectPositionName = "SELECT position_name from positions where id=$1"
+
+      const positionName = await db.query(selectPositionName,[position])
       await db.query("UPDATE wohUser SET userType=$1, email=$2 WHERE id=$3", [
         position,
-        email,
+      _.trim(email),
         userId,
       ]);
       return res.json({ status: "success" });
@@ -1400,7 +1408,9 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     const ncrBarangays = await fetchNcrBarangays();
     const apptToday = await appointmentToday(db);
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
+    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id)
     const currentlyServing = await fetchNurseCurrentlyServing(db);
+    const patientRecords = await fetchAllPatientRecords(db);
     const queues = await fetchQueues(db);
     const services = await fetchAllServices(db);
     const availableDays = await fetchDoctorsDaySched(db);
@@ -1411,6 +1421,8 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
       inQueue: queues,
       availableDays: availableDays,
       services: services,
+      patientRecords: patientRecords,
+      myAttendance: myAttendance,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });
   } catch (error) {
@@ -1418,6 +1430,17 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+app.get("/view-attendance/:id", async (req,res)=>{
+  try {
+    const {id} = req.params
+    const attendance = await viewedAttendance(db, id)
+
+    return res.status(200).json(attendance)
+  } catch (error) {
+    console.error("view attendance API error: " + error.message)
+  }
+})
 
 app.post("/walkin-appointment/:nurse_id", async (req, res) => {
   try {
@@ -1503,6 +1526,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       db,
       employeeResult.rows[0].id
     );
+    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id)
     const patientRecords = await fetchAllPatientRecords(db);
     const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
     const services = await doctorDepartmentService(
@@ -1520,6 +1544,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
     res.json({
       user: employeeResult.rows,
       inQueue: queue,
+      myAttendance: myAttendance,
       currentlyServing: ongoingAppointment,
       services: services,
       serviceChartData: serviceChartData,
@@ -2216,6 +2241,7 @@ app.get("/HR/:uid", async (req, res) => {
     const { uid } = req.params;
 
     const hrResult = await fetchEmployeeUserInfo(db, uid);
+    const myAttendance = await fetchMyAttendance(db, hrResult.rows[0].id)
     const noSchedResult = await getNoSchedEmployee(db);
     const employeeAttendance = await fetchEmployeeAttendance(db);
     const employeeSchedResult = await getSchedule(db);
@@ -2223,6 +2249,7 @@ app.get("/HR/:uid", async (req, res) => {
       user: hrResult.rows,
       noSchedule: noSchedResult,
       employeeSched: employeeSchedResult,
+      myAttendance: myAttendance,
       employeeAttendance: employeeAttendance,
       ncr: { cities: ncrCities, barangays: ncrBarangays },
     });

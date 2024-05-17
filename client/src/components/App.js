@@ -91,6 +91,10 @@ function App() {
           <Route path="RFIDScan" element={<RFIDScan />} />
           <Route path="Dashboard" element={<AdminDashboard />} />
           <Route path="Log" element={<MyAttendancLog />} />
+          <Route path="Log">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
+
           <Route path="Accounts" element={<Accounts />} />
           <Route path="Doctor-Schedule" element={<DoctorSched />} />
           <Route path="Patient-Demand-Rate" element={<PatientDemandRate />} />
@@ -98,7 +102,7 @@ function App() {
           <Route path="Accounts/Edit/:empId" element={<EditEmployee />} />
           <Route path="Departments" element={<Departments />} />
           <Route path="Services" element={<AddSevices />} />
-          <Route path="Deactivated" element={<DeactivatedAccounts />}/>
+          <Route path="Deactivated" element={<DeactivatedAccounts />} />
           <Route path="Change-Password" element={<FirstTimeLog />} />
           <Route path="Account-Settings" element={<AccountSettings />}>
             <Route path="User-Profile" element={<UserProfile />} />
@@ -116,9 +120,14 @@ function App() {
           <Route path="Queue" element={<DocQueue />} />
           <Route path="Appointment-Sched" element={<DocAppointmentSched />} />
           <Route path="Change-Password" element={<FirstTimeLog />} />
-          <Route path="Log" element={<DocLog />} />
+          <Route path="Log" element={<MyAttendancLog />} />
+          <Route path="Log">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
           <Route path="Patient-Record" element={<DocPatientRec />} />
-          <Route path="Patient-Record/:record_id" element={<ViewedPatientRecord />} />
+          <Route path="Patient-Record">
+            <Route path=":record_id" element={<ViewedPatientRecord />} />
+          </Route>
           <Route path="Patient-Demographics" element={<PatientDemo />} />
           <Route path="Result-Management" element={<DocResultMgmt />} />
           <Route path="Result-Management/:record_id" element={<EditResult />} />
@@ -150,12 +159,14 @@ function App() {
             path="Employee-Schedule/Add-Schedule"
             element={<AddEmployeeSched />}
           />
-          <Route path="Employee-Schedule/View-Schedule/:id" element={<EditEmployeeSched />}/>
-          <Route path="Attendance" element={<Attendance />} />
           <Route
-            path="Attendance/:attendanceId"
-            element={<EmployeeViewAttendance />}
+            path="Employee-Schedule/View-Schedule/:id"
+            element={<EditEmployeeSched />}
           />
+          <Route path="Attendance" element={<Attendance />} />
+          <Route path="Attendance">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
           <Route path="Account-Settings" element={<AccountSettings />}>
             <Route path="User-Profile" element={<UserProfile />} />
             <Route
@@ -171,9 +182,15 @@ function App() {
           <Route path="Dashboard" element={<ReceptDashboard />} />
           <Route path="Change-Password" element={<FirstTimeLog />} />
           <Route path="Queue" element={<Queues />} />
-          <Route path="Log" element={<ReceptLog />} />
+          <Route path="Log" element={<MyAttendancLog />} />
+          <Route path="Log">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
           <Route path="Patient-Account" element={<ReceptPatientAcc />} />
-          <Route path="Patient-Record" element={<ReceptPatientRec />} />
+          <Route path="Patient-Record" element={<DocPatientRec />} />
+          <Route path="Patient-Record">
+            <Route path=":record_id" element={<ViewedPatientRecord />} />
+          </Route>
           <Route path="Doctor-Schedule" element={<ReceptDoctorSched />} />
           <Route path="Book-Appointment" element={<ReceptBookAppointment />} />
           <Route path="Account-Settings" element={<AccountSettings />}>

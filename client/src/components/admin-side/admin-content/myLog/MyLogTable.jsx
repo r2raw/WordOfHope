@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Zoom } from "@mui/material";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   useTable,
   useSortBy,
@@ -14,9 +14,13 @@ import ArrowBackIosNewSharpIcon from "@mui/icons-material/ArrowBackIosNewSharp";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import MyLogTableFilter from "./MyLogTableFilter";
 function MyLogTable(props) {
+  const navigate  = useNavigate()
   const { backendData } = useOutletContext();
   const columns = useMemo(() => myLogColumn, []);
-  const data = useMemo(() => backendData.myAttendance, [backendData.myAttendance]);
+  const data = useMemo(
+    () => backendData.myAttendance,
+    [backendData.myAttendance]
+  );
   const {
     getTableProps,
     getTableBodyProps,
@@ -86,43 +90,18 @@ function MyLogTable(props) {
                       </td>
                     );
                   })}
-                  {row.original.id !== 1 && row.original.id !== 2 ? (
-                    <td className="action-button">
-                      <div>
-                        <button
-                          className="solid submit fade"
-                          onClick={() => {
-                            props.handleOpenEditDepartment(row.original.id);
-                          }}
-                        >
-                          Edit
-                        </button>
-                        {row.original.availability === "Available" ? (
-                          <button
-                            className="solid danger fade"
-                            onClick={() => {
-                              props.handleOpenDeleteDepartment(row.original.id);
-                            }}
-                          >
-                            Deactivate
-                          </button>
-                        ) : (
-                          <button
-                            className="solid primary fade"
-                            onClick={() => {
-                              props.handleOpenActivateDepartment(
-                                row.original.id
-                              );
-                            }}
-                          >
-                            Activate
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  ) : (
-                    <td></td>
-                  )}
+                  <td className="action-button">
+                    <div>
+                      <button
+                        className="solid submit fade"
+                        onClick={() => {
+                          navigate(`${row.original.id}`);
+                        }}
+                      >
+                        View
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}

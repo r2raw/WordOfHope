@@ -5,19 +5,34 @@ import calculateTimeDiff from "../../../my-functions/calculateTimeDiff";
 import _ from "lodash";
 import ArrowBackSharpIcon from "@mui/icons-material/ArrowBackSharp";
 import calculateAttendance from "../../../my-functions/calculateAttendance";
+import axios from "axios";
 function EmployeeViewAttendance() {
   const { attendanceId } = useParams();
   const { backendData } = useOutletContext();
   const [foundEmployee, setFoundEmployee] = useState();
 
-  useEffect(() => {
-    const findEmployee = backendData.employeeAttendance.find(
-      (i) => i.id === parseInt(attendanceId)
-    );
-    if (findEmployee) {
-      setFoundEmployee(findEmployee);
+  const fetchAttendance = async ()=>{
+    try {
+      const response  = await axios.get(`/view-attendance/${attendanceId}`)
+      if(response.status === 200){
+        setFoundEmployee(response.data);
+      }
+    } catch (error) {
+      console.error("fetchAttendance ERROR: " + error.message)
     }
-  }, [attendanceId]);
+  }
+  // useEffect(() => {
+  //   const findEmployee = backendData.employeeAttendance.find(
+  //     (i) => i.id === parseInt(attendanceId)
+  //   );
+  //   if (findEmployee) {
+  //     setFoundEmployee(findEmployee);
+  //   }
+  // }, [attendanceId]);
+
+  useEffect(()=>{
+    fetchAttendance();
+  },[])
 
   if (!foundEmployee) return null;
 
@@ -33,7 +48,7 @@ function EmployeeViewAttendance() {
 
   return (
     <div className="admin-element">
-      <Link to="../Attendance" style={{ width: "autofit" }}>
+      <Link to="../" style={{ width: "autofit" }}>
         <ArrowBackSharpIcon />
       </Link>
       <h1>Employee: {foundEmployee.empid}</h1>

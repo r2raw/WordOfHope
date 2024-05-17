@@ -27,7 +27,7 @@ function ViewedPatientRecord() {
   return (
     <div className="admin-element">
       <div className="back-button">
-        <Link to="../Patient-Record">
+        <Link to="../">
           <ArrowBackSharpIcon />
         </Link>
       </div>
