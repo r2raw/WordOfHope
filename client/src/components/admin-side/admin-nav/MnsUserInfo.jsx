@@ -1,15 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import MoreVertSharpIcon from "@mui/icons-material/MoreVertSharp";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import PersonSharpIcon from "@mui/icons-material/PersonSharp";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import def from "../../my-images/empImg/defaultImg.png";
-import SensorsSharpIcon from '@mui/icons-material/SensorsSharp';
-import PeopleAltSharpIcon from '@mui/icons-material/PeopleAltSharp';
-
+import SensorsSharpIcon from "@mui/icons-material/SensorsSharp";
+import PeopleAltSharpIcon from "@mui/icons-material/PeopleAltSharp";
+import axios from "axios";;
 function MnsUserInfo(props) {
   const [imageSrc, setImageSrc] = useState(null);
 
+  const navigate = useNavigate();
+  const {user} = useParams();
   const [userDets, setUserDets] = useState({
     lastname: props.lastname,
     firstname: props.firstname,
@@ -35,25 +37,40 @@ function MnsUserInfo(props) {
   }, []);
 
   useEffect(() => {
-    if(userDets.imgsrc){
-          setImageSrc(`http://localhost:5000/empImg/${userDets.imgsrc}`);
-    
-  }});
+    if (userDets.imgsrc) {
+      setImageSrc(`http://localhost:5000/empImg/${userDets.imgsrc}`);
+    }
+  });
 
-  useEffect(()=>{
+  useEffect(() => {
     setUserDets({
-        lastname: props.lastname,
-        firstname: props.firstname,
-        imgsrc: props.img,
-        position: props.pos,
-    
-    })
-  }, [props])
+      lastname: props.lastname,
+      firstname: props.firstname,
+      imgsrc: props.img,
+      position: props.pos,
+    });
+  }, [props]);
   function handleClick() {
     setIsOpen(!isOpen);
   }
 
-  function openRfidDialog(){
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(`/Logout/${user}`);
+      if (response.status === 200) {
+        
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("uid");
+        localStorage.removeItem("role");
+        navigate("/Login")
+        return;
+      }
+    } catch (error) {
+      console.error("handleLogout error: " + error.message);
+    }
+  };
+
+  function openRfidDialog() {
     props.openRfidDialog();
   }
   return (
@@ -90,16 +107,18 @@ function MnsUserInfo(props) {
         {/* </NavLink> */}
         {/* <NavLink to=""> */}
 
-        <div className="fullscreen">
+        {/* <div className="fullscreen">
           <div>
             <div>
               <PeopleAltSharpIcon />
             </div>
             <p>Queue</p>
           </div>
-        </div>
+        </div> */}
         {/* </NavLink> */}
-        <NavLink to={`/WordOfHope/MNS/${props.user}/Account-Settings/User-Profile`}>
+        <NavLink
+          to={`/WordOfHope/MNS/${props.user}/Account-Settings/User-Profile`}
+        >
           <div>
             <div>
               <PersonSharpIcon />
@@ -107,14 +126,14 @@ function MnsUserInfo(props) {
             <p>My Profile</p>
           </div>
         </NavLink>
-        <NavLink to="/Login">
-          <div>
+        <a>
+          <div onClick={handleLogout}>
             <div>
               <LogoutSharpIcon />
             </div>
             <p>Logout</p>
           </div>
-        </NavLink>
+        </a>
       </div>
     </div>
   );

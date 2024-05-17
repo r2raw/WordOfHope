@@ -37,6 +37,9 @@ function RightForm() {
         .then((res) => {
           if (res.data.status === "Success") {
             const { role, id } = res.data;
+            localStorage.setItem("isLoggedIn", true);
+            localStorage.setItem("uid", id);
+            localStorage.setItem("role", role);
             if(role !== 'Admin'){
               navigate(`/WordOfHope/${role}/${id}/Dashboard`);
             }else{

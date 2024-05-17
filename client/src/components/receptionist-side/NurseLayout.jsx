@@ -12,12 +12,29 @@ function NurseLayout() {
   const navigate = useNavigate();
   const [backendData, setBackendData] = useState();
   useEffect(() => {
-    axios
-      .get("/WordOfHope/Nurse/" + user)
-      .then((response) => {
-        setBackendData(response.data);
-      })
-      .catch((error) => {});
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const role = localStorage.getItem("role");
+    const uid = localStorage.getItem("uid");
+    if (!isLoggedIn || isLoggedIn === "false" || !role || !uid) {
+      navigate("/Login");
+      return;
+    } else {
+      if (role !== "Nurse") {
+        if (role !== "Admin") {
+          navigate(`/WordOfHope/${role}/${uid}/Dashboard`);
+          return;
+        }
+
+        navigate(`/WordOfHope/MNS/${uid}/Dashboard`);
+        return;
+      }
+      axios
+        .get("/WordOfHope/Nurse/" + user)
+        .then((response) => {
+          setBackendData(response.data);
+        })
+        .catch((error) => {});
+    }
   }, [user]);
 
   const renewBackendData = () => {
@@ -41,18 +58,20 @@ function NurseLayout() {
       .catch((error) => {});
   };
 
-  const updateQueue = ()=>{
+  const updateQueue = () => {
     axios
-    .get(`/fetchQueues`)
-    .then((response) => {
-      setBackendData((prev) => ({
-        ...prev,
-        inQueue: response.data.inQueue,
-        appointmentsToday: response.data.appointmentsToday,
-      }));
-    })
-    .catch((error) => {console.error("fetchQueues error: "+ error.message  )});
-  }
+      .get(`/fetchQueues`)
+      .then((response) => {
+        setBackendData((prev) => ({
+          ...prev,
+          inQueue: response.data.inQueue,
+          appointmentsToday: response.data.appointmentsToday,
+        }));
+      })
+      .catch((error) => {
+        console.error("fetchQueues error: " + error.message);
+      });
+  };
   useEffect(() => {
     if (backendData) {
       if (backendData.user[0].firsttimelog) {
@@ -63,7 +82,7 @@ function NurseLayout() {
   useEffect(() => {
     if (backendData && backendData.user && backendData.user.length > 0) {
       const intervalId = setInterval(() => {
-        renewBackendData()
+        renewBackendData();
       }, 60000);
 
       return () => clearInterval(intervalId);
@@ -93,7 +112,14 @@ function NurseLayout() {
       <EmpHeader />
       <ReceptionistNav user={user} backendData={backendData} />
       <main>
-        <Outlet context={{ backendData, renewBackendData, renewUserInfo, updateQueue }} />
+        <Outlet
+          context={{
+            backendData,
+            renewBackendData,
+            renewUserInfo,
+            updateQueue,
+          }}
+        />
       </main>
     </div>
   );

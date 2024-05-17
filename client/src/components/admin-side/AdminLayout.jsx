@@ -14,15 +14,26 @@ function AdminLayout() {
   const navigate = useNavigate();
   const [rfidDialogfOpen, setRfidDialogOpen] = useState(false);
   const [backendData, setBackendData] = useState();
-  
-  console.log(backendData)
+
   useEffect(() => {
-    axios
-      .get("/WordOfHope/MNS/" + user)
-      .then((response) => {
-        setBackendData(response.data);
-      })
-      .catch((error) => {});
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const role = localStorage.getItem("role");
+    const uid = localStorage.getItem("uid");
+    if (!isLoggedIn || isLoggedIn === "false" ||!role || !uid) {
+      navigate("/Login");
+      return;
+    } else {
+      if (role !== "Admin") {
+        return navigate(`/WordOfHope/${role}/${uid}/Dashboard`);
+      }
+
+      axios
+        .get("/WordOfHope/MNS/" + user)
+        .then((response) => {
+          setBackendData(response.data);
+        })
+        .catch((error) => {});
+    }
   }, []);
 
   const renewBackendData = () => {
@@ -35,14 +46,12 @@ function AdminLayout() {
   };
 
   const updateDepartments = () => {
-    axios
-      .get("/fetchDepartments")
-      .then((res) => {
-        setBackendData((prev) => ({
-          ...prev,
-          departments: res.data.departments,
-        }));
-      });
+    axios.get("/fetchDepartments").then((res) => {
+      setBackendData((prev) => ({
+        ...prev,
+        departments: res.data.departments,
+      }));
+    });
   };
 
   const updatePositions = () => {
@@ -56,12 +65,10 @@ function AdminLayout() {
 
   const updateServices = () => {
     axios.get("/fetchServices").then((res) => {
-      
       setBackendData((prev) => ({
         ...prev,
         services: res.data.services,
       }));
-
     });
   };
   const renewEmployees = () => {
@@ -103,7 +110,7 @@ function AdminLayout() {
   useEffect(() => {
     if (backendData && backendData.user && backendData.user.length > 0) {
       const intervalId = setInterval(() => {
-        renewBackendData()
+        renewBackendData();
       }, 60000);
 
       return () => clearInterval(intervalId);

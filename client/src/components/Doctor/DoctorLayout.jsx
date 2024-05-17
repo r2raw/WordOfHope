@@ -11,12 +11,30 @@ function DoctorLayout() {
   const navigate = useNavigate();
   const [backendData, setBackendData] = useState();
   useEffect(() => {
-    axios
-      .get("/WordOfHope/Doctor/" + user)
-      .then((response) => {
-        setBackendData(response.data);
-      })
-      .catch((error) => {console.error("API error: " + error.message)});
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const role = localStorage.getItem("role");
+    const uid = localStorage.getItem("uid");
+    if (!isLoggedIn || isLoggedIn === "false" ||!role || !uid) {
+      navigate("/Login");
+      return;
+    }else{
+      if(role !== "Doctor"){
+        if(role !== "Admin"){
+          navigate(`/WordOfHope/${role}/${uid}/Dashboard`);
+          return;
+        }
+
+        navigate(`/WordOfHope/MNS/${uid}/Dashboard`)
+        return;
+      }
+      axios
+        .get("/WordOfHope/Doctor/" + user)
+        .then((response) => {
+          setBackendData(response.data);
+        })
+        .catch((error) => {console.error("API error: " + error.message)});
+
+    }
   }, [user]);
   
   const renewUserInfo = () => {

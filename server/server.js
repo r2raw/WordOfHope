@@ -1306,11 +1306,25 @@ app.post(
 
 // LOGIN
 
+
+app.post("/Logout/:uid", async (req, res)=>{
+  try {
+    const {uid} = req.params;
+    const updateLogin = await db.query("UPDATE wohUser SET loggedin=$1 WHERE id=$2", [false, uid])
+    if(updateLogin.rowCount <= 0){
+      return res.status(500).json({ status: "failed", errorMessage: "Logout attempt failed" });
+    }
+
+    return res.status(200).json({message: "logout success"})
+  } catch (error) {
+    console.log("Logout api error: " + error.message)
+  }
+})
 app.post("/Login", async (req, res) => {
   try {
     const { username, password } = req.body;
     const getUserResult = await db.query(
-      "SELECT id, username, password, userType, email FROM wohUser WHERE username=$1 OR email=$1",
+      "SELECT id, username, password, userType, email, accountstatus FROM wohUser WHERE username=$1 OR email=$1",
       [username]
     );
 
@@ -1321,18 +1335,27 @@ app.post("/Login", async (req, res) => {
       const userType = firstRow.usertype;
       const dbEmail = firstRow.email;
 
+      const accountStatus = firstRow.accountstatus
       const uid = firstRow.id;
       const match = await bcrypt.compare(password, dbPass);
 
-      console.log(`user exist`);
       if (match) {
-        console.log(`Role: ${userType}, id: ${uid}, email: ${dbEmail}`);
+        if(accountStatus === 'Deactivated'){
+          return res.json({ status: "failed", errorMessage: "Account deactivated! Plss, contact the admin!" });
+        }
+
+        const updateLogin = await db.query("UPDATE wohUser SET loggedin=$1 WHERE id=$2", [true, uid])
+        if(updateLogin.rowCount <= 0){
+          return res.json({ status: "failed", errorMessage: "Login attempt failed" });
+        }
+
         return res.json({
           role: userType,
           id: uid,
           email: dbEmail,
           status: "Success",
         });
+       
         // if (userType === "Nurse") {
         //   res.redirect(`/WordOfHope/Nurse/${username}/Dashboard`);
         // } else if (userType === "HR") {
@@ -1358,7 +1381,7 @@ app.post("/Login", async (req, res) => {
 
     // res.redirect("/Login");
   } catch (error) {
-    return res.json({ status: "failed", errorMessage: error });
+    return res.json({ status: "failed", errorMessage: error.message });
   }
 });
 

@@ -1,28 +1,45 @@
 import React, { useState, useEffect } from "react";
 import { PatientNav, ReceptionistNav } from "../admin-side/admin-nav/AdminNav";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Outlet } from "react-router-dom";
 import EmpHeader from "../admin-side/header/EmpHeader";
 import ClientNav from "../client-side/ClientNav";
 import logoImg from "../my-images/hopeImgs/hope-logo.png";
 import HomeSharpIcon from "@mui/icons-material/HomeSharp";
-
 import io from "socket.io-client";
 import Loader from "../Loader";
 
 function PatientLayout() {
+  const navigate = useNavigate();
   const socket = io.connect("http://localhost:5000/Patient");
   const { user } = useParams();
 
   const [backendData, setBackendData] = useState();
   useEffect(() => {
-    axios
-      .get("/WordOfHope/Patient/" + user)
-      .then((response) => {
-        setBackendData(response.data);
-      })
-      .catch((error) => {});
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const role = localStorage.getItem("role");
+    const uid = localStorage.getItem("uid");
+    if (!isLoggedIn || isLoggedIn === "false" || !role || !uid) {
+      navigate("/Login");
+      return;
+    } else {
+      if (role !== "Patient") {
+        if (role !== "Admin") {
+          navigate(`/WordOfHope/${role}/${uid}/Dashboard`);
+          return;
+        }
+
+        navigate(`/WordOfHope/MNS/${uid}/Dashboard`);
+        return;
+      }
+      axios
+        .get("/WordOfHope/Patient/" + user)
+        .then((response) => {
+          setBackendData(response.data);
+        })
+        .catch((error) => {});
+    }
   }, [user]);
 
   useEffect(() => {
@@ -33,13 +50,13 @@ function PatientLayout() {
       }));
     });
 
-    
     socket.on("get_self_appointment", (updatedData) => {
       console.log(updatedData);
       setBackendData((prevData) => ({
         ...prevData,
-        appointments: {...prevData.appointments,
-          selfAppointment: updatedData
+        appointments: {
+          ...prevData.appointments,
+          selfAppointment: updatedData,
         },
       }));
     });
@@ -48,14 +65,15 @@ function PatientLayout() {
       console.log(updatedData);
       setBackendData((prevData) => ({
         ...prevData,
-        appointments: {...prevData.appointments,
-          thirdPartyAppointment: updatedData
+        appointments: {
+          ...prevData.appointments,
+          thirdPartyAppointment: updatedData,
         },
       }));
     });
   }, [socket]);
 
-  if(!backendData) return <Loader />
+  if (!backendData) return <Loader />;
 
   console.log(backendData);
   return (
