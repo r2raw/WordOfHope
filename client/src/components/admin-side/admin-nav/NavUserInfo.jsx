@@ -110,7 +110,7 @@ function NavUserInfo(props) {
         style={{ display: isOpen ? "flex" : "none" }}
       >
         <NavLink
-          to={`/WordOfHope/${userDets.position}/${props.user}/Account-Settings/User-Profile`}
+          to={userDets.position === "Patient" ? "./User-Profile" :`/WordOfHope/${userDets.position}/${props.user}/Account-Settings/User-Profile`}
         >
           <div>
             <div>

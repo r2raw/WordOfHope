@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import passwordValidation from "./passwordValidation";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import axios from "axios";
+import passwordValidation from "../AccountSettings/passwordValidation";
 import LockSharpIcon from "@mui/icons-material/LockSharp";
 import LockOpenSharpIcon from "@mui/icons-material/LockOpenSharp";
-import { useOutletContext, useNavigate } from "react-router-dom";
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";
-import axios from "axios";
-function ChangePassForm() {
-  const { userInfo } = useOutletContext();
-  console.log(useOutletContext())
+function PatientPassword() {
+  const { backendData } = useOutletContext();
+  const userInfo = backendData.user[0];
+
+  console.log(userInfo)
   const [values, setValues] = useState({
     newpassword: "",
     confirmpassword: "",
@@ -101,19 +103,25 @@ function ChangePassForm() {
 
           setTimeout(() => {
             setSuccess(false);
-            if(userInfo.usertype !== "Admin"){
-              navigate(`/WordOfHope/${userInfo.usertype}/${userInfo.userid}/Account-Settings/User-Profile`);
+            if (userInfo.usertype !== "Patient") {
+              if (userInfo.usertype !== "Admin") {
+                navigate(
+                  `/WordOfHope/${userInfo.usertype}/${userInfo.userid}/Account-Settings/User-Profile`
+                );
+              } else {
+                navigate(
+                  `/WordOfHope/MNS/${userInfo.userid}/Account-Settings/User-Profile`
+                );
+              }
             }else{
-              navigate(`/WordOfHope/MNS/${userInfo.userid}/Account-Settings/User-Profile`);
-            }
-            
+                navigate(
+                `/WordOfHope/${userInfo.usertype}/${userInfo.userid}/Dashboard`
+              );}
           }, 3000);
         }
       })
       .catch((err) => console.error(err.message));
   };
-
-  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -167,12 +175,7 @@ function ChangePassForm() {
             required
           />
           <span className="new-floating-label">Confirm Password</span>
-          <span
-            className="new-floating-icon"
-            onClick={() => {
-              handleShowPass("confirmPass");
-            }}
-          >
+          <span className="new-floating-icon">
             {showPass.confirmPass ? <LockOpenSharpIcon /> : <LockSharpIcon />}
           </span>
         </div>
@@ -187,21 +190,21 @@ function ChangePassForm() {
           Submit
         </button>
       </div>
-      {success && 
-      <div>
-        <div className="success-change">
-          <div>
-            <CheckCircleOutlineSharpIcon />
+      {success && (
+        <div>
+          <div className="success-change">
+            <div>
+              <CheckCircleOutlineSharpIcon />
+            </div>
+            <h1>Success</h1>
           </div>
-          <h1>Success</h1>
         </div>
-      </div>}
+      )}
     </form>
   );
 }
 
-export default ChangePassForm;
-
+export default PatientPassword;
 const invalidStyle = {
   textShadow: "none",
   color: "red",

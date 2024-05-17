@@ -61,6 +61,7 @@ import DeactivatedAccounts from "./admin-side/admin-content/deactivated/Deactiva
 import EditResult from "./Doctor/ResultManagementTable/EditResult";
 import ViewedPatientRecord from "./Doctor/ViewPatientRecord/ViewedPatientRecord";
 import MyAttendancLog from "./admin-side/admin-content/myLog/MyAttendancLog";
+import UsernamePassword from "./patient/UsernamePassword";
 
 function App() {
   return (
@@ -226,6 +227,7 @@ function App() {
           <Route path="Medical-History">
             <Route path=":record_id" element={<ViewedPatientRecord />} />
           </Route>
+          <Route path="User-Profile" element={<UsernamePassword />}/>
         </Route>
       </Route>
     </Routes>

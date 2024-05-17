@@ -137,6 +137,8 @@ import monthlyPatientVisit from "./MyServerFunctions/Doctor/monthlyPatientVisit.
 import removeFromQueue from "./MyServerFunctions/Nurse/removeFromQueue.js";
 import fetchMyRecord from "./MyServerFunctions/Patient/fetchMyRecord.js";
 import upcomingAppointments from "./MyServerFunctions/Nurse/upcomingAppointments.js";
+import myUnattendedAppointment from "./MyServerFunctions/Patient/myUnattendedAppointment.js";
+import myAppointmentTotal from "./MyServerFunctions/Patient/myAppointmentTotal.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1800,7 +1802,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
     const services = await fetchPatientServices(db);
     const patientRecord = await fetchMyRecord(db, uid);
     const patientResult = await db.query(
-      "SELECT userProfile.*, wohUser.email FROM userProfile JOIN wohUser ON userProfile.userId = wohUser.id WHERE userid=$1",
+      "SELECT userProfile.*, wohUser.email, wohUser.username FROM userProfile JOIN wohUser ON userProfile.userId = wohUser.id WHERE userid=$1",
       [uid]
     );
 
@@ -1812,6 +1814,8 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
 
     const myAppointments = await GetMyAppointment(db, uid);
     const thirdPartyAppointment = await GetThirdPartyAppointment(db, uid);
+    const unattendedAppointment = await myUnattendedAppointment(db, uid);
+    const mytotalAppointment = await myAppointmentTotal(db, uid)
     // console.log(myAppointments);
     res.json({
       ncr: { cities: ncrCities, barangays: ncrBarangays },
@@ -1820,9 +1824,11 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
       availableTime: availableTime,
       services: services,
       myRecord: patientRecord,
+      mytotalAppointment: mytotalAppointment,
       appointments: {
         selfAppointment: myAppointments,
         thirdPartyAppointment: thirdPartyAppointment,
+        unattendedAppointment: unattendedAppointment,
       },
     });
   } catch (error) {

@@ -10,7 +10,6 @@ function ScannedQr() {
   const [backendData, setBackendData] = useState();
   const [loading, setLoading] = useState(true);
   const { qr } = useParams();
-
   useEffect(() => {
     axios
       .get("/ViewAppointment/" + qr)
@@ -34,6 +33,7 @@ function ScannedQr() {
 
   return (
     <div>
+    
       <div className="viewed-qr">
         <div className="company-info">
           <div className="img-container">

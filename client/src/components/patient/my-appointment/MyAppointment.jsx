@@ -9,32 +9,26 @@ import ViewThirdPartyAppointment from "../../client-side/ViewApointment/ViewThir
 import ViewedThirdParty from "./ViewedThirdParty";
 import ViewSelfAppointment from "../../client-side/ViewApointment/ViewSelfAppointment";
 import ViewSelfAppoint from "./ViewSelfAppoint";
-
+import MyUpComingAppointmentTable from "./MyUpComingAppointmentTable";
+import MyThirdPartyAppointment from "./MyThirdPartyAppointment";
+import UnattendedTable from "./UnattendedTable";
 function MyAppointment() {
-  // const { user } = useParams();
 
   const { backendData } = useOutletContext();
-  // const [loading, setLoading] = useState(true);
 
   const [selectedAppointment, setSelectedAppointment] = useState();
-  // useEffect(() => {
-  //   if (backendData) {
-  //     setLoading(false);
-  //   }
-  // }, [backendData]);
+
   const today = dayjs("01/12/2022").format("MMMM DD, YYYY");
 
-  // if (loading) return <Loader />;
-
+  console.log(selectedAppointment);
   const selfAppointment = backendData.appointments.selfAppointment;
   const thirdPartyAppointment = backendData.appointments.thirdPartyAppointment;
-
   if (selectedAppointment) {
     console.log(selectedAppointment);
     // const qrImagePath = require(`../../my-images/qr-codes/${selectedAppointment.qrcode}.png`);
-    const qrImagePath = `http://localhost:5000/qrImgs/${selectedAppointment.qrcode}.png`
+    const qrImagePath = `http://localhost:5000/qrImgs/${selectedAppointment.qrcode}.png`;
     return (
-      <div className="admin-element">
+      <div className="admin-element" id="appointment-to-pdf">
         <div
           style={{
             position: "absolute",
@@ -64,94 +58,17 @@ function MyAppointment() {
   return (
     <div className="admin-element">
       <h1>My Appointment</h1>
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Appointment Id</th>
-              <th>Date Booked</th>
-              <th>Appointment Type</th>
-              <th>Reason for Visit</th>
-              <th>Service</th>
-              <th>Scheduled Date</th>
-              <th>Time</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody>
-            {selfAppointment && selfAppointment.map((i, index) => {
-              return (
-                <tr key={index}>
-                  <td>{i.id}</td>
-                  <td>{dayjs(i.datebooked).format("MMMM DD, YYYY")}</td>
-                  <td>{i.type}</td>
-                  <td>{i.reason}</td>
-                  <td>{i.service}</td>
-                  <td>{dayjs(i.appointmentdate).format("MMMM DD, YYYY")}</td>
-                  <td>
-                    {dayjs(i.appointmenttime, "HH:mm:ss").format("hh:mm A")}
-                  </td>
-                  <td>
-                    <button
-                      className="solid submit"
-                      onClick={() => {
-                        setSelectedAppointment(i);
-                      }}
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <MyUpComingAppointmentTable
+        setSelectedAppointment={setSelectedAppointment}
+      />
 
       <h1>Third Party Appointment</h1>
-      <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Appointment Id</th>
-              <th>Date Booked</th>
-              <th>Appointment Type</th>
-              <th>Reason for Visit</th>
-              <th>Service</th>
-              <th>Scheduled Date</th>
-              <th>Time</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody>
-            {thirdPartyAppointment && thirdPartyAppointment.map((i, index) => {
-              return (
-                <tr key={index}>
-                  <td>{i.id}</td>
-                  <td>{dayjs(i.datebooked).format("MMMM DD, YYYY")}</td>
-                  <td>{i.type}</td>
-                  <td>{i.reason}</td>
-                  <td>{i.service}</td>
-                  <td>{dayjs(i.appointmentdate).format("MMMM DD, YYYY")}</td>
-                  <td>
-                    {dayjs(i.appointmenttime, "HH:mm:ss").format("hh:mm A")}
-                  </td>
-                  <td>
-                    <button
-                      className="solid submit"
-                      onClick={() => {
-                        setSelectedAppointment(i);
-                      }}
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <MyThirdPartyAppointment
+        setSelectedAppointment={setSelectedAppointment}
+      />
+
+      <h1>Unnattended</h1>
+      <UnattendedTable setSelectedAppointment={setSelectedAppointment} />
     </div>
   );
 }

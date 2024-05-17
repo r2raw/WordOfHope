@@ -3,6 +3,8 @@ import { NavLink, useOutletContext, useParams } from "react-router-dom";
 import defaultImg from "../../my-images/empImg/defaultImg.png";
 import { currentDate } from "../../my-functions/CurrentDate";
 import Loader from "../../Loader";
+import MyUpComingAppointmentTable from "../my-appointment/MyUpComingAppointmentTable";
+import UpcomingDashboardTable from "./UpcomingDashboardTable";
 function PatientDashboard() {
   const { user } = useParams();
   const { backendData } = useOutletContext();
@@ -44,8 +46,8 @@ function PatientDashboard() {
           }`}</h2>
           <p>21 years old</p>
           <div>
-            <p className="upcoming-appointment">Upcoming apointments: 2</p>
-            <p>Total apointments: 102</p>
+            <p className="upcoming-appointment">Upcoming apointments: {backendData.appointments.selfAppointment.length}</p>
+            <p>Total apointments: {backendData.mytotalAppointment}</p>
           </div>
         </div>
       </div>
@@ -108,48 +110,7 @@ function PatientDashboard() {
         </div>
       </div>
       <h3>Upcoming Appointments</h3>
-      <div className="upcoming-appointment-tbl table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Doctor</th>
-              <th>Service</th>
-              <th>Appointment Type</th>
-              <th>Date of Appointment</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Doctor</td>
-              <td>Service</td>
-              <td>Appointment Type</td>
-              <td>Date of Appointment</td>
-              <td>
-                <button className="view solid gr">View</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Doctor</td>
-              <td>Service</td>
-              <td>Appointment Type</td>
-              <td>Date of Appointment</td>
-              <td>
-                <button className="view solid gr">View</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Doctor</td>
-              <td>Service</td>
-              <td>Appointment Type</td>
-              <td>Date of Appointment</td>
-              <td>
-                <button className="view solid gr">View</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <UpcomingDashboardTable/>
     </div>
   );
 }

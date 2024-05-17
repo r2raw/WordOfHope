@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ManageAccountsSharpIcon from "@mui/icons-material/ManageAccountsSharp";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";
+import ChangePassForm from "./ChangePassForm"
 import axios from "axios";
 function ChangeUsername() {
   const { userInfo,renewUserInfo } = useOutletContext();
