@@ -175,6 +175,13 @@ function HRNav(props) {
       title: "Attendance",
       path: `/WordOfHope/HR/${user}/Attendance`,
     },
+    {
+      id: 4,
+      url: mylogbl,
+      wurl: mylogwh,
+      title: "My Attendance Log",
+      path: `/WordOfHope/HR/${user && user}/Log`,
+    },
   ];
   return (
     <aside>

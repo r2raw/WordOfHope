@@ -1,24 +1,26 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Zoom } from "@mui/material";
-import { useOutletContext } from "react-router-dom";
-import dayjs from "dayjs";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   useTable,
   useSortBy,
   useGlobalFilter,
   usePagination,
 } from "react-table";
-import axios from "axios";
-import { inQueueColumn } from "./InQueuColumn";
+import { hrAttendancesColumn } from "./hrAttendancesColumn";
 import ArrowDropUpSharpIcon from "@mui/icons-material/ArrowDropUpSharp";
 import ArrowDropDownSharpIcon from "@mui/icons-material/ArrowDropDownSharp";
 import ArrowBackIosNewSharpIcon from "@mui/icons-material/ArrowBackIosNewSharp";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-function InQueueTable() {
-  const [success,  setSuccess] = useState(false);
-  const { backendData, updateQueue } = useOutletContext();
-  const columns = useMemo(() => inQueueColumn, []);
-  const data = useMemo(() => backendData.inQueue, [backendData.inQueue]);
+import AttendancesFilter from "./AttendancesFilter";
+function AttendancesTable() {
+  const navigate = useNavigate();
+  const { backendData } = useOutletContext();
+  const columns = useMemo(() => hrAttendancesColumn, []);
+  const data = useMemo(
+    () => backendData.employeeAttendance.filter(i => i.status !== "Unscheduled"),
+    [backendData.employeeAttendance]
+  );
   const {
     getTableProps,
     getTableBodyProps,
@@ -46,37 +48,16 @@ function InQueueTable() {
   const { globalFilter } = state;
 
   const { pageIndex, pageSize } = state;
-  const handleRemove = async (row)=>{
-    try {
-      const response = await axios.post("/remove-queue", row)
-
-      if(response.status === 200){
-        updateQueue();
-        setSuccess(true)
-      }
-    } catch (error) {
-      console.error("handleRemove ERROR: " + error.message)
-    }
-  }
-
-  useEffect(()=>{
-    if(success){
-      setTimeout(()=>{
-        setSuccess(false);
-      },3000)
-    }
-  },[success])
   return (
     <Zoom in={true}>
       <div className="table-container">
-        {/* <DepartmentFilter filter={globalFilter} setFilter={setGlobalFilter} /> */}
+        <AttendancesFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((header) => (
               <tr {...header.getHeaderGroupProps()}>
                 {header.headers.map((col) => (
                   <th {...col.getHeaderProps(col.getSortByToggleProps())}>
-                    {/* {console.log(col)} */}
                     <div className="table-header">
                       {col.render("Header")}
                       <span className="sort-indicator">
@@ -100,29 +81,27 @@ function InQueueTable() {
           <tbody {...getTableBodyProps()}>
             {page.map((row) => {
               prepareRow(row);
-              {
-                /* console.log(row.original.id) */
-              }
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map((cell) => {
                     return (
                       <td {...cell.getCellProps()}>
-                        <p
-                          style={
-                            dayjs(row.original.appointmentdate)
-                              .startOf("day")
-                              .isBefore(dayjs().startOf("day"))
-                              ? { color: "red" }
-                              : {}
-                          }
-                        >
-                          {cell.render("Cell")}
-                        </p>
+                        <p>{cell.render("Cell")}</p>
                       </td>
                     );
                   })}
-                  <td className="action-button"><div><button className="solid danger fade" onClick={()=>{handleRemove(row.original)}}>Remove</button></div></td>
+                  <td className="action-button">
+                    <div>
+                      <button
+                        className="solid submit fade"
+                        onClick={() => {
+                          navigate(`${row.original.id}`)
+                        }}
+                      >
+                        View
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               );
             })}
@@ -144,7 +123,6 @@ function InQueueTable() {
               <ArrowDropDownSharpIcon />
             </span>
           </div>
-          {success && <p className="success">Queue removed successfully!</p>}
           <div>
             <div
               className="pagination-arrow"
@@ -170,4 +148,4 @@ function InQueueTable() {
   );
 }
 
-export default InQueueTable;
+export default AttendancesTable

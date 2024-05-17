@@ -155,9 +155,16 @@ function App() {
         </Route>
 
         <Route path="HR/:user" element={<HrLayout />}>
-          <Route path="Dashboard" element={<HrDashboard />} />
+          <Route path="Dashboard" element={<AdminDashboard />} />
+          <Route path="Dashboard">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
           <Route path="Change-Password" element={<FirstTimeLog />} />
           <Route path="Employee-Schedule" element={<EmployeeSched />} />
+          <Route path="Log" element={<MyAttendancLog />} />
+          <Route path="Log">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
           <Route
             path="Employee-Schedule/Add-Schedule"
             element={<AddEmployeeSched />}

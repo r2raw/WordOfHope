@@ -134,6 +134,7 @@ import departmentCurrMonthPatientCount from "./MyServerFunctions/Doctor/departme
 import deoartmentAppointmentToday from "./MyServerFunctions/Doctor/deoartmentAppointmentToday.js";
 import departmentsServicesChart from "./MyServerFunctions/Doctor/departmentsServicesChart.js";
 import monthlyPatientVisit from "./MyServerFunctions/Doctor/monthlyPatientVisit.js";
+import removeFromQueue from "./MyServerFunctions/Nurse/removeFromQueue.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1980,7 +1981,19 @@ app.get("/fetchDepartments", async (req, res) => {
     console.error("fetchDepartment API ERROR: " + error.message);
   }
 });
+app.post("/remove-queue", async(req,res)=>{
+  try {
+    const { id, appointment_id } =req.body;
+    const removed = await removeFromQueue(db, id, appointment_id);
 
+    if(removed){
+      return res.status(200).json({message: "success"});
+    }
+    
+  } catch (error) {
+    console.error("remove queue API ERROR: " + error.message)
+  }
+})
 app.get("/employeeApi", async (req, res) => {
   try {
     const employee = await GetAllEmployee(db);
@@ -2374,9 +2387,13 @@ app.get("/HR/:uid", async (req, res) => {
     const noSchedResult = await getNoSchedEmployee(db);
     const employeeAttendance = await fetchEmployeeAttendance(db);
     const employeeSchedResult = await getSchedule(db);
+    const absentee = await absentEmployee(db);
+    const attendancesToday = await attendanceToday(db);
     return res.json({
       user: hrResult.rows,
+      attendancesToday: attendancesToday,
       noSchedule: noSchedResult,
+      absentee: absentee,
       employeeSched: employeeSchedResult,
       myAttendance: myAttendance,
       employeeAttendance: employeeAttendance,

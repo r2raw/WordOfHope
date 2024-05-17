@@ -1,8 +1,12 @@
 import dayjs from "dayjs";
-export const attendanceTodayColumn = [
+export const hrAttendancesColumn = [
   {
     Header: `ID`,
     accessor: `empid`,
+  },
+  {
+    Header: `Date`,
+    accessor: (row) =>`${dayjs(row.arrival).format("MMMM DD, YYYY")} `,
   },
   {
     Header: `Fullname`,
