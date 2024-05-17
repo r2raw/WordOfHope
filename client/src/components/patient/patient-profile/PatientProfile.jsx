@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import Loader from "../../Loader";
 import defaulttImg from "../../my-images/empImg/defaultImg.png";
 import AddCircleOutlineSharpIcon from "@mui/icons-material/AddCircleOutlineSharp";
@@ -10,20 +10,54 @@ import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import calculateAge from "../../my-functions/calculateAge";
 import { titleCase } from "title-case";
 import _ from "lodash";
-import axios from "axios"
+import axios from "axios";
 import dayjs from "dayjs";
 import AddEmergencyContact from "./AddEmergencyContact";
 // import io from "socket.io-client";
 
 function PatientProfile() {
   const { backendData, updateBackend } = useOutletContext();
+  console.log(backendData)
   const [loading, setLoading] = useState(true);
   const [viewEditForm, setViewEditForm] = useState(false);
+  const [preview, setPreview] = useState();
+  const [image, setImage] = useState();
 
+  const imgPath = `http://localhost:5000/empimg/${backendData.user[0].empimg}`
+  const { user } = useParams();
   const [viewContactForm, setViewContactForm] = useState(false);
   const handleViewEditForm = () => {
     setViewEditForm(!viewEditForm);
   };
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files;
+      setImage(() => file);
+    } else {
+      setImage(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!image) return setPreview("");
+
+    let tmp = [];
+
+    for (let i = 0; i < image.length; i++) {
+      tmp.push(URL.createObjectURL(image[i]));
+    }
+
+    const objectUrl = tmp;
+    setPreview(objectUrl);
+
+    for (let i = 0; i < objectUrl.length; i++) {
+      return () => {
+        URL.revokeObjectURL(objectUrl[i]);
+      };
+    }
+  }, [image]);
+
   const handleViewContactForm = () => {
     setViewContactForm(!viewContactForm);
   };
@@ -33,6 +67,16 @@ function PatientProfile() {
     }
   }, [backendData]);
 
+  const handleChangeimg = async (e) => {
+    e.preventDefault();
+
+    const newData = new FormData(e.target);
+    const response =  await axios.post(`/add-img-patient/${user}`, newData);
+    if(response.status === 200){
+      updateBackend()
+    }
+  };
+
   const { socket } = useOutletContext();
 
   useEffect(() => {
@@ -40,16 +84,16 @@ function PatientProfile() {
       console.log(data);
     });
   }, [socket]);
-  const handleRemove = async (id)=>{
+  const handleRemove = async (id) => {
     try {
-      const response = await axios.post(`/remove-contact/${id}`)
-      if(response.status === 200){
+      const response = await axios.post(`/remove-contact/${id}`);
+      if (response.status === 200) {
         updateBackend();
       }
     } catch (error) {
-      console.error("handleRemove Error: " +error.message)
+      console.error("handleRemove Error: " + error.message);
     }
-  }
+  };
   if (!backendData) {
     return <Loader />;
   }
@@ -59,12 +103,40 @@ function PatientProfile() {
       {!loading && (
         <div className="my-profile">
           <div className="img-container">
-            <img src={defaulttImg} alt="defaultImg" />
+            {preview ? (
+              preview.map((pic) => {
+                return <img src={pic} alt="emp-img" />;
+              })
+            ) : (
+              <img src={backendData.user[0].empimg ?  imgPath :defaulttImg} alt="defaultImg" />
+            )}
             <div className="btn-container">
               <PhotoSharpIcon />
-              <p>Edit</p>
+              <label htmlFor="patient-img">Edit</label>
             </div>
+            <form
+              encType="multipart/form-data"
+              className="patient-img-form"
+              onSubmit={handleChangeimg}
+            >
+              <input
+                type="file"
+                name="patient-img"
+                id="patient-img"
+                accept="image/jpeg"
+                onChange={handleFileChange}
+              />
+              {preview && (
+                <button
+                  className="solid submit fade"
+                  style={{ width: "100px", margin: "0", padding: "0" }}
+                >
+                  Submit
+                </button>
+              )}
+            </form>
           </div>
+
           <div className="patient-info">
             <div className="myName">
               <h2>
@@ -177,7 +249,15 @@ function PatientProfile() {
                     <p>
                       <b>Email:</b> {i.email}
                     </p>
-                    <button style={{marginTop: "10px"}} className="solid danger fade" onClick={()=>{handleRemove(i.id)}}>Remove</button>
+                    <button
+                      style={{ marginTop: "10px" }}
+                      className="solid danger fade"
+                      onClick={() => {
+                        handleRemove(i.id);
+                      }}
+                    >
+                      Remove
+                    </button>
                   </div>
                 );
               })}

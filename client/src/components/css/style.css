@@ -3478,6 +3478,12 @@ header .header-details {
     url(../../../public/images/hopeImgs/dshbrdimg.png);
 }
 
+.patient-img-form{
+  position: absolute;
+  bottom: 20px;
+  height: 20px;
+  right: -200px;
+}
 .emergency-contacts .contacts{
   display: grid;
   grid-template-columns: repeat(3, 1fr);

@@ -1095,7 +1095,21 @@ app.post("/add-employee-no-img/:user", async (req, res) => {
     res.status(503).json("Internal server error: " + error.message);
   }
 });
-
+app.post(
+  "/add-img-patient/:user", upload.single("patient-img"),async (req,res)=>{
+    try {
+      
+      const { user } = req.params;
+      const image = req.file.filename;
+      const sql = "UPDATE userprofile SET empimg=$1 WHERE userid=$2"
+      const result = await db.query(sql, [image, user]) 
+      if(result.rows > 0){
+        return res.status(200).json({message: "success"})
+      }
+    } catch (error) {
+      console.error("add-img-patient ERROR: " + error.message)
+    }
+  })
 app.post(
   "/add-employee/:user",
   upload.single("employeeImg"),
