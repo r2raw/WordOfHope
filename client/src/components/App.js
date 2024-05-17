@@ -90,6 +90,9 @@ function App() {
         <Route path="MNS/:user" element={<AdminLayout />}>
           <Route path="RFIDScan" element={<RFIDScan />} />
           <Route path="Dashboard" element={<AdminDashboard />} />
+          <Route path="Dashboard">
+            <Route path=":attendanceId" element={<EmployeeViewAttendance />} />
+          </Route>
           <Route path="Log" element={<MyAttendancLog />} />
           <Route path="Log">
             <Route path=":attendanceId" element={<EmployeeViewAttendance />} />

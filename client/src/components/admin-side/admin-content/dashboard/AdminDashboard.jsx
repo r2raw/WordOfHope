@@ -6,6 +6,7 @@ import { useOutletContext } from "react-router-dom";
 import _ from "lodash";
 import { titleCase } from "title-case";
 import { Zoom } from "@mui/material";
+import AdminTodaysAttendanceTable from "./AdminTodaysAttendanceTable";
 
 function AdminDashboard() {
   const { backendData } = useOutletContext();
@@ -114,34 +115,7 @@ function AdminDashboard() {
           </div>
         </div>
         <h1>Attendance</h1>
-        <div className="attendance-container">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Time-in</th>
-                <th>Time-out</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attndnce.map((item, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{item.id}</td>
-                    <td>{item.lastname}</td>
-                    <td>{item.firstname}</td>
-                    <td>{item.in}</td>
-                    <td>{item.out}</td>
-                    <td>{item.status}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <AdminTodaysAttendanceTable />
       </div>
     </Zoom>
   );

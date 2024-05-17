@@ -5,6 +5,7 @@ import axios from "axios";
 import ViewedPatientData from "./ViewedPatientData";
 import html2canvas from "html2canvas"
 import jsPDF from "jspdf"
+import PictureAsPdfSharpIcon from '@mui/icons-material/PictureAsPdfSharp';
 function ViewedPatientRecord() {
   const [recordData, setRecordData] = useState();
 
@@ -49,15 +50,15 @@ function ViewedPatientRecord() {
           <ArrowBackSharpIcon />
         </Link>
       </div>
+      <div className="export-to-pdf">
+        <button className="danger solid fade" disabled={loader} onClick={downloadPdf}><PictureAsPdfSharpIcon/>
+          {loader ? "Exporting" : "Export as PDF"}
+        </button>
+      </div>
       <ViewedPatientData
         patient={recordData.patientRecord[0]}
         diagnosis={recordData.diagnosis}
       />
-      <div>
-        <button className="danger solid fade" disabled={loader} onClick={downloadPdf}>
-          {loader ? "Downloading" : "Download"}
-        </button>
-      </div>
     </div>
   );
 }

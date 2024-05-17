@@ -117,6 +117,23 @@ import fetchAllPatientRecords from "./MyServerFunctions/Doctor/fetchAllPatientRe
 import viewPatientRecord from "./MyServerFunctions/Doctor/viewPatientRecord.js";
 import fetchMyAttendance from "./MyServerFunctions/fetchMyAttendance.js";
 import viewedAttendance from "./MyServerFunctions/viewedAttendance.js";
+import patientAgeGroup from "./MyServerFunctions/Doctor/patientAgeGroup.js";
+import avaragePatientVisit from "./MyServerFunctions/Nurse/avaragePatientVisit.js";
+import countAppointmentToday from "./MyServerFunctions/Nurse/countAppointmentToday.js";
+import countPatientToday from "./MyServerFunctions/Nurse/countPatientToday.js";
+import appointmentCountCurrMonth from "./MyServerFunctions/Nurse/appointmentCountCurrMonth.js";
+import patientCountCurrMonth from "./MyServerFunctions/Nurse/patientCountCurrMonth.js";
+import activeDoctors from "./MyServerFunctions/Nurse/activeDoctors.js";
+import departmentPatientCount from "./MyServerFunctions/Nurse/departmentPatientCount.js";
+import departmentsCount from "./MyServerFunctions/Nurse/departmentsCount.js";
+import availableDoctorsCount from "./MyServerFunctions/Nurse/availableDoctorsCount.js";
+import departmentAppointmentCount from "./MyServerFunctions/Doctor/departmentAppointmentCount.js";
+import departmentAppointmentCurrMonth from "./MyServerFunctions/Doctor/departmentAppointmentCurrMonth.js";
+import departmentPatientTodayCount from "./MyServerFunctions/Doctor/departmentPatientTodayCount.js";
+import departmentCurrMonthPatientCount from "./MyServerFunctions/Doctor/departmentCurrMonthPatientCount.js";
+import deoartmentAppointmentToday from "./MyServerFunctions/Doctor/deoartmentAppointmentToday.js";
+import departmentsServicesChart from "./MyServerFunctions/Doctor/departmentsServicesChart.js";
+import monthlyPatientVisit from "./MyServerFunctions/Doctor/monthlyPatientVisit.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1163,10 +1180,10 @@ app.post("/update-employee/:user", async (req, res) => {
       return res.json({ status: "invalid", errorIn: errors });
     }
 
-    
-    const selectPositionName = "SELECT position_name from positions where id=$1"
+    const selectPositionName =
+      "SELECT position_name from positions where id=$1";
 
-    const positionName = await db.query(selectPositionName,[position])
+    const positionName = await db.query(selectPositionName, [position]);
 
     const wohUser = await db.query(
       "UPDATE wohUser SET userType=$1, email=$2 WHERE id=$3",
@@ -1288,12 +1305,13 @@ app.post(
         ]
       );
 
-      const selectPositionName = "SELECT position_name from positions where id=$1"
+      const selectPositionName =
+        "SELECT position_name from positions where id=$1";
 
-      const positionName = await db.query(selectPositionName,[position])
+      const positionName = await db.query(selectPositionName, [position]);
       await db.query("UPDATE wohUser SET userType=$1, email=$2 WHERE id=$3", [
         position,
-      _.trim(email),
+        _.trim(email),
         userId,
       ]);
       return res.json({ status: "success" });
@@ -1306,20 +1324,25 @@ app.post(
 
 // LOGIN
 
-
-app.post("/Logout/:uid", async (req, res)=>{
+app.post("/Logout/:uid", async (req, res) => {
   try {
-    const {uid} = req.params;
-    const updateLogin = await db.query("UPDATE wohUser SET loggedin=$1 WHERE id=$2", [false, uid])
-    if(updateLogin.rowCount <= 0){
-      return res.status(500).json({ status: "failed", errorMessage: "Logout attempt failed" });
+    const { uid } = req.params;
+    const updateLogin = await db.query(
+      "UPDATE wohUser SET loggedin=$1 WHERE id=$2",
+      [false, uid]
+    );
+    if (updateLogin.rowCount <= 0) {
+      return res
+        .status(500)
+        .json({ status: "failed", errorMessage: "Logout attempt failed" });
     }
 
-    return res.status(200).json({message: "logout success"})
+    return res.status(200).json({ message: "logout success" });
   } catch (error) {
-    console.log("Logout api error: " + error.message)
+    console.log("Logout api error: " + error.message);
   }
-})
+});
+
 app.post("/Login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -1335,18 +1358,27 @@ app.post("/Login", async (req, res) => {
       const userType = firstRow.usertype;
       const dbEmail = firstRow.email;
 
-      const accountStatus = firstRow.accountstatus
+      const accountStatus = firstRow.accountstatus;
       const uid = firstRow.id;
       const match = await bcrypt.compare(password, dbPass);
 
       if (match) {
-        if(accountStatus === 'Deactivated'){
-          return res.json({ status: "failed", errorMessage: "Account deactivated! Plss, contact the admin!" });
+        if (accountStatus === "Deactivated") {
+          return res.json({
+            status: "failed",
+            errorMessage: "Account deactivated! Plss, contact the admin!",
+          });
         }
 
-        const updateLogin = await db.query("UPDATE wohUser SET loggedin=$1 WHERE id=$2", [true, uid])
-        if(updateLogin.rowCount <= 0){
-          return res.json({ status: "failed", errorMessage: "Login attempt failed" });
+        const updateLogin = await db.query(
+          "UPDATE wohUser SET loggedin=$1 WHERE id=$2",
+          [true, uid]
+        );
+        if (updateLogin.rowCount <= 0) {
+          return res.json({
+            status: "failed",
+            errorMessage: "Login attempt failed",
+          });
         }
 
         return res.json({
@@ -1355,7 +1387,7 @@ app.post("/Login", async (req, res) => {
           email: dbEmail,
           status: "Success",
         });
-       
+
         // if (userType === "Nurse") {
         //   res.redirect(`/WordOfHope/Nurse/${username}/Dashboard`);
         // } else if (userType === "HR") {
@@ -1431,7 +1463,7 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
     const ncrBarangays = await fetchNcrBarangays();
     const apptToday = await appointmentToday(db);
     const employeeResult = await fetchEmployeeUserInfo(db, uid);
-    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id)
+    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id);
     const currentlyServing = await fetchNurseCurrentlyServing(db);
     const patientRecords = await fetchAllPatientRecords(db);
     const queues = await fetchQueues(db);
@@ -1454,16 +1486,16 @@ app.get("/WordOfHope/Nurse/:user", async (req, res) => {
   }
 });
 
-app.get("/view-attendance/:id", async (req,res)=>{
+app.get("/view-attendance/:id", async (req, res) => {
   try {
-    const {id} = req.params
-    const attendance = await viewedAttendance(db, id)
+    const { id } = req.params;
+    const attendance = await viewedAttendance(db, id);
 
-    return res.status(200).json(attendance)
+    return res.status(200).json(attendance);
   } catch (error) {
-    console.error("view attendance API error: " + error.message)
+    console.error("view attendance API error: " + error.message);
   }
-})
+});
 
 app.post("/walkin-appointment/:nurse_id", async (req, res) => {
   try {
@@ -1549,7 +1581,7 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
       db,
       employeeResult.rows[0].id
     );
-    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id)
+    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id);
     const patientRecords = await fetchAllPatientRecords(db);
     const queue = await fetchDoctorQueue(db, employeeResult.rows[0].department);
     const services = await doctorDepartmentService(
@@ -1581,6 +1613,80 @@ app.get("/WordOfHope/Doctor/:user", async (req, res) => {
   }
 });
 
+app.get("/nurse-dashboard", async (req, res) => {
+  try {
+    const patientVisit = await avaragePatientVisit(db);
+    const appointmentCountToday = await countAppointmentToday(db);
+    const patientCountToday = await countPatientToday(db);
+    const currMonthAppointment = await appointmentCountCurrMonth(db);
+    const patientsCurrMonth = await patientCountCurrMonth(db);
+    const loggedinDoctors = await activeDoctors(db);
+    const departmentChart = await departmentPatientCount(db);
+    const countDepartments = await departmentsCount(db);
+    const number_of_doctors = await availableDoctorsCount(db);
+    return res.status(200).json({
+      patientVisitBar: patientVisit,
+      departmentChart: departmentChart,
+      countDepartments: countDepartments,
+      number_of_doctors: number_of_doctors,
+      appointmentCountToday: appointmentCountToday,
+      patientCountToday: patientCountToday,
+      currMonthAppointment: currMonthAppointment,
+      patientsCurrMonth: patientsCurrMonth,
+      loggedinDoctors: loggedinDoctors,
+    });
+  } catch (error) {
+    console.error("dashboard api error: " + error.message);
+  }
+});
+
+app.get("/doctor-dashboard/:department_id", async (req, res) => {
+  try {
+    const { department_id } = req.params;
+    const appointmentCount = await departmentAppointmentCount(
+      db,
+      department_id
+    );
+    const appointmentCurrMonth = await departmentAppointmentCurrMonth(
+      db,
+      department_id
+    );
+
+    const totalPatientToday = await departmentPatientTodayCount(db, department_id);
+    const currentMonthPatientCount = await departmentCurrMonthPatientCount(db, department_id);
+    const appointmentToday = await deoartmentAppointmentToday(db, department_id)
+    
+    return res
+      .status(200)
+      .json({
+        appointmentCount: appointmentCount,
+        appointmentCurrMonth: appointmentCurrMonth,
+        currentMonthPatientCount: currentMonthPatientCount,
+        totalPatientToday: totalPatientToday,
+        appointmentsToday: appointmentToday,
+      });
+  } catch (error) {
+    console.error("/doctor-dashboard/ API ERROR: " + error.message);
+  }
+});
+app.get("/patient-demographics/:deptid", async (req, res) => {
+  try {
+
+    const {deptid} =req.params
+    const departmentChart = await departmentPatientCount(db);
+    const patientVisitServices = await departmentsServicesChart(db, deptid)
+    const patientAgeGroupChart = await patientAgeGroup(db);
+    const patientVisitPerMonth = await monthlyPatientVisit(db)
+    return res.status(200).json({
+      departmentChart: departmentChart,
+      departmentsServiceData: patientVisitServices,
+      patientVisitPerMonth: patientVisitPerMonth,
+      patientAgeGroupChart: patientAgeGroupChart,
+    });
+  } catch (error) {
+    console.error("patient-demog error: " + error.message);
+  }
+});
 app.get("/fetchEditPatientRecord/:record_id", async (req, res) => {
   try {
     const { record_id } = req.params;
@@ -1727,7 +1833,7 @@ app.get("/WordOfHope/MNS/:user", async (req, res) => {
 
     const ncrCities = await fetchNcrCities();
     const ncrBarangays = await fetchNcrBarangays();
-    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id)
+    const myAttendance = await fetchMyAttendance(db, employeeResult.rows[0].id);
     const absentee = await absentEmployee(db);
     const employee = await GetAllEmployee(db);
     const departments = await fetchDepartments(db);
@@ -2264,7 +2370,7 @@ app.get("/HR/:uid", async (req, res) => {
     const { uid } = req.params;
 
     const hrResult = await fetchEmployeeUserInfo(db, uid);
-    const myAttendance = await fetchMyAttendance(db, hrResult.rows[0].id)
+    const myAttendance = await fetchMyAttendance(db, hrResult.rows[0].id);
     const noSchedResult = await getNoSchedEmployee(db);
     const employeeAttendance = await fetchEmployeeAttendance(db);
     const employeeSchedResult = await getSchedule(db);
@@ -2401,13 +2507,12 @@ app.post(
   "/add-existing-patient-record/:doc_id/:patient_id",
   async (req, res) => {
     try {
-
       const { doc_id, patient_id } = req.params;
       const { diagnosis } = req.body;
       const record_id = uid(10);
 
-      console.log(patient_id)
-      console.log(req.body)
+      console.log(patient_id);
+      console.log(req.body);
       const patient_record = await insertPatientRecord(
         db,
         record_id,
@@ -2488,17 +2593,19 @@ app.get("/appointment-today", async (req, res) => {
   }
 });
 
-app.get("/view-patient-record/:id", async (req, res)=>{
+app.get("/view-patient-record/:id", async (req, res) => {
   try {
-    const {id} = req.params;
-    const patientRecord = await viewPatientRecord(db, id)
-    const diagnosis = await fetchPatientEditDiagnosis(db, id)
+    const { id } = req.params;
+    const patientRecord = await viewPatientRecord(db, id);
+    const diagnosis = await fetchPatientEditDiagnosis(db, id);
 
-    return res.status(200).json({patientRecord: patientRecord, diagnosis: diagnosis})
+    return res
+      .status(200)
+      .json({ patientRecord: patientRecord, diagnosis: diagnosis });
   } catch (error) {
-    console.error("view-patient-record error: " + error.message)
+    console.error("view-patient-record error: " + error.message);
   }
-})
+});
 
 app.get("/search-existing-patient/:id", async (req, res) => {
   try {

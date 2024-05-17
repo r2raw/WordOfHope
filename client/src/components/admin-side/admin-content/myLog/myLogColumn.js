@@ -16,7 +16,7 @@ export const myLogColumn = [
       Header: `Time-Out`,
       accessor: `departure`,
       Cell: ({value}) => (
-        dayjs(value).format("MMMM DD, YYYY - hh:mm A")
+        value && dayjs(value).format("MMMM DD, YYYY - hh:mm A")
       )
     },
     {

@@ -1,6 +1,7 @@
 import React from "react";
 import calculateAge from "../../my-functions/calculateAge";
 import dayjs from "dayjs";
+import logowoh from "../../my-images/hopeImgs/hope-logo.png";
 function ViewedPatientData(props) {
   const { patient, diagnosis } = props;
 
@@ -20,8 +21,16 @@ function ViewedPatientData(props) {
         style={{ backgroundColor: "white" }}
       >
         <div className="result-header">
-          <h1>Test Result - {patient.service_type}</h1>
-          <h3>Record ID: {patient.id}</h3>
+          <div>
+          </div>
+          <div>
+            <h1>Word Of Hope General Hosital</h1>
+            <h3>#23 BUENAR ST. NOVALICHES, QUEZON CITY TEL: 289301622</h3>
+            <h1>Test Result - {patient.service_type}</h1>
+            <h3>Record ID: {patient.id}</h3>
+          </div>
+          <div>
+            <img src={logowoh} alt="logo" /></div>
         </div>
         <div className="information">
           <h2>Patient Information</h2>

@@ -1389,7 +1389,7 @@ a.active .nav-item * {
   align-items: center;
 }
 
-.modal .account-status-update{
+.modal .account-status-update {
   background-color: var(--color-white);
   padding: 20px 40px;
   max-width: 600px;
@@ -1506,7 +1506,7 @@ body:has(.modal, .openModal, #loader) {
   top: 10px;
   right: 10px;
   padding: 10px;
-  display:  flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -3007,10 +3007,34 @@ header .header-details {
 }
 
 .report.patient-demo {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.report.patient-demo > div {
+  padding: 20px;
+  background-color: #97cadb50;
+}
+.report.patient-demo div .chart-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 400px;
-  width: 400px;
+}
+.patient-demographics .line-chart {
+  background-color: #97cadb50;
+  padding: 20px 100px;
+}
+.patient-demographics .line-chart .chart-data {
+  height: 400px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
+.patient-demographics .line-chart .chart-data canvas{
+  width: 100%!important;  
+}
 .reports .report {
   margin: 2%;
   background-color: var(--color-lightblue-2);
@@ -3058,6 +3082,11 @@ header .header-details {
   gap: 10xpx;
 }
 
+.patient-demographics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
 .nurse.reports .report:hover {
   box-shadow: none;
 }
@@ -3065,6 +3094,7 @@ header .header-details {
 .nurse.analytics.reports .chart-container .report .actives {
   position: absolute;
   top: 2%;
+  width: 90%;
 }
 
 .nurse.analytics.reports div .active-docs {
@@ -3263,7 +3293,7 @@ header .header-details {
   padding: 0;
   border-radius: 10px;
 }
-#new-input-group textarea{
+#new-input-group textarea {
   width: 100%;
   border: none;
   border-radius: 5px;
@@ -3271,20 +3301,22 @@ header .header-details {
   resize: none;
   height: min-content;
 }
-#new-input-group textarea:focus{
+#new-input-group textarea:focus {
   outline: 2px solid var(--color-darkblue);
 }
 
-#new-input-group textarea ~ .word-count{
+#new-input-group textarea ~ .word-count {
   position: absolute;
   right: 0;
 }
-#new-input-group textarea:is(:not(:placeholder-shown), :focus)+ .new-floating-label {
+#new-input-group
+  textarea:is(:not(:placeholder-shown), :focus)
+  + .new-floating-label {
   top: 11px;
   border-radius: 5px;
   padding-inline: 5px;
   left: 0;
-  font-size: .7rem;
+  font-size: 0.7rem;
   width: 100%;
   background-color: var(--color-white);
 }
@@ -3704,13 +3736,13 @@ header .header-details {
   align-items: flex-end;
   gap: 20px;
 }
-.add-result .search-patient{
+.add-result .search-patient {
   display: flex;
   align-items: flex-end;
   gap: 20px;
 }
 
-.add-result .search-patient > button{
+.add-result .search-patient > button {
   width: 10%;
   min-width: 100px;
   margin: 0;
@@ -3809,7 +3841,7 @@ header .header-details {
   /* border-top: 1px solid var(--color-darkblue); */
 }
 
-.scheduler-form .day-time-selection button.danger{
+.scheduler-form .day-time-selection button.danger {
   margin-top: 10px;
 }
 .scheduler-form .submit-schedule {
@@ -3872,12 +3904,12 @@ p.invalid {
   text-align: center;
 }
 
-h3.update-dialog{
+h3.update-dialog {
   font-weight: 400;
   text-align: center;
 }
 
-h3.update-dialog span{
+h3.update-dialog span {
   font-weight: 600;
 }
 p.success {
@@ -4075,7 +4107,7 @@ input[type="file"] + label {
   align-items: center;
 }
 
-.admin-element.result-management .modal .navigation{
+.admin-element.result-management .modal .navigation {
   display: grid;
   width: 400px;
   grid-template-columns: repeat(2, 1fr);
@@ -4099,13 +4131,13 @@ input[type="file"] + label {
   gap: 20px 10px;
 }
 
-.admin-element.diagnosis form .diagnosis-h3{
+.admin-element.diagnosis form .diagnosis-h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.admin-element.diagnosis form .diagnosis-h3 .add-btn{
+.admin-element.diagnosis form .diagnosis-h3 .add-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4114,7 +4146,7 @@ input[type="file"] + label {
   padding: 5px;
 }
 
-.admin-element.diagnosis form .diagnosis-h3 .add-btn:hover{
+.admin-element.diagnosis form .diagnosis-h3 .add-btn:hover {
   background-color: #00000010;
 }
 
@@ -4149,34 +4181,58 @@ input[type="file"] + label {
   color: var(--color-white);
 }
 
-.viewed-patient-record{
+.viewed-patient-record {
   padding: 100px;
 }
 
-.viewed-patient-record .information > div{
+.viewed-patient-record .information > div {
   display: flex;
   justify-content: space-between;
 }
 
-.viewed-patient-record > div{
+.viewed-patient-record > div {
   padding: 10px;
 }
 
-.viewed-patient-record .information h3 span{
+.viewed-patient-record .information h3 span {
   font-weight: 400;
 }
 
-p.diagnosis{
+p.diagnosis {
   font-weight: 600;
   letter-spacing: 4px;
 }
-.viewed-patient-record .result-header{
+.viewed-patient-record .result-header {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+}
+.viewed-patient-record .result-header > div{
   display: flex;
+  align-items: center;
   justify-content: center;
   flex-direction: column;
-  align-items: center;
 }
-.viewed-patient-record hr{
+
+.export-to-pdf{
+  display: flex;
+  justify-content: flex-end;
+}
+.export-to-pdf button{
+  width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+
+.export-to-pdf button svg{
+  fill: white;
+}
+.viewed-patient-record .result-header > div img{
+  width: 100%;
+}
+.viewed-patient-record hr {
   border: 1px solid var(--color-darkblue);
   box-shadow: var(--card-box-shadow);
 }
