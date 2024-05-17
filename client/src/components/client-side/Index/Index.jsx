@@ -34,11 +34,14 @@ function Index() {
             <h1>WORD OF HOPE GENERAL HOSPITAL</h1>
             <h2>MedInnovate Nexus Systems</h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Sit
-              amet porttitor eget dolor. Metus aliquam eleifend mi in nulla
-              posuere sollicitudin. Maecenas volutpat blandit aliquam etiam erat
-              velit scelerisque in. Sed sed risus pretium quam vulputate{" "}
+              Welcome to Hope General Hospital, the pioneer 'Born Again'
+              Christian Hospital in the Philippines, serving one of Metro
+              Manila's most underserved communities. Committed to the highest
+              standards of care, our dedicated professionals uphold integrity,
+              compassion, and excellence in all we do. Supported primarily by
+              generous contributions from compassionate individuals, we strive
+              to deliver holistic healthcare services to all, guided by our
+              mission to serve God and humanity.
             </p>
             <motion.div
               variants={{
@@ -50,13 +53,7 @@ function Index() {
               transition={{ duration: 0.5, delay: 0.75 }}
               className="index-btns"
             >
-              <Link
-                to={
-                  user
-                    ? `About`
-                    : `About`
-                }
-              >
+              <Link to={user ? `About` : `About`}>
                 <button className="outlined out-wht learn-more">
                   LEARN MORE
                 </button>

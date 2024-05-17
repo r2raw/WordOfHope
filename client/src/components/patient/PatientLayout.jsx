@@ -42,6 +42,14 @@ function PatientLayout() {
     }
   }, [user]);
 
+  const updateBackend = () => {
+    axios
+      .get("/WordOfHope/Patient/" + user)
+      .then((response) => {
+        setBackendData(response.data);
+      })
+      .catch((error) => {});
+  };
   useEffect(() => {
     socket.on("new_patient_profile", (updatedData) => {
       setBackendData((prevData) => ({
@@ -92,7 +100,7 @@ function PatientLayout() {
       </header>
       <PatientNav user={user} backendData={backendData} />
       <main>
-        <Outlet context={{ backendData, socket }} />
+        <Outlet context={{ backendData, socket, updateBackend }} />
       </main>
     </div>
   );

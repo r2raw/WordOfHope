@@ -5,11 +5,11 @@ import passwordValidation from "../AccountSettings/passwordValidation";
 import LockSharpIcon from "@mui/icons-material/LockSharp";
 import LockOpenSharpIcon from "@mui/icons-material/LockOpenSharp";
 import CheckCircleOutlineSharpIcon from "@mui/icons-material/CheckCircleOutlineSharp";
-function PatientPassword() {
+function PatientPassword(props) {
   const { backendData } = useOutletContext();
   const userInfo = backendData.user[0];
 
-  console.log(userInfo)
+  const {setSuccess} = props;
   const [values, setValues] = useState({
     newpassword: "",
     confirmpassword: "",
@@ -27,7 +27,6 @@ function PatientPassword() {
   const [validCurrent, setValidCurrent] = useState(false);
 
   const navigate = useNavigate();
-  const [success, setSuccess] = useState(false);
   const handleShowPass = (name) => {
     setShowPass((prev) => ({
       ...prev,
@@ -99,25 +98,7 @@ function PatientPassword() {
       })
       .then((res) => {
         if (res.data.status === "success") {
-          setSuccess(true);
-
-          setTimeout(() => {
-            setSuccess(false);
-            if (userInfo.usertype !== "Patient") {
-              if (userInfo.usertype !== "Admin") {
-                navigate(
-                  `/WordOfHope/${userInfo.usertype}/${userInfo.userid}/Account-Settings/User-Profile`
-                );
-              } else {
-                navigate(
-                  `/WordOfHope/MNS/${userInfo.userid}/Account-Settings/User-Profile`
-                );
-              }
-            }else{
-                navigate(
-                `/WordOfHope/${userInfo.usertype}/${userInfo.userid}/Dashboard`
-              );}
-          }, 3000);
+          setSuccess(true)
         }
       })
       .catch((err) => console.error(err.message));
@@ -125,6 +106,7 @@ function PatientPassword() {
 
   return (
     <form onSubmit={handleSubmit}>
+    
       <div>
         <div className="card" id="new-input-group">
           <input
@@ -136,7 +118,7 @@ function PatientPassword() {
           />
           <span className="new-floating-label">Current Password</span>
           <span
-            className="new-floating-icon"
+            className="new-floating-icon pass"
             onClick={() => {
               handleShowPass("currentPass");
             }}
@@ -155,7 +137,7 @@ function PatientPassword() {
           />
           <span className="new-floating-label">New Password</span>
           <span
-            className="new-floating-icon"
+            className="new-floating-icon pass"
             onClick={() => {
               handleShowPass("newPass");
             }}
@@ -175,7 +157,10 @@ function PatientPassword() {
             required
           />
           <span className="new-floating-label">Confirm Password</span>
-          <span className="new-floating-icon">
+          <span className="new-floating-icon pass"
+            onClick={() => {
+              handleShowPass("confirmPass");
+            }}>
             {showPass.confirmPass ? <LockOpenSharpIcon /> : <LockSharpIcon />}
           </span>
         </div>
@@ -187,19 +172,9 @@ function PatientPassword() {
           className="solid submit simple"
           disabled={validCurrent && isEnabled ? false : true}
         >
-          Submit
+          Submit  
         </button>
-      </div>
-      {success && (
-        <div>
-          <div className="success-change">
-            <div>
-              <CheckCircleOutlineSharpIcon />
-            </div>
-            <h1>Success</h1>
-          </div>
-        </div>
-      )}
+      </div>  
     </form>
   );
 }

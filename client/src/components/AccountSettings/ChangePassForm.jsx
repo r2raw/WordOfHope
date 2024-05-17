@@ -128,7 +128,7 @@ function ChangePassForm() {
           />
           <span className="new-floating-label">Current Password</span>
           <span
-            className="new-floating-icon"
+            className="new-floating-icon pass"
             onClick={() => {
               handleShowPass("currentPass");
             }}
@@ -147,7 +147,7 @@ function ChangePassForm() {
           />
           <span className="new-floating-label">New Password</span>
           <span
-            className="new-floating-icon"
+            className="new-floating-icon pass"
             onClick={() => {
               handleShowPass("newPass");
             }}
@@ -168,7 +168,7 @@ function ChangePassForm() {
           />
           <span className="new-floating-label">Confirm Password</span>
           <span
-            className="new-floating-icon"
+            className="new-floating-icon pass"
             onClick={() => {
               handleShowPass("confirmPass");
             }}

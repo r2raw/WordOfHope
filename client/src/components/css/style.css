@@ -3032,8 +3032,8 @@ header .header-details {
   display: flex;
 }
 
-.patient-demographics .line-chart .chart-data canvas{
-  width: 100%!important;  
+.patient-demographics .line-chart .chart-data canvas {
+  width: 100% !important;
 }
 .reports .report {
   margin: 2%;
@@ -3163,7 +3163,30 @@ header .header-details {
   display: flex;
   gap: 10px;
 }
+.patient-user-pass {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+}
 
+.patient-user-pass > div {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.patient-user-pass > div form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.patient-user-pass > div:first-child form > div {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
 .qr-scanner {
   position: fixed;
   width: 400px;
@@ -3381,6 +3404,12 @@ header .header-details {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+#new-input-group input[type="text"] ~ .new-floating-icon.pass {
+  pointer-events:all;
+   cursor: pointer;
 }
 
 #new-input-group select:valid + .new-floating-label {
@@ -4206,18 +4235,18 @@ p.diagnosis {
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
 }
-.viewed-patient-record .result-header > div{
+.viewed-patient-record .result-header > div {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 }
 
-.export-to-pdf{
+.export-to-pdf {
   display: flex;
   justify-content: flex-end;
 }
-.export-to-pdf button{
+.export-to-pdf button {
   width: 300px;
   display: flex;
   align-items: center;
@@ -4225,11 +4254,10 @@ p.diagnosis {
   margin-bottom: 20px;
 }
 
-
-.export-to-pdf button svg{
+.export-to-pdf button svg {
   fill: white;
 }
-.viewed-patient-record .result-header > div img{
+.viewed-patient-record .result-header > div img {
   width: 100%;
 }
 .viewed-patient-record hr {

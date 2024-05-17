@@ -91,6 +91,12 @@ function Facility() {
           })}
         </div>
       </div>
+      <div className="card">
+        <h1>Pharmacy</h1>
+        <div>
+          <img src={fac5} alt="pharmacy"/>
+        </div>
+      </div>
       {/* <Footer /> */}
       <div
         className="img-modal"
