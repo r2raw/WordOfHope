@@ -139,6 +139,8 @@ import fetchMyRecord from "./MyServerFunctions/Patient/fetchMyRecord.js";
 import upcomingAppointments from "./MyServerFunctions/Nurse/upcomingAppointments.js";
 import myUnattendedAppointment from "./MyServerFunctions/Patient/myUnattendedAppointment.js";
 import myAppointmentTotal from "./MyServerFunctions/Patient/myAppointmentTotal.js";
+import userEmergencyContact from "./MyServerFunctions/Patient/userEmergencyContact.js";
+import inserEmergencyContact from "./MyServerFunctions/Patient/inserEmergencyContact.js";
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -1801,6 +1803,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
     const availableTime = await fetchAvailableDoctorTime(db);
     const services = await fetchPatientServices(db);
     const patientRecord = await fetchMyRecord(db, uid);
+    const emergencyContact = await userEmergencyContact(db, uid);
     const patientResult = await db.query(
       "SELECT userProfile.*, wohUser.email, wohUser.username FROM userProfile JOIN wohUser ON userProfile.userId = wohUser.id WHERE userid=$1",
       [uid]
@@ -1824,6 +1827,7 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
       availableTime: availableTime,
       services: services,
       myRecord: patientRecord,
+      emergencyContact: emergencyContact,
       mytotalAppointment: mytotalAppointment,
       appointments: {
         selfAppointment: myAppointments,
@@ -1837,6 +1841,32 @@ app.get("/WordOfHope/Patient/:user", async (req, res) => {
   }
 });
 
+
+app.post("/remove-contact/:id", async (req, res)=>{
+  try {
+    const {id} = req.params;
+    const sql = "DELETE FROM userEmergencyContact WHERE id=$1"
+    const result = await db.query(sql, [id]);
+
+    if(result.rowCount > 0){
+      return res.status(200).json({message: "success"})
+    }
+  } catch (error) {
+    console.error('remove contact error: ' + error.message)
+  }
+})
+app.post("/add-emergency-contact/:uid", async (req, res) =>{
+  try {
+    const {uid} =  req.params;
+    console.log(uid)
+    const emergencyContact = await inserEmergencyContact(db, uid, req.body)
+    if(emergencyContact){
+      return res.status(200).json({success: "message"});
+    }
+  } catch (error) {
+    console.error("add-emergency-contact API ERROR: " + error.message)
+  }
+})
 app.get("/WordOfHope/MNS/:user", async (req, res) => {
   try {
     const uid = req.params.user;

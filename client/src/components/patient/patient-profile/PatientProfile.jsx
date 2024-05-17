@@ -8,19 +8,24 @@ import PhotoSharpIcon from "@mui/icons-material/PhotoSharp";
 import EditMyProfile from "./EditMyProfile";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import calculateAge from "../../my-functions/calculateAge";
-import {titleCase} from "title-case";
+import { titleCase } from "title-case";
 import _ from "lodash";
-
+import axios from "axios"
 import dayjs from "dayjs";
+import AddEmergencyContact from "./AddEmergencyContact";
 // import io from "socket.io-client";
 
 function PatientProfile() {
-  const { backendData } = useOutletContext();
+  const { backendData, updateBackend } = useOutletContext();
   const [loading, setLoading] = useState(true);
   const [viewEditForm, setViewEditForm] = useState(false);
 
+  const [viewContactForm, setViewContactForm] = useState(false);
   const handleViewEditForm = () => {
     setViewEditForm(!viewEditForm);
+  };
+  const handleViewContactForm = () => {
+    setViewContactForm(!viewContactForm);
   };
   useEffect(() => {
     if (backendData) {
@@ -35,6 +40,16 @@ function PatientProfile() {
       console.log(data);
     });
   }, [socket]);
+  const handleRemove = async (id)=>{
+    try {
+      const response = await axios.post(`/remove-contact/${id}`)
+      if(response.status === 200){
+        updateBackend();
+      }
+    } catch (error) {
+      console.error("handleRemove Error: " +error.message)
+    }
+  }
   if (!backendData) {
     return <Loader />;
   }
@@ -56,17 +71,16 @@ function PatientProfile() {
                 {backendData
                   ? `${titleCase(_.lowerCase(backendData.user[0].firstname))}${
                       backendData.user[0].middlename &&
-                      ` ${titleCase(_.lowerCase(backendData.user[0].middlename))}`
+                      ` ${titleCase(
+                        _.lowerCase(backendData.user[0].middlename)
+                      )}`
                     } ${titleCase(_.lowerCase(backendData.user[0].lastname))}${
                       backendData.user[0].suffix &&
                       ` ${backendData.user[0].suffix}`
                     }`
                   : `---`}
               </h2>
-              <div
-                className="btn-container"
-                onClick={handleViewEditForm}
-              >
+              <div className="btn-container" onClick={handleViewEditForm}>
                 <CreateSharpIcon />
               </div>
             </div>
@@ -135,42 +149,59 @@ function PatientProfile() {
             </p>
           </div>
           <hr />
+
           <div className="emergency-contacts">
             <div className="header">
               <h3>Emergency Contacts</h3>
-              <div className="btn-container">
+              <div className="btn-container" onClick={handleViewContactForm}>
                 <AddCircleOutlineSharpIcon />
               </div>
             </div>
-            <div className="info">
-              <p>
-                <b>Name:</b> ---- -. ----
-              </p>
-              <p>
-                <b>Relationship:</b> ---
-              </p>
-              <p>
-                <b>Address: </b>---- - --- -- --- - --. ---- ----,
-                ---- ---, -----, -----
-              </p>
-              <p>
-                <b>Phone:</b> -----
-              </p>
-              <p>
-                <b>Email:</b> ----
-              </p>
+
+            <div className="contacts">
+              {backendData.emergencyContact.map((i, index) => {
+                const fullname = `${i.lastname}, ${i.firstname}${
+                  i.middlename && `, ${i.middlename}`
+                }${i.suffix && `, ${i.suffix}`}`;
+                return (
+                  <div key={index} className="info card">
+                    <p>
+                      <b>Name:</b> {fullname}
+                    </p>
+                    <p>
+                      <b>Relationship:</b> {i.relation}
+                    </p>
+                    <p>
+                      <b>Phone:</b> {i.phone}
+                    </p>
+                    <p>
+                      <b>Email:</b> {i.email}
+                    </p>
+                    <button style={{marginTop: "10px"}} className="solid danger fade" onClick={()=>{handleRemove(i.id)}}>Remove</button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       )}
-
-      {viewEditForm && (
+      {viewContactForm && (
         <div className="edit-patient-profile modal">
           <div className="container-header">
             <div
               className="btn-container close"
-              onClick={handleViewEditForm}
+              onClick={handleViewContactForm}
             >
+              <CloseSharpIcon />
+            </div>
+          </div>
+          <AddEmergencyContact handleViewContactForm={handleViewContactForm} />
+        </div>
+      )}
+      {viewEditForm && (
+        <div className="edit-patient-profile modal">
+          <div className="container-header">
+            <div className="btn-container close" onClick={handleViewEditForm}>
               <CloseSharpIcon />
             </div>
           </div>

@@ -3478,6 +3478,15 @@ header .header-details {
     url(../../../public/images/hopeImgs/dshbrdimg.png);
 }
 
+.emergency-contacts .contacts{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.emergency-contacts .contacts .info{
+  padding: 10px;
+  background-color: #35679930;
+}
 .user-profile .profile-header > div:first-child {
   display: flex;
   flex-direction: row;
