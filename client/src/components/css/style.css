@@ -1770,6 +1770,7 @@ img.empl-img {
 footer {
   background-color: var(--color-lightblue);
   width: 100%;
+  padding-block: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1871,7 +1872,84 @@ footer {
 
 .facility-container {
   width: 100%;
+  display: flex;
+  gap: 50px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-block: 3%;
 }
+
+.facility-container .bytwos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.facility-container .operating-room.facility.card {
+  background-color: #eaf4ff;
+}
+.facility.card img {
+  width: 100%;
+}
+
+.float-left, .float-right{
+  padding: 5% 5% 0;
+}
+
+
+.float-left p, .float-right p{
+  letter-spacing: 4px;
+  line-height: 2.5;
+}
+.float-left img {
+  height: 300px;
+  margin: 0 3% 3% 0;
+  float: left;
+}
+.float-right img {
+  height: 300px;
+  margin: 0 3% 3% 0;
+  float: right;
+}
+
+.float-left p {
+  padding: 20px 0;
+  text-align: justify;
+}
+.facility-container .patient-room.facility.card {
+  background-color: #eaf4ff;
+  width: 90%;
+}
+
+.facility-container .patient-room.facility.card > div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.facility-container .operating-room.facility.card > div {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+}
+.facility-container .facility.card h1 {
+  text-align: center;
+}
+.facility-container .facility.card {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #eaf4ff;
+  align-self: center;
+  border-radius: 10px;
+}
+
+.facility-container .facility.card img {
+  height: 400px;
+}
+
 .facility-container .facility-header {
   padding: 0;
   display: flex;
@@ -2382,6 +2460,12 @@ nav .nav-container .nav-items .nav-list a.active::before {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+}
+.services-grid .img-container {
+  border-radius: 50%;
+}
+.services-grid .img-container img {
+  border-radius: 50%;
 }
 .img-container {
   display: flex;
@@ -3406,10 +3490,9 @@ header .header-details {
   justify-content: center;
 }
 
-
 #new-input-group input[type="text"] ~ .new-floating-icon.pass {
-  pointer-events:all;
-   cursor: pointer;
+  pointer-events: all;
+  cursor: pointer;
 }
 
 #new-input-group select:valid + .new-floating-label {
@@ -3478,18 +3561,18 @@ header .header-details {
     url(../../../public/images/hopeImgs/dshbrdimg.png);
 }
 
-.patient-img-form{
+.patient-img-form {
   position: absolute;
   bottom: 20px;
   height: 20px;
   right: -200px;
 }
-.emergency-contacts .contacts{
+.emergency-contacts .contacts {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
-.emergency-contacts .contacts .info{
+.emergency-contacts .contacts .info {
   padding: 10px;
   background-color: #35679930;
 }

@@ -70,31 +70,71 @@ function Facility() {
             <h1>Our Facilities</h1>
           </div>
         </div>
-        <div className="our-facilities-container" ref={intersectionRef}>
-          {imgs.map((img, index) => {
-            return (
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, scale: 0 },
-                  visible: { opacity: 1, scale: 1 },
-                }}
-                initial="hidden"
-                animate={mainControls}
-                transition={{ duration: 0.5, delay: 0.25 }}
-                key={index}
-                className="grid-item"
-                name={img.src}
-              >
-                <img onClick={handleImgModal} src={img.src} alt={img.name} />
-              </motion.div>
-            );
-          })}
+
+        <div className="operating-room facility card">
+          <h1>Front Desk</h1>
+          <div className="">
+            <div>
+              <img onClick={handleImgModal} src={fac11} alt="Radiology" />
+            </div>
+            <div>
+              <img onClick={handleImgModal} src={fac14} alt="Radiology" />
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="card">
-        <h1>Pharmacy</h1>
-        <div>
-          <img src={fac5} alt="pharmacy"/>
+        <div className="patient-room facility card">
+          <h1>Patient Rooms</h1>
+          <div className="">
+            <div>
+              <img  onClick={handleImgModal} src={fac4} alt="Radiology" />
+            </div>
+            <div>
+              <img  onClick={handleImgModal} src={fac3} alt="Radiology" />
+            </div>
+            <div>
+              <img  onClick={handleImgModal} src={fac10} alt="Radiology" />
+            </div>
+            <div>
+              <img  onClick={handleImgModal} src={fac7} alt="Radiology" />
+            </div>
+            <div>
+              <img  onClick={handleImgModal} src={fac8} alt="Radiology" />
+            </div>
+            <div>
+              <img  onClick={handleImgModal} src={fac9} alt="Radiology" />
+            </div>
+          </div>
+        </div>
+        <div className="operating-room facility card">
+          <h1>Operating Room</h1>
+          <div className="">
+            <div>
+              <img  onClick={handleImgModal} src={fac11} alt="Radiology" />
+            </div>
+            <div>
+              <img onClick={handleImgModal} src={fac14} alt="Radiology" />
+            </div>
+          </div>
+        </div>
+        <div className="bytwos">
+          <div className="facility card">
+            <h1>Radiology</h1>
+            <div>
+              <img onClick={handleImgModal} src={fac15} alt="Radiology" />
+            </div>
+          </div>
+          <div className="facility card">
+            <h1>Ultrasound</h1>
+            <div>
+              <img onClick={handleImgModal} src={fac13} alt="Ultrasound" />
+            </div>
+          </div>
+        </div>
+        <div className="facility card">
+          <h1>Pharmacy</h1>
+          <div>
+            <img onClick={handleImgModal} src={fac5} alt="pharmacy" />
+          </div>
         </div>
       </div>
       {/* <Footer /> */}

@@ -4,9 +4,23 @@ import defaultImg from "../../my-images/empImg/defaultImg.png";
 import { currentDate } from "../../my-functions/CurrentDate";
 import Loader from "../../Loader";
 import MyUpComingAppointmentTable from "../my-appointment/MyUpComingAppointmentTable";
+import labimg from "../../my-images/hopeImgs/diagnostic/laboratory.jpg";
+import ultrasoundimg from "../../my-images/hopeImgs/diagnostic/ultrasound.jpg";
+import xrayimg from "../../my-images/hopeImgs/diagnostic/xray.jpg";
+import ent from "../../my-images/hopeImgs/diagnostic/ent.png";
+import intermed from "../../my-images/hopeImgs/diagnostic/intermed.jpg";
+import orth from "../../my-images/hopeImgs/diagnostic/orth.jpg";
+import surg from "../../my-images/hopeImgs/diagnostic/surg.png";
+import cardiology from "../../my-images/hopeImgs/specialize/spec-cardiology.jpg";
+import neurology from "../../my-images/hopeImgs/specialize/spec-neurology.jpg";
+import obstetrics from "../../my-images/hopeImgs/specialize/spec-obstetrics.jpg";
+import optholmology from "../../my-images/hopeImgs/specialize/spec-opthomology.jpg";
+import pediatrics from "../../my-images/hopeImgs/specialize/spec-pediatric.jpg";
+import pulmonology from "../../my-images/hopeImgs/specialize/spec-pulomonology.jpg";
 import UpcomingDashboardTable from "./UpcomingDashboardTable";
 function PatientDashboard() {
   const { user } = useParams();
+  const [seeMore, setSeeMor] = useState(false);
   const { backendData } = useOutletContext();
   // const [loading, setLoading] = useState(true);
 
@@ -46,7 +60,10 @@ function PatientDashboard() {
           }`}</h2>
           <p>21 years old</p>
           <div>
-            <p className="upcoming-appointment">Upcoming apointments: {backendData.appointments.selfAppointment.length}</p>
+            <p className="upcoming-appointment">
+              Upcoming apointments:{" "}
+              {backendData.appointments.selfAppointment.length}
+            </p>
             <p>Total apointments: {backendData.mytotalAppointment}</p>
           </div>
         </div>
@@ -54,65 +71,109 @@ function PatientDashboard() {
 
       <div className="dashboard services-header">
         <h3>Our Services</h3>
-        <NavLink to={`../../../${user}/Services`}>
-          <p>See all...</p>
-        </NavLink>
+        <a>
+          <p
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setSeeMor(!seeMore);
+            }}
+          >
+            {!seeMore ? `See all >>>` : `See Less`}
+          </p>
+        </a>
       </div>
       <div className="services-grid">
-        <div className="service-item">
-          <div className="img-container">
-            <img src={defaultImg} alt="img" />
-          </div>
-          <div>
-            <h3>Laboratory</h3>
-            <p>
-              Provide specialized testing for specific conditions or diseases,
-              such as genetic testing or microbiology services
-            </p>
-          </div>
-        </div>
-        <div className="service-item">
-          <div className="img-container">
-            <img src={defaultImg} alt="img" />
-          </div>
-          <div>
-            <h3>Ultrasound</h3>
-            <p>
-              Used for a variety of purposes, including diagnosing medical
-              conditions, monitoring pregnancies, and guiding medical
-              procedures.
-            </p>
-          </div>
-        </div>
-        <div className="service-item">
-          <div className="img-container">
-            <img src={defaultImg} alt="img" />
-          </div>
-          <div>
-            <h3>X-RAY</h3>
-            <p>
-              Used to diagnose and monitor a variety of medical conditions,
-              including fractures, infections, tumors, and lung conditions.
-            </p>
-          </div>
-        </div>
-        <div className="service-item">
-          <div className="img-container">
-            <img src={defaultImg} alt="img" />
-          </div>
-          <div>
-            <h3>Nephrology</h3>
-            <p>
-              Focuses on the diagnosis and treatment of kidney-related
-              conditions and diseases.
-            </p>
-          </div>
-        </div>
+        {seeMore
+          ? services.map((i, index) => (
+              <div key={index} className="service-item">
+                <div className="img-container">
+                  <img src={i.imgsrc} alt={i.name} />
+                </div>
+                <div>
+                  <h3>{i.name}</h3>
+                  <p>{i.desc}</p>
+                </div>
+              </div>
+            ))
+          : services.slice(0, 4).map((i, index) => (
+              <div key={index} className="service-item">
+                <div className="img-container">
+                  <img src={i.imgsrc} alt={i.name} />
+                </div>
+                <div>
+                  <h3>{i.name}</h3>
+                  <p>{i.desc}</p>
+                </div>
+              </div>
+            ))}
       </div>
       <h3>Upcoming Appointments</h3>
-      <UpcomingDashboardTable/>
+      <UpcomingDashboardTable />
     </div>
   );
 }
 
 export default PatientDashboard;
+
+const services = [
+  {
+    imgsrc: labimg,
+    name: "Laboratory",
+    desc: "Provide specialized testing for specific conditions or diseases, such as genetic testing or microbiology services.",
+  },
+  {
+    imgsrc: ultrasoundimg,
+    name: "Ultrasound",
+    desc: " Used for a variety of purposes, including diagnosing medical conditions, monitoring pregnancies, and guiding medical procedures.",
+  },
+  {
+    imgsrc: xrayimg,
+    name: "X-Ray",
+    desc: "Used to diagnose and monitor a variety of medical conditions, including fractures, infections, tumors, and lung conditions.",
+  },
+  {
+    imgsrc: neurology,
+    name: "Nephrology",
+    desc: "Focuses on the diagnosis and treatment of kidney-related conditions and diseases.",
+  },
+  {
+    imgsrc: pulmonology,
+    name: "Pulmonology",
+    desc: "Focuses on the diagnosis and treatment of diseases and disorders of the respiratory system, including the lungs and airways. ",
+  },
+  {
+    imgsrc: cardiology,
+    name: "Cardiology",
+    desc: "Focuses on the diagnosis and treatment of heart diseases and conditions.",
+  },
+  {
+    imgsrc: obstetrics,
+    name: "OB/Gyne",
+    desc: "Focuses on the health of the female reproductive system, including the uterus, ovaries, and breasts.",
+  },
+  {
+    imgsrc: ent,
+    name: "ENT",
+    desc: "Focuses on the diagnosis and treatment of disorders/conditions related to the ear, nose, throat, and structures of the head and neck.",
+  },
+  {
+    imgsrc: pediatrics,
+    name: "Pediatrics",
+    desc: "Focuses on the health, development, and well-being of infants, children, and adolescents.",
+  },
+  {
+    imgsrc: orth,
+    name: "Orthopedics",
+    desc: "Focuses on the diagnosis, treatment, and rehabilitation of disorders and injuries of the musculoskeletal system.",
+  },
+  {
+    imgsrc: intermed,
+    name: "Internal Medicine",
+    desc: "Focuses on the prevention, diagnosis, and treatment of adult diseases.",
+  },
+  {
+    imgsrc: surg,
+    name: "Surgery",
+    desc: "Involves the use of operative techniques to investigate or treat various conditions or diseases.",
+  },
+];
