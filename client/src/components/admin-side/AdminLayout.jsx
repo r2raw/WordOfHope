@@ -19,7 +19,7 @@ function AdminLayout() {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     const role = localStorage.getItem("role");
     const uid = localStorage.getItem("uid");
-    if (!isLoggedIn || isLoggedIn === "false" ||!role || !uid) {
+    if (!isLoggedIn || isLoggedIn === "false" || !role || !uid) {
       navigate("/Login");
       return;
     } else {
@@ -185,9 +185,9 @@ function AdminLayout() {
               >
                 Cancel
               </button>
-              <Link to="/rfid">
+              <a href="/rfid" target="_blank">
                 <button className="submit solid">Confirm</button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
